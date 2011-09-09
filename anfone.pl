@@ -593,7 +593,7 @@ sub get_screenshot{
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
     my @nodes = $tree->look_down( id => $mark );
-    return undef unless @nodes;
+    return [] unless @nodes;
     my @tags =  $nodes[0]->find_by_tag_name('a') ;
 
     #retrun a arrayref
@@ -613,7 +613,7 @@ sub get_permission{
 
     # find permission
     my @nodes = $tree->look_down( class => $mark );
-    return 0 unless @nodes;
+    return [] unless @nodes;
 
     # foreach @nodes;
     # mark class => 'row' <h3>|<h4>
@@ -637,7 +637,7 @@ sub get_permission{
         }
     }
 
-    return $permission||undef;
+    return $permission;
 }
 
 sub get_related_app{
@@ -650,7 +650,7 @@ sub get_related_app{
     $tree->parse($html);
 
     my @nodes = $tree->look_down( class => 'sort-r' );
-    return undef unless @nodes;
+    return [] unless @nodes;
     # related_apps 
     #my @re_apps_a = find_by_tag_name('a');
 =pod
@@ -674,8 +674,7 @@ sub get_related_app{
 		
 	}
 
-    return scalar(@{ $related_apps }) == 0 
-        ? undef : $related_apps
+    return  $related_apps;
 }
 
 sub extract_app_info
@@ -699,15 +698,7 @@ sub extract_app_info
                 # dymic function invoke
                 # 'get_author' => sub get_author
                 # 'get_price'  => sub get_price
-                if( defined( my $ret = &{ __PACKAGE__."::get_".$meta }($html) ) ){
-                    $app_info->{$meta} = $ret;
-                }else{
-                    Carp::croak(
-                        'not find get meta data method',
-                        "get_".$meta,
-                        "\n"
-                    );
-                }
+                $app_info->{$meta} = &{ __PACKAGE__."::get_".$meta }($html) ;
             }
 
             if (defined($category_mapping{$app_info->{official_category}})){
@@ -724,9 +715,13 @@ sub extract_app_info
     };
     use Data::Dumper;
     #warn Encode::encode_utf8( Dumper $app_info );
-    warn Dumper $app_info;
+#    delete $app_info->{app_page};
 
-    $app_info->{stauts} = 'success';
+    $app_info->{status} = 'success';
+    foreach my $meta(keys %{$app_info}){ 
+         my $value = decode_utf8($app_info->{$meta});
+         warn "$meta => $value\n";
+    }
     if($@){
         $app_info->{status} = 'fail';
         Carp::carp('get app_info failed,reason: '.$@ );

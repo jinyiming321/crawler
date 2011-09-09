@@ -33,10 +33,10 @@ while(1)
     foreach ( @markets_be_monitored)
     {
         $market=$db_helper->get_market_info($_);
-        &task_for_find_app;
+#        &task_for_find_app;
 #        &task_for_find_app_again;
 #        &task_for_updated_app();
-#        &task_for_new_app();
+        &task_for_new_app();
 #        &update_market_monitor;
 #        &task_for_new_apk();
     }
