@@ -762,7 +762,6 @@ sub run{
 
 }
 
-&run;
 
 __END__
 
