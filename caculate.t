@@ -93,7 +93,7 @@ sub run_new_app{
     my @task_id_list = keys %{ $task_info->{new_app} };
     for( my $i = 0;$i<=30;$i++){
         my $cmd = <<CMD;
-        perl /root/crawler/anfone_for_test.pl new_app $task_id_list[$i] /root/crawler/default.cfg
+        perl /root/crawler/anfone.pl new_app $task_id_list[$i] /root/crawler/default.cfg
 CMD
         print $cmd."\n";
         #sleep 5;
