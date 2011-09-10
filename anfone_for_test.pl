@@ -75,8 +75,8 @@ $0 task_type task_id conf_file
 for example:
     $0 find_app 10 /root/crawler/default.cfg
 EOF
-for(@ARGV){
-    Carp::croak($usage."\n") unless defined $_;
+unless( $task_type && $task_id && $conf_file ){
+    die $usage;
 }
 
 
@@ -760,7 +760,12 @@ sub extract_app_info
     #warn Encode::encode_utf8( Dumper $app_info );
 #    delete $app_info->{app_page};
     foreach my $meta( keys %$app_info){
-      my $value = decode_utf8($app_info->{$meta});
+      my $value = $app_info->{$meta};
+      if( ref($value) eq 'ARRAY' ){
+          $value = Dumper $value;
+      }else{
+          $value = decode_utf8($value);
+      }
       warn "$meta => $value\n";
     }
     $app_info->{status} = 'success';
