@@ -751,7 +751,8 @@ sub extract_app_info
     #warn Encode::encode_utf8( Dumper $app_info );
 #    delete $app_info->{app_page};
     foreach my $meta( keys %$app_info){
-#	print "$meta => ".decode_utf8($app_info->{$meta})."\n";
+      my $value = decode_utf8($app_info->{$meta});
+      warn "$meta => $value\n";
     }
     $app_info->{status} = 'success';
     if($@){
