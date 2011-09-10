@@ -76,7 +76,7 @@ for example:
     $0 find_app 10 /root/crawler/default.cfg
 EOF
 for(@ARGV){
-    Carp::croak($usage."\n") unless $_;
+    Carp::croak($usage."\n") unless defined $_;
 }
 
 
