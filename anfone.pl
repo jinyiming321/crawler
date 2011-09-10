@@ -436,7 +436,7 @@ sub get_official_rating_stars{
 </ul>
 =cut
     # here, star and match by regular expression
-    if( $web =~ m/df-star star-(\d+)/s ){
+    if( $html =~ m/df-star star-(\d+)/s ){
         return $1;
     }
 
