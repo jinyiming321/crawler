@@ -27,7 +27,7 @@ my $ret = GetOptions(
     'config=s'    => \$config,
 ) ;
 # $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
-my $dsn  = 'DBI:mysql:database=AMMS;host=localhost;port=3306';
+my $dsn  = 'DBI:mysql:database=amms;host=192.168.154.1;port=3306';
 my $user = 'root';
 my $pass = 'root';
 my $feeder_url_match = '';
@@ -49,23 +49,20 @@ if( $task_type eq 'new_app' ){
 sub get_task_info{
     # http://anfone.com/sort/2.html
     my $sql =<<EOF;
-    select task_id,detail_info from task_detail 
-    where detail_info like '%coolapk%';
+    SELECT  DISTINCT a.task_id
+    FROM 
+    task a,
+    task_detail b
+    WHERE
+    b.detail_info LIKE '%coolapk%' 
+    AND a.task_type='$task_type';
 EOF
     my $sth = $dbh->prepare($sql);
     $sth->execute;
     while( my $ret = $sth->fetchrow_hashref ){
 #        if( $ret->{detail_info} =~ m{anfone.com/sort/\d+\.html} ){
-        if( $ret->{detail_info} =~ m{coolapk} ){
-            $task_info->{find_app}{ $ret->{task_id} } = $ret->{detail_info};
-        }
-        # http://anfone.com/sort/1_4.html
-        if( $ret->{detail_info} =~ m{anfone.com/sort/\d+_\d+\.html} ){
-            $task_info->{get_app_list}{ $ret->{task_id} } = $ret->{detail_info};
-        }
-        # http://anfone.com/soft/16478.html
-        if( $ret->{detail_info} =~ m{anfone.com/soft/\d+\.html} ){
-            $task_info->{new_app}->{ $ret->{task_id} } = $ret->{detail_info};
+        if( $ret->{task_id} =~ m{\d+} ){
+            $task_info->{$task_type}{ $ret->{task_id} } = 1;
         }
     }
 
@@ -96,12 +93,11 @@ sub run_new_app{
     my @task_id_list = keys %{ $task_info->{new_app} };
     for( my $i = 0;$i<=30;$i++){
         my $cmd = <<CMD;
-        perl /root/crawler/anfone.pl new_app $task_id_list[$i] /root/crawler/default.cfg
+        perl /root/crawler/coolapk.pl new_app $task_id_list[$i] /root/crawler/default.cfg
 CMD
         print $cmd."\n";
         #sleep 5;
-        my $ret = system($cmd);
-        $ret ? print " run task_id $_ success with url $task_info->{find_app}{$_}\n"
-             : warn "run task_id $_ faild with url $task_info->{find_app}{$_}\n";
+        `$cmd`;
+        is($?,0,"run '$cmd' test");
     }
 }

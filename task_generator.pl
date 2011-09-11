@@ -7,7 +7,6 @@ use Data::Dumper;
 use AMMS::Util;
 					
 my $market;
-my $task_type = pop @ARGV;
 my @markets_be_monitored = @ARGV;
 my $conf_file="./default.cfg";
 
@@ -34,10 +33,6 @@ while(1)
     foreach ( @markets_be_monitored)
     {
         $market=$db_helper->get_market_info($_);
-        {
-            no strict 'refs';
-            &{__PACKAGE__."::"."task_for_".$task_type}();
-        }
 #        &task_for_find_app;
 #        &task_for_find_app_again;
 #        &task_for_updated_app();
