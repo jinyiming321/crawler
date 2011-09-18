@@ -1,4 +1,30 @@
+#!/usr/bin/perl 
+#===============================================================================
+#
+#         FILE: anfone.pl
+#        USAGE: ./anfone.pl  
+#  DESCRIPTION: 
+#      This is a program,which is a adaptor for the crawler of amms system,
+# it can parse html meta data and support extract_page_list,extract_app_from_feeder,
+# extract_app_info.Somewhere used HTML::TreeBuilder to parse html tree, handle 
+# description,stars... with regular expression.
+#
+# REQUIREMENTS: HTML::TreeBuilder,AMMS::UpdatedAppExtractor,AMMS::Downloader,
+#               AMMS::NewAppExtractor,AMMS::AppFinder,AMMS::Util
+#         BUGS: send email to me, if there is any bugs.
+#        NOTES: add support for related app,screenshot,
+#       AUTHOR: James King, jinyiming456@gmail.com
+#      COMPANY: Trustgo
+#      VERSION: 1.0
+#      CREATED: 2011/9/19 0:10:31
+#     REVISION: 1.0
+#===============================================================================
+
+use strict;
+use warnings;
+
 #!/usr/bin/perl
+
 BEGIN{unshift(@INC, $1) if ($0=~m/(.+)\//);}
 use strict;
 use utf8;
@@ -24,7 +50,8 @@ my $url_base    = 'http://anfone.com';
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
 # so i remove it from this mapping
-# TODO realated_app official_rating_stars 
+# modify record :
+# 	2011-09-19 add support for screenshot related_app official_rating_starts
 our @app_info_list = qw(
     author 
     app_name 
@@ -111,7 +138,6 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->run($task_id);
 }
-
 
 sub FIRST_NODE			(){		0		}
 
@@ -376,7 +402,6 @@ sub get_total_install_times{
     return undef;
 }
 
-# TODO get_last_update
 sub get_last_update{
     my $html = shift;
     # mark is class => 'info'
@@ -627,12 +652,27 @@ sub get_related_app{
     my @nodes = $tree->look_down( class => 'sort-r' );
     return undef unless @nodes;
     # related_apps 
-    my @re_apps_a = find_by_tag_name('a');
-    foreach my $app_link( @re_apps_a ){
-        next unless ref($app_link);
-        push @{ $related_apps },
-            trim_url($url_base).$app_link->attr('href');
-    }
+    #my @re_apps_a = find_by_tag_name('a');
+=pod
+<div class="column-r">
+	<h2>猜你喜欢</h2>
+	<ul class="sort-r">
+		<li>
+			<a href="/soft/19120.html">
+		</li>
+	</ur>
+</div>
+=cut
+	foreach my $class ( @nodes ){
+		my @links = $class->find_by_tag_name('a');
+		next unless @links;
+		foreach my $link(@links){
+			next unless ref($link);
+			push @{ $related_apps },
+	            trim_url($url_base).$link->attr('href');
+		}
+		
+	}
 
     return scalar(@{ $related_apps }) == 0 
         ? undef : $related_apps
@@ -653,10 +693,8 @@ sub extract_app_info
 
     eval{
         # TODO get note 'not find'
-        # TODO get related_app  'not find'
         {
             no strict 'refs';
-            # TODO ralated_app not find
             foreach my $meta( @app_info_list ){
                 # dymic function invoke
                 # 'get_author' => sub get_author
@@ -688,11 +726,12 @@ sub extract_app_info
     #warn Encode::encode_utf8( Dumper $app_info );
     warn Dumper $app_info;
 
+    $app_info->{stauts} = 'success';
     if($@){
         $app_info->{status} = 'fail';
         Carp::carp('get app_info failed,reason: '.$@ );
     }
-    $app_info->{stauts} = 'success';
+
     return scalar %{$app_info};
 }
 
@@ -708,6 +747,22 @@ sub get_content{
 
     return $content;
 }
+
+sub run{
+    use LWP::Simple;
+    my $content = get('http://www.anfone.com/soft/19389.html');
+=pod
+    my $worker	 = shift;
+    my $hook	 = shift;
+    my $html     = shift;
+    my $app_info = shift;
+=cut
+    my $app_info = {};
+    extract_app_info( undef,undef,$content,$app_info );
+
+}
+
+&run;
 
 __END__
 
