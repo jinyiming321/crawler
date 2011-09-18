@@ -7,13 +7,15 @@ USE `AMMS`;
 --
 
 DROP TABLE IF EXISTS `market`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `market` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) NOT NULL ,
   `name` varchar(255) collate utf8_bin NOT NULL,
   `language` varchar(32) collate utf8_bin NOT NULL,
   `feeder_entity_of_task` int(11) NOT NULL,
-  `interval_of_discovery` int(11) NOT NULL default '3',
-  `interval_of_update` int(11) NOT NULL default '12',
+  `interval_of_discovery` int(11) NOT NULL default 3,/*unit is hour*/
+  `interval_of_update` int(11) NOT NULL default 12,/*unit is hour*/
   `status` enum('good','bad') collate utf8_bin default 'good',
   `start_crawl_time` datetime default NULL,
   `access_url` varchar(255) collate utf8_bin NOT NULL,
@@ -23,10 +25,9 @@ CREATE TABLE `market` (
   `header_quarter` varchar(32) collate utf8_bin NOT NULL,
   `setup_date` datetime default NULL,
   `description` varchar(255) collate utf8_bin NOT NULL,
-  `display_name` varchar(255) collate utf8_bin NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `feeder`
@@ -44,8 +45,7 @@ CREATE TABLE `feeder` (
   `last_visited_time` datetime default NULL,
   `status` enum('undo','doing','success','fail','invalid') collate utf8_bin default 'undo',
   PRIMARY KEY  (`feeder_id`),
-  KEY `market_idx` (`market_id`),
-  UNIQUE `feeder.feeder_url` (feeder_url) 
+  KEY `market_idx` (`market_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 SET character_set_client = @saved_cs_client;
 
@@ -203,7 +203,7 @@ CREATE TABLE `task` (
   `task_id` int(11) NOT NULL auto_increment,
   `market_id` int(11) NOT NULL,
   `worker_ip` varchar(64) default NULL,
-  `task_type` enum('find_app','new_app','update_app','new_apk','multi_lang','price') NOT NULL,
+  `task_type` enum('find_app','new_app','update_app','new_apk','multi-lang','price') NOT NULL,
   `status` enum('undo','doing','done') NOT NULL default 'undo',
   `request_time` datetime NOT NULL default '0000-00-00 00:00:00',
   `start_time` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -257,7 +257,6 @@ CREATE TABLE `package` (
   `worker_ip` varchar(64) default NULL,
   `package_name` varchar(128) default NULL,
   `status` enum('undo','doing','success','fail') NOT NULL default 'undo',
-  `fail_times` int(11) default 0,
   `insert_time` datetime NOT NULL default '0000-00-00 00:00:00',
   `end_time` datetime NOT NULL default '0000-00-00 00:00:00',
   KEY `ix_task_id` (`task_id`),
@@ -289,7 +288,6 @@ CREATE TABLE `app_price` (
   `currency` varchar (32) default NULL,
   `free` TINYINT default 0,
   `status` enum('undo','fail','success') default 'fail',
-  `extra_info` varchar(256) default NULL,
   `cs` varchar(32) default NULL,
   `da` varchar(32) default NULL,
   `de` varchar(32) default NULL,
@@ -365,4 +363,15 @@ INSERT INTO `google_account` VALUES
 GRANT SELECT,INSERT,UPDATE, DELETE,ALTER,LOCK TABLES ON AMMS.* TO trustgo@"%" IDENTIFIED BY "123456";
 GRANT SELECT,LOCK TABLES ON AMMS.* TO onlyread@"%" IDENTIFIED BY "123456";
 
-INSERT INTO `market` VALUES (1,'market.android.com','en_us',2,3,12,'good',NULL,'http://www.android.com/market/','http://developer.android.com/','67 countries','multiple\r\n       languages','CA,US',NULL,'','Android Market'),(2,'www.mumayi.com','zh_cn',3,3,12,'good',NULL,'http://www.mumayi.com/','','','','jiangsu, CN',NULL,'','木蚂蚁应用市场'),(3,'www.amazon.com','en_us',2,3,12,'good',NULL,'','','','','',NULL,'',''),(4,'www.aimi8.com','zh_cn',3,3,12,'good',NULL,'http://www.aimi8.com/','','','','Beijing,CN',NULL,'','爱米软件商店'),(5,'www.hiapk.com','zh_cn',3,3,12,'good',NULL,'www.hiapk.com','','','','Fujian, CN',NULL,'','安卓市场'),(6,'www.gfan.com','zh_cn',3,3,12,'good',NULL,'www.gfan.com','','','','Beijing,CN',NULL,'','机锋市场'),(7,'www.appchina.com','zh_cn',2,3,12,'good',NULL,'www.appchina.com','','','','Beijing,CN',NULL,'','应用汇市场'),(8,'www.nduoa.com','zh_cn',2,3,12,'good',NULL,'www.nduoa.com','','','','Shanghai, CN',NULL,'','N多市场'),(9,'www.eoemarket.com','zh_cn',2,3,12,'good',NULL,'www.eoemarket.com','','','','Beijing,CN',NULL,'','优亿市场'),(10,'www.goapk.com','zh_cn',2,3,12,'good',NULL,'www.goapk.com','','','','CN',NULL,'','安智市场'),(11,'android.d.cn','zh_cn',2,3,12,'good',NULL,'android.d.cn','','','','CN',NULL,'','安致市场'),(12,'m.163.com','zh_cn',2,3,12,'good',NULL,'m.163.com','','','','CN',NULL,'all mobile OS','网易应用'),(13,'appslib.com','',0,3,12,'good',NULL,'http://appslib.com/applications/index.html','http://appslib.com/developers/index.html','128 countries','English','HongKong, HK',NULL,'','AppsLib'),(14,'www.getjar.com','',0,3,12,'good',NULL,'http://www.getjar.com/','http://my.getjar.com/','128 countries','multiple languages','CA, US',NULL,'all mobile OS','GetJar'),(15,'www.189store.com','',0,3,12,'good',NULL,'http://www.189store.com','','','','CN',NULL,'','天翼空间应用商城'),(16,'soft.kaiqi.com','',0,3,12,'good',NULL,'http://soft.kaiqi.com/','','','','CN',NULL,'','开奇网'),(17,'store.wo.com.cn','',0,3,12,'good',NULL,'http://store.wo.com.cn/','','','','CN',NULL,'','沃商店'),(18,'www.starandroid.com','',0,3,12,'good',NULL,'http://www.starandroid.com/','','','','CN',NULL,'','安卓星空'),(19,'www.anfone.com','',0,3,12,'good',NULL,'http://www.anfone.com/index.html','','','','CN',NULL,'','安丰下载'),(20,'www.liqucn.com','',0,3,12,'good',NULL,'http://www.liqucn.com/phone/htc/g8-wildfire/','','','','CN',NULL,'','历趣安卓市场'),(21,'mm.10086.cn','',0,3,12,'good',NULL,'http://mm.10086.cn','','','','CN',NULL,'','移动应用商场');
+replace INTO `market` set id=1,name='market.android.com',language='en_us',feeder_entity_of_task=2, status='good';
+replace INTO `market` set id=2,name='www.mumayi.com',language='zh_cn',feeder_entity_of_task=3,status='good';
+replace INTO `market` set id=3,name='www.amazon.com',language='en_us',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=4,name='www.aimi8.com',language='zh_cn',feeder_entity_of_task=3,status='good';
+replace INTO `market` set id=5,name='www.hiapk.com',language='zh_cn',feeder_entity_of_task=3,status='good';
+replace INTO `market` set id=6,name='www.gfan.com',language='zh_cn',feeder_entity_of_task=3,status='good';
+replace INTO `market` set id=7,name='www.appchina.com',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=8,name='www.nduoa.com',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=9,name='www.eoemarket.com',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=10,name='www.goapk.com',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=11,name='android.d.cn',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=12,name='m.163.com',language='zh_cn',feeder_entity_of_task=2,status='good';

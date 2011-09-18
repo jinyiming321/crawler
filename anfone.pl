@@ -24,11 +24,23 @@ my $url_base    = 'http://anfone.com';
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
 # so i remove it from this mapping
+# TODO realated_app official_rating_stars 
 our @app_info_list = qw(
-    author app_name official_category current_version 
-    size price app_url description
-    apk_url last_update total_install_times app_qr
+    author 
+    app_name 
+    official_category 
+    current_version 
+    size 
+    price 
+    description
+    apk_url 
+    last_update 
+    total_install_times 
+    app_qr
     permission
+    screenshot
+    official_rating_stars
+    related_app
 );
 
 our %category_mapping=(
@@ -409,10 +421,7 @@ sub get_apk_url{
 }
 
 sub get_official_rating_stars{
-    my $tree  = shift;
-    my $web   = shift;
-    my $mark  = shift;
-
+    my $html  = shift;
     # find stars for app
     # html_string:
 =pod
@@ -606,12 +615,35 @@ sub get_permission{
     return $permission||undef;
 }
 
+sub get_related_app{
+    my $html = shift;
+    
+    # a related apps 
+    my $related_apps = [];
+    # create a empty html tree
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
+
+    my @nodes = $tree->look_down( class => 'sort-r' );
+    return undef unless @nodes;
+    # related_apps 
+    my @re_apps_a = find_by_tag_name('a');
+    foreach my $app_link( @re_apps_a ){
+        next unless ref($app_link);
+        push @{ $related_apps },
+            trim_url($url_base).$app_link->attr('href');
+    }
+
+    return scalar(@{ $related_apps }) == 0 
+        ? undef : $related_apps
+}
+
 sub extract_app_info
 {
     # accept args ref from outside
     my $worker	 = shift;
     my $hook	 = shift;
-    my $html   = shift;
+    my $html     = shift;
     my $app_info = shift;
 
     # create a html tree and parse
