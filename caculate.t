@@ -21,7 +21,7 @@ my $temp_html_dir = '/root/crawler/html/';
                         "verbose"  => \$verbose);  # flag
 =cut
 
-my ( $task_type,$config ) = shift;
+my ( $task_type,$config );
 my $ret = GetOptions( 
     'task_type=s' => \$task_type,
     'config=s'    => \$config,
@@ -38,10 +38,10 @@ my $dbh = DBI->connect( $dsn,$user,$pass ) or die $DBI::errstr;
 my $task_info = {};
 
 get_task_info();
-if( $ret->{task_type} eq 'find_app' ){
+if( $task_type eq 'find_app' ){
     run_find_app();
 }
-if( $ret->{task_type} eq 'new_app' ){
+if( $task_type eq 'new_app' ){
     run_new_app();
 }
 
