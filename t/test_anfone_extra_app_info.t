@@ -38,6 +38,7 @@ BEGIN{
 
 TEST_EXTRACT_FEEDER_FUNC:
 my @category_app_list= qw(
+http://anfone.com/soft/8766.html
 );
 
 my @metas = qw(
@@ -93,11 +94,9 @@ my $wrong = '<html></html>';
 # get html string
 for(@category_app_list){
     my $content;
-    if( $_ =~ m/(\d+_\d+\.html)$/){
+    if( $_ =~ m{soft/(\d+\.html)} ){
         my $file = $1;
-        unless ( -e $file){
- 	   	is( defined( $content = LWP::Simple::getstore($_,$file) ),1," lwp simple get html content from '$_' ") ;
-        }
+ 	is( defined( $content = LWP::Simple::getstore($_,$file) ),1," lwp simple get html content from '$_' ") ;
     	push @content_list,get_content($file);
     }
 }
@@ -116,9 +115,9 @@ sub test_extract_app_info{
     my $app_info = {};
     # testing
     is(
-        &extract_app_info( undef,undef,$page,$app_info ),
+        defined &extract_app_info( undef,undef,$page,$app_info ) ,
         1,
-        "extract app from feeder '$url' get 'Dumper $app_info' "
+        "extract app info from '$url' get 'Dumper $app_info' "
     );
     for(@metas){
         is( exists $app_info->{$_}, 1, "exists '$_' in app_info");

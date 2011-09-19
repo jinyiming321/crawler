@@ -1,0 +1,91 @@
+ok 1 - use HTML::TreeBuilder;
+ok 2 - use AMMS::Util;
+ok 3 - use AMMS::AppFinder;
+ok 4 - use AMMS::Downloader;
+ok 5 - use AMMS::NewAppExtractor;
+ok 6 - use AMMS::UpdatedAppExtractor;
+ok 7 - use Carp;
+ok 8 - require 'anfone_for_test.pl';
+ok 9 -  lwp simple get html content from 'http://anfone.com/soft/8766.html' 
+extract_app_info  run 
+not ok 10 - extract app from feeder 'http://anfone.com/soft/8766.html' get 'Dumper HASH(0x9104ad8)' 
+ok 11 - exists 'author' in app_info
+ok 12 - defined 'author' with '安丰网' in app_info
+not ok 13 - 'author' => '安丰网' match app_info rule 'å®ä¸°ç½'
+ok 14 - exists 'app_name' in app_info
+ok 15 - defined 'app_name' with '吸血鬼猎人' in app_info
+ok 16 - 'app_name' => '吸血鬼猎人' match app_info rule '\S+'
+ok 17 - exists 'official_category' in app_info
+ok 18 - defined 'official_category' with '动作游戏' in app_info
+ok 19 - 'official_category' => '动作游戏' match app_info rule '\S+'
+ok 20 - exists 'current_version' in app_info
+ok 21 - defined 'current_version' with '1.3.2' in app_info
+not ok 22 - 'current_version' => '1.3.2' match app_info rule '\d.*'
+ok 23 - exists 'size' in app_info
+ok 24 - defined 'size' with '12582912' in app_info
+not ok 25 - 'size' => '12582912' match app_info rule '\d+'
+ok 26 - exists 'price' in app_info
+ok 27 - defined 'price' with '0' in app_info
+not ok 28 - 'price' => '0' match app_info rule '\d+'
+ok 29 - exists 'description' in app_info
+ok 30 - defined 'description' with '应用介绍：
+# iDracula这款射击游戏将玩家带入一场吸血鬼猎人和不死军团之间的战争。孤身一人，身陷重围，敌人如潮水般涌来……陪伴你的只有各式各样的枪械和一点点运气。喜爱《孤胆枪手》和《血腥大地》的玩家万万不可错过本作。
+# 
+# 在游戏中你将扮演一个猎人，吸血鬼猎人。
+# 
+# 你将要追捕的对象包括吸血鬼、狼人、黑巫师等一系列黑暗生物。
+# 
+# 
+# ' in app_info
+ok 31 - 'description' => '应用介绍：
+# iDracula这款射击游戏将玩家带入一场吸血鬼猎人和不死军团之间的战争。孤身一人，身陷重围，敌人如潮水般涌来……陪伴你的只有各式各样的枪械和一点点运气。喜爱《孤胆枪手》和《血腥大地》的玩家万万不可错过本作。
+# 
+# 在游戏中你将扮演一个猎人，吸血鬼猎人。
+# 
+# 你将要追捕的对象包括吸血鬼、狼人、黑巫师等一系列黑暗生物。
+# 
+# 
+# ' match app_info rule '.*'
+ok 32 - exists 'apk_url' in app_info
+ok 33 - defined 'apk_url' with 'http://anfone.com/download/8766' in app_info
+not ok 34 - 'apk_url' => 'http://anfone.com/download/8766' match app_info rule '.*apk$'
+ok 35 - exists 'last_update' in app_info
+ok 36 - defined 'last_update' with '2011-05-19' in app_info
+not ok 37 - 'last_update' => '2011-05-19' match app_info rule '\d+-\d+-\d+'
+ok 38 - exists 'total_install_times' in app_info
+ok 39 - defined 'total_install_times' with '963' in app_info
+not ok 40 - 'total_install_times' => '963' match app_info rule '\d+'
+ok 41 - exists 'app_qr' in app_info
+ok 42 - defined 'app_qr' with 'http://anfone.com/qrcode/8766.jpg' in app_info
+not ok 43 - 'app_qr' => 'http://anfone.com/qrcode/8766.jpg' match app_info rule 'http:.*img'
+ok 44 - exists 'permission' in app_info
+ok 45 - defined 'permission' with 'ARRAY(0x8f4a880)' in app_info
+ok 46 - 'permission' => 'ARRAY(0x8f4a880)' match app_info rule '.*'
+ok 47 - exists 'screenshot' in app_info
+ok 48 - defined 'screenshot' with 'ARRAY(0x9329dd0)' in app_info
+not ok 49 - 'screenshot' => 'ARRAY(0x9329dd0)' match app_info rule 'http.*img'
+ok 50 - exists 'official_rating_stars' in app_info
+ok 51 - defined 'official_rating_stars' with '2' in app_info
+not ok 52 - 'official_rating_stars' => '2' match app_info rule '\d+'
+ok 53 - exists 'related_app' in app_info
+ok 54 - defined 'related_app' with 'ARRAY(0x932db48)' in app_info
+not ok 55 - 'related_app' => 'ARRAY(0x932db48)' match app_info rule '.*\d+\.html'
+not ok 56 - exists 'icon' in app_info
+not ok 57 - defined 'icon' with '' in app_info
+not ok 58 - 'icon' => '' match app_info rule '.*png'
+not ok 59 - exists 'app_url' in app_info
+not ok 60 - defined 'app_url' with '' in app_info
+not ok 61 - 'app_url' => '' match app_info rule '.*html'
+not ok 62 - exists 'trustgo_category_id' in app_info
+not ok 63 - defined 'trustgo_category_id' with '' in app_info
+ok 64 - 'trustgo_category_id' => '' match app_info rule ''
+not ok 65 - exists 'app_url_md5' in app_info
+not ok 66 - defined 'app_url_md5' with '' in app_info
+ok 67 - 'app_url_md5' => '' match app_info rule ''
+extract_app_info  run 
+not ok 68 - get app_info with undef app_info
+extract_app_info  run 
+not ok 69 - get app_info with undef html
+extract_app_info  run 
+not ok 70 - get app_info with undef app_info,html
+1..70

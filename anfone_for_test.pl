@@ -329,12 +329,16 @@ sub get_app_url{
 }
 
 sub get_icon{
-    my $tree = shift;
-    my $web  = shift;
-    my $mark = shift;
+    my $html = shift;
+    
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
+#    return unless @nodes;
 
     #look down brief label;
-    my @nodes = $tree->look_down( class => $mark );
+    my @nodes = $tree->look_down( class => 'brief' );
+    return unless @nodes;
+
     my $title = [ $tree->find_by_attribute( class => 'title') ]->[FIRST_NODE];
     my $icon = [ $title->find_by_tag_name($IMG) ]->[FIRST_NODE]->attr($SRC);
 
@@ -347,7 +351,7 @@ sub get_app_name{
     my $html = shift;
     my $web  = shift;
     my $mark = shift||'qnav';
-
+    
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
@@ -362,7 +366,8 @@ sub get_app_name{
     <li>拉蜂文件管理器</li>
     </div>
 =cut
-    my @nodes = $tree->look_down( class => $mark );
+    my @nodes = $tree->look_down( class => 'qnav' );
+    return unless @nodes;
     my @list = $nodes[0]->find_by_tag_name('li');
     # app name is li=>[3]
     my $app_name = $list[3]->as_text;
@@ -393,6 +398,8 @@ sub get_description{
         $desc =~ s/<br>//g;
         $desc =~ s/<\/br>//g;
         $desc =~ s/<br\s+\/>/\n/g;
+        $desc =~ s/\r//g;
+        $desc =~ s/\n//g;
         return $desc;
     }
 
@@ -743,12 +750,10 @@ sub extract_app_info
     use Data::Dumper;
     #warn Encode::encode_utf8( Dumper $app_info );
 #    delete $app_info->{app_page};
-
-    $app_info->{status} = 'success';
-    foreach my $meta(keys %{$app_info}){ 
-         my $value = decode_utf8($app_info->{$meta});
-         warn "$meta => $value\n";
+    foreach my $meta( keys %$app_info){
+#	print "$meta => ".decode_utf8($app_info->{$meta})."\n";
     }
+    $app_info->{status} = 'success';
     if($@){
         $app_info->{status} = 'fail';
         Carp::carp('get app_info failed,reason: '.$@ );
