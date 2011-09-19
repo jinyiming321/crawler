@@ -76,7 +76,7 @@ for example:
     $0 find_app 10 /root/crawler/default.cfg
 EOF
 unless( $task_type && $task_id && $conf_file ){
-    Carp::croak($usage."\n") unless $_;
+    die $usage;
 }
 
 

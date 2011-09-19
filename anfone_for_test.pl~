@@ -75,7 +75,7 @@ $0 task_type task_id conf_file
 for example:
     $0 find_app 10 /root/crawler/default.cfg
 EOF
-for( $task_type $task_id $conf_file ){
+unless( $task_type && $task_id && $conf_file ){
     Carp::croak($usage."\n") unless $_;
 }
 
