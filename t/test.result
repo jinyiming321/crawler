@@ -1,0 +1,890 @@
+ok 1 - use HTML::TreeBuilder;
+ok 2 - use AMMS::Util;
+ok 3 - use AMMS::AppFinder;
+ok 4 - use AMMS::Downloader;
+ok 5 - use AMMS::NewAppExtractor;
+ok 6 - use AMMS::UpdatedAppExtractor;
+ok 7 - use Carp;
+ok 8 - require 'anfone.pl';
+test extract_page_listrun extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/1_1.html',
+          'http://anfone.com/sort/1_2.html',
+          'http://anfone.com/sort/1_3.html',
+          'http://anfone.com/sort/1_4.html',
+          'http://anfone.com/sort/1_5.html',
+          'http://anfone.com/sort/1_6.html',
+          'http://anfone.com/sort/1_7.html',
+          'http://anfone.com/sort/1_8.html',
+          'http://anfone.com/sort/1_9.html',
+          'http://anfone.com/sort/1_10.html',
+          'http://anfone.com/sort/1_11.html',
+          'http://anfone.com/sort/1_12.html',
+          'http://anfone.com/sort/1_13.html',
+          'http://anfone.com/sort/1_14.html',
+          'http://anfone.com/sort/1_15.html'
+        ];
+ok 9 - extracet pagelist parse http://anfone.com/sort/1.html,and get 'ARRAY(0x8d0b758)' 
+ok 10 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 11 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 12 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 13 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 14 - wrong page for extract_page
+ok 15 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/2_1.html',
+          'http://anfone.com/sort/2_2.html',
+          'http://anfone.com/sort/2_3.html',
+          'http://anfone.com/sort/2_4.html',
+          'http://anfone.com/sort/2_5.html'
+        ];
+ok 16 - extracet pagelist parse http://anfone.com/sort/2.html,and get 'ARRAY(0x8d664b0)' 
+ok 17 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 18 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 19 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 20 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 21 - wrong page for extract_page
+ok 22 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/3_1.html',
+          'http://anfone.com/sort/3_2.html',
+          'http://anfone.com/sort/3_3.html',
+          'http://anfone.com/sort/3_4.html',
+          'http://anfone.com/sort/3_5.html',
+          'http://anfone.com/sort/3_6.html',
+          'http://anfone.com/sort/3_7.html',
+          'http://anfone.com/sort/3_8.html',
+          'http://anfone.com/sort/3_9.html',
+          'http://anfone.com/sort/3_10.html',
+          'http://anfone.com/sort/3_11.html',
+          'http://anfone.com/sort/3_12.html'
+        ];
+ok 23 - extracet pagelist parse http://anfone.com/sort/3.html,and get 'ARRAY(0x8f534e8)' 
+ok 24 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 25 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 26 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 27 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 28 - wrong page for extract_page
+ok 29 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/6_1.html'
+        ];
+ok 30 - extracet pagelist parse http://anfone.com/sort/6.html,and get 'ARRAY(0x8fcb238)' 
+ok 31 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 32 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 33 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 34 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 35 - wrong page for extract_page
+ok 36 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/7_1.html',
+          'http://anfone.com/sort/7_2.html',
+          'http://anfone.com/sort/7_3.html'
+        ];
+ok 37 - extracet pagelist parse http://anfone.com/sort/7.html,and get 'ARRAY(0x9040218)' 
+ok 38 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 39 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 40 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 41 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 42 - wrong page for extract_page
+ok 43 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/8_1.html',
+          'http://anfone.com/sort/8_2.html',
+          'http://anfone.com/sort/8_3.html',
+          'http://anfone.com/sort/8_4.html',
+          'http://anfone.com/sort/8_5.html',
+          'http://anfone.com/sort/8_6.html',
+          'http://anfone.com/sort/8_7.html'
+        ];
+ok 44 - extracet pagelist parse http://anfone.com/sort/8.html,and get 'ARRAY(0x90799b8)' 
+ok 45 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 46 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 47 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 48 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 49 - wrong page for extract_page
+ok 50 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/9_1.html',
+          'http://anfone.com/sort/9_2.html',
+          'http://anfone.com/sort/9_3.html',
+          'http://anfone.com/sort/9_4.html',
+          'http://anfone.com/sort/9_5.html',
+          'http://anfone.com/sort/9_6.html',
+          'http://anfone.com/sort/9_7.html',
+          'http://anfone.com/sort/9_8.html'
+        ];
+ok 51 - extracet pagelist parse http://anfone.com/sort/9.html,and get 'ARRAY(0x90d7900)' 
+ok 52 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 53 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 54 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 55 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 56 - wrong page for extract_page
+ok 57 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/10_1.html',
+          'http://anfone.com/sort/10_2.html',
+          'http://anfone.com/sort/10_3.html'
+        ];
+ok 58 - extracet pagelist parse http://anfone.com/sort/10.html,and get 'ARRAY(0x913a6b0)' 
+ok 59 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 60 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 61 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 62 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 63 - wrong page for extract_page
+ok 64 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/11_1.html',
+          'http://anfone.com/sort/11_2.html',
+          'http://anfone.com/sort/11_3.html',
+          'http://anfone.com/sort/11_4.html',
+          'http://anfone.com/sort/11_5.html',
+          'http://anfone.com/sort/11_6.html',
+          'http://anfone.com/sort/11_7.html',
+          'http://anfone.com/sort/11_8.html',
+          'http://anfone.com/sort/11_9.html',
+          'http://anfone.com/sort/11_10.html',
+          'http://anfone.com/sort/11_11.html',
+          'http://anfone.com/sort/11_12.html',
+          'http://anfone.com/sort/11_13.html',
+          'http://anfone.com/sort/11_14.html',
+          'http://anfone.com/sort/11_15.html'
+        ];
+ok 65 - extracet pagelist parse http://anfone.com/sort/11.html,and get 'ARRAY(0x9154828)' 
+ok 66 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 67 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 68 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 69 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 70 - wrong page for extract_page
+ok 71 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/12_1.html',
+          'http://anfone.com/sort/12_2.html',
+          'http://anfone.com/sort/12_3.html',
+          'http://anfone.com/sort/12_4.html',
+          'http://anfone.com/sort/12_5.html',
+          'http://anfone.com/sort/12_6.html',
+          'http://anfone.com/sort/12_7.html',
+          'http://anfone.com/sort/12_8.html',
+          'http://anfone.com/sort/12_9.html',
+          'http://anfone.com/sort/12_10.html',
+          'http://anfone.com/sort/12_11.html',
+          'http://anfone.com/sort/12_12.html',
+          'http://anfone.com/sort/12_13.html',
+          'http://anfone.com/sort/12_14.html',
+          'http://anfone.com/sort/12_15.html',
+          'http://anfone.com/sort/12_16.html',
+          'http://anfone.com/sort/12_17.html',
+          'http://anfone.com/sort/12_18.html',
+          'http://anfone.com/sort/12_19.html',
+          'http://anfone.com/sort/12_20.html',
+          'http://anfone.com/sort/12_21.html',
+          'http://anfone.com/sort/12_22.html',
+          'http://anfone.com/sort/12_23.html',
+          'http://anfone.com/sort/12_24.html',
+          'http://anfone.com/sort/12_25.html',
+          'http://anfone.com/sort/12_26.html'
+        ];
+ok 72 - extracet pagelist parse http://anfone.com/sort/12.html,and get 'ARRAY(0x9211740)' 
+ok 73 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 74 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 75 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 76 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 77 - wrong page for extract_page
+ok 78 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/13_1.html',
+          'http://anfone.com/sort/13_2.html',
+          'http://anfone.com/sort/13_3.html',
+          'http://anfone.com/sort/13_4.html',
+          'http://anfone.com/sort/13_5.html',
+          'http://anfone.com/sort/13_6.html',
+          'http://anfone.com/sort/13_7.html',
+          'http://anfone.com/sort/13_8.html',
+          'http://anfone.com/sort/13_9.html',
+          'http://anfone.com/sort/13_10.html',
+          'http://anfone.com/sort/13_11.html',
+          'http://anfone.com/sort/13_12.html',
+          'http://anfone.com/sort/13_13.html',
+          'http://anfone.com/sort/13_14.html',
+          'http://anfone.com/sort/13_15.html',
+          'http://anfone.com/sort/13_16.html',
+          'http://anfone.com/sort/13_17.html',
+          'http://anfone.com/sort/13_18.html',
+          'http://anfone.com/sort/13_19.html',
+          'http://anfone.com/sort/13_20.html',
+          'http://anfone.com/sort/13_21.html',
+          'http://anfone.com/sort/13_22.html',
+          'http://anfone.com/sort/13_23.html',
+          'http://anfone.com/sort/13_24.html',
+          'http://anfone.com/sort/13_25.html',
+          'http://anfone.com/sort/13_26.html',
+          'http://anfone.com/sort/13_27.html',
+          'http://anfone.com/sort/13_28.html',
+          'http://anfone.com/sort/13_29.html',
+          'http://anfone.com/sort/13_30.html'
+        ];
+ok 79 - extracet pagelist parse http://anfone.com/sort/13.html,and get 'ARRAY(0x9272ce8)' 
+ok 80 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 81 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 82 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 83 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 84 - wrong page for extract_page
+ok 85 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/14_1.html',
+          'http://anfone.com/sort/14_2.html',
+          'http://anfone.com/sort/14_3.html',
+          'http://anfone.com/sort/14_4.html',
+          'http://anfone.com/sort/14_5.html',
+          'http://anfone.com/sort/14_6.html'
+        ];
+ok 86 - extracet pagelist parse http://anfone.com/sort/14.html,and get 'ARRAY(0x9276a88)' 
+ok 87 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 88 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 89 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 90 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 91 - wrong page for extract_page
+ok 92 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/15_1.html',
+          'http://anfone.com/sort/15_2.html',
+          'http://anfone.com/sort/15_3.html',
+          'http://anfone.com/sort/15_4.html',
+          'http://anfone.com/sort/15_5.html',
+          'http://anfone.com/sort/15_6.html',
+          'http://anfone.com/sort/15_7.html',
+          'http://anfone.com/sort/15_8.html'
+        ];
+ok 93 - extracet pagelist parse http://anfone.com/sort/15.html,and get 'ARRAY(0x931a878)' 
+ok 94 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 95 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 96 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 97 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 98 - wrong page for extract_page
+ok 99 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/16_1.html',
+          'http://anfone.com/sort/16_2.html',
+          'http://anfone.com/sort/16_3.html',
+          'http://anfone.com/sort/16_4.html',
+          'http://anfone.com/sort/16_5.html',
+          'http://anfone.com/sort/16_6.html',
+          'http://anfone.com/sort/16_7.html',
+          'http://anfone.com/sort/16_8.html',
+          'http://anfone.com/sort/16_9.html',
+          'http://anfone.com/sort/16_10.html',
+          'http://anfone.com/sort/16_11.html',
+          'http://anfone.com/sort/16_12.html',
+          'http://anfone.com/sort/16_13.html',
+          'http://anfone.com/sort/16_14.html',
+          'http://anfone.com/sort/16_15.html'
+        ];
+ok 100 - extracet pagelist parse http://anfone.com/sort/16.html,and get 'ARRAY(0x9392080)' 
+ok 101 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 102 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 103 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 104 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 105 - wrong page for extract_page
+ok 106 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/17_1.html',
+          'http://anfone.com/sort/17_2.html',
+          'http://anfone.com/sort/17_3.html',
+          'http://anfone.com/sort/17_4.html',
+          'http://anfone.com/sort/17_5.html',
+          'http://anfone.com/sort/17_6.html',
+          'http://anfone.com/sort/17_7.html',
+          'http://anfone.com/sort/17_8.html',
+          'http://anfone.com/sort/17_9.html',
+          'http://anfone.com/sort/17_10.html',
+          'http://anfone.com/sort/17_11.html',
+          'http://anfone.com/sort/17_12.html',
+          'http://anfone.com/sort/17_13.html',
+          'http://anfone.com/sort/17_14.html',
+          'http://anfone.com/sort/17_15.html',
+          'http://anfone.com/sort/17_16.html',
+          'http://anfone.com/sort/17_17.html',
+          'http://anfone.com/sort/17_18.html'
+        ];
+ok 107 - extracet pagelist parse http://anfone.com/sort/17.html,and get 'ARRAY(0x93df810)' 
+ok 108 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 109 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 110 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 111 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 112 - wrong page for extract_page
+ok 113 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/21_1.html',
+          'http://anfone.com/sort/21_2.html',
+          'http://anfone.com/sort/21_3.html',
+          'http://anfone.com/sort/21_4.html',
+          'http://anfone.com/sort/21_5.html',
+          'http://anfone.com/sort/21_6.html',
+          'http://anfone.com/sort/21_7.html',
+          'http://anfone.com/sort/21_8.html',
+          'http://anfone.com/sort/21_9.html',
+          'http://anfone.com/sort/21_10.html',
+          'http://anfone.com/sort/21_11.html',
+          'http://anfone.com/sort/21_12.html',
+          'http://anfone.com/sort/21_13.html',
+          'http://anfone.com/sort/21_14.html',
+          'http://anfone.com/sort/21_15.html',
+          'http://anfone.com/sort/21_16.html',
+          'http://anfone.com/sort/21_17.html',
+          'http://anfone.com/sort/21_18.html',
+          'http://anfone.com/sort/21_19.html',
+          'http://anfone.com/sort/21_20.html',
+          'http://anfone.com/sort/21_21.html',
+          'http://anfone.com/sort/21_22.html',
+          'http://anfone.com/sort/21_23.html',
+          'http://anfone.com/sort/21_24.html',
+          'http://anfone.com/sort/21_25.html',
+          'http://anfone.com/sort/21_26.html',
+          'http://anfone.com/sort/21_27.html',
+          'http://anfone.com/sort/21_28.html'
+        ];
+ok 114 - extracet pagelist parse http://anfone.com/sort/21.html,and get 'ARRAY(0x93f5c90)' 
+ok 115 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 116 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 117 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 118 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 119 - wrong page for extract_page
+ok 120 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/22_1.html',
+          'http://anfone.com/sort/22_2.html',
+          'http://anfone.com/sort/22_3.html',
+          'http://anfone.com/sort/22_4.html',
+          'http://anfone.com/sort/22_5.html',
+          'http://anfone.com/sort/22_6.html',
+          'http://anfone.com/sort/22_7.html',
+          'http://anfone.com/sort/22_8.html',
+          'http://anfone.com/sort/22_9.html',
+          'http://anfone.com/sort/22_10.html',
+          'http://anfone.com/sort/22_11.html',
+          'http://anfone.com/sort/22_12.html',
+          'http://anfone.com/sort/22_13.html',
+          'http://anfone.com/sort/22_14.html',
+          'http://anfone.com/sort/22_15.html',
+          'http://anfone.com/sort/22_16.html',
+          'http://anfone.com/sort/22_17.html',
+          'http://anfone.com/sort/22_18.html',
+          'http://anfone.com/sort/22_19.html',
+          'http://anfone.com/sort/22_20.html',
+          'http://anfone.com/sort/22_21.html',
+          'http://anfone.com/sort/22_22.html',
+          'http://anfone.com/sort/22_23.html',
+          'http://anfone.com/sort/22_24.html',
+          'http://anfone.com/sort/22_25.html',
+          'http://anfone.com/sort/22_26.html',
+          'http://anfone.com/sort/22_27.html',
+          'http://anfone.com/sort/22_28.html',
+          'http://anfone.com/sort/22_29.html',
+          'http://anfone.com/sort/22_30.html',
+          'http://anfone.com/sort/22_31.html',
+          'http://anfone.com/sort/22_32.html',
+          'http://anfone.com/sort/22_33.html',
+          'http://anfone.com/sort/22_34.html',
+          'http://anfone.com/sort/22_35.html',
+          'http://anfone.com/sort/22_36.html',
+          'http://anfone.com/sort/22_37.html',
+          'http://anfone.com/sort/22_38.html',
+          'http://anfone.com/sort/22_39.html',
+          'http://anfone.com/sort/22_40.html',
+          'http://anfone.com/sort/22_41.html',
+          'http://anfone.com/sort/22_42.html',
+          'http://anfone.com/sort/22_43.html',
+          'http://anfone.com/sort/22_44.html',
+          'http://anfone.com/sort/22_45.html',
+          'http://anfone.com/sort/22_46.html',
+          'http://anfone.com/sort/22_47.html',
+          'http://anfone.com/sort/22_48.html',
+          'http://anfone.com/sort/22_49.html',
+          'http://anfone.com/sort/22_50.html',
+          'http://anfone.com/sort/22_51.html',
+          'http://anfone.com/sort/22_52.html',
+          'http://anfone.com/sort/22_53.html',
+          'http://anfone.com/sort/22_54.html',
+          'http://anfone.com/sort/22_55.html',
+          'http://anfone.com/sort/22_56.html',
+          'http://anfone.com/sort/22_57.html',
+          'http://anfone.com/sort/22_58.html',
+          'http://anfone.com/sort/22_59.html',
+          'http://anfone.com/sort/22_60.html',
+          'http://anfone.com/sort/22_61.html',
+          'http://anfone.com/sort/22_62.html',
+          'http://anfone.com/sort/22_63.html',
+          'http://anfone.com/sort/22_64.html',
+          'http://anfone.com/sort/22_65.html',
+          'http://anfone.com/sort/22_66.html',
+          'http://anfone.com/sort/22_67.html'
+        ];
+ok 121 - extracet pagelist parse http://anfone.com/sort/22.html,and get 'ARRAY(0x94b62d8)' 
+ok 122 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 123 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 124 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 125 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 126 - wrong page for extract_page
+ok 127 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/23_1.html',
+          'http://anfone.com/sort/23_2.html',
+          'http://anfone.com/sort/23_3.html',
+          'http://anfone.com/sort/23_4.html',
+          'http://anfone.com/sort/23_5.html',
+          'http://anfone.com/sort/23_6.html',
+          'http://anfone.com/sort/23_7.html',
+          'http://anfone.com/sort/23_8.html',
+          'http://anfone.com/sort/23_9.html'
+        ];
+ok 128 - extracet pagelist parse http://anfone.com/sort/23.html,and get 'ARRAY(0x94ee868)' 
+ok 129 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 130 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 131 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 132 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 133 - wrong page for extract_page
+ok 134 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/24_1.html',
+          'http://anfone.com/sort/24_2.html',
+          'http://anfone.com/sort/24_3.html',
+          'http://anfone.com/sort/24_4.html',
+          'http://anfone.com/sort/24_5.html'
+        ];
+ok 135 - extracet pagelist parse http://anfone.com/sort/24.html,and get 'ARRAY(0x957cab0)' 
+ok 136 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 137 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 138 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 139 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 140 - wrong page for extract_page
+ok 141 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/25_1.html',
+          'http://anfone.com/sort/25_2.html',
+          'http://anfone.com/sort/25_3.html',
+          'http://anfone.com/sort/25_4.html',
+          'http://anfone.com/sort/25_5.html',
+          'http://anfone.com/sort/25_6.html',
+          'http://anfone.com/sort/25_7.html',
+          'http://anfone.com/sort/25_8.html',
+          'http://anfone.com/sort/25_9.html',
+          'http://anfone.com/sort/25_10.html',
+          'http://anfone.com/sort/25_11.html',
+          'http://anfone.com/sort/25_12.html',
+          'http://anfone.com/sort/25_13.html',
+          'http://anfone.com/sort/25_14.html',
+          'http://anfone.com/sort/25_15.html'
+        ];
+ok 142 - extracet pagelist parse http://anfone.com/sort/25.html,and get 'ARRAY(0x957ec00)' 
+ok 143 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 144 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 145 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 146 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 147 - wrong page for extract_page
+ok 148 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/26_1.html',
+          'http://anfone.com/sort/26_2.html',
+          'http://anfone.com/sort/26_3.html',
+          'http://anfone.com/sort/26_4.html',
+          'http://anfone.com/sort/26_5.html',
+          'http://anfone.com/sort/26_6.html',
+          'http://anfone.com/sort/26_7.html',
+          'http://anfone.com/sort/26_8.html',
+          'http://anfone.com/sort/26_9.html',
+          'http://anfone.com/sort/26_10.html',
+          'http://anfone.com/sort/26_11.html',
+          'http://anfone.com/sort/26_12.html',
+          'http://anfone.com/sort/26_13.html',
+          'http://anfone.com/sort/26_14.html',
+          'http://anfone.com/sort/26_15.html',
+          'http://anfone.com/sort/26_16.html',
+          'http://anfone.com/sort/26_17.html',
+          'http://anfone.com/sort/26_18.html',
+          'http://anfone.com/sort/26_19.html'
+        ];
+ok 149 - extracet pagelist parse http://anfone.com/sort/26.html,and get 'ARRAY(0x9611a30)' 
+ok 150 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 151 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 152 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 153 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 154 - wrong page for extract_page
+ok 155 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/27_1.html',
+          'http://anfone.com/sort/27_2.html',
+          'http://anfone.com/sort/27_3.html',
+          'http://anfone.com/sort/27_4.html',
+          'http://anfone.com/sort/27_5.html',
+          'http://anfone.com/sort/27_6.html',
+          'http://anfone.com/sort/27_7.html'
+        ];
+ok 156 - extracet pagelist parse http://anfone.com/sort/27.html,and get 'ARRAY(0x968f0b8)' 
+ok 157 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 158 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 159 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 160 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 161 - wrong page for extract_page
+ok 162 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/28_1.html',
+          'http://anfone.com/sort/28_2.html'
+        ];
+ok 163 - extracet pagelist parse http://anfone.com/sort/28.html,and get 'ARRAY(0x96faa08)' 
+ok 164 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 165 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 166 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 167 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 168 - wrong page for extract_page
+ok 169 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/29_1.html',
+          'http://anfone.com/sort/29_2.html',
+          'http://anfone.com/sort/29_3.html',
+          'http://anfone.com/sort/29_4.html',
+          'http://anfone.com/sort/29_5.html'
+        ];
+ok 170 - extracet pagelist parse http://anfone.com/sort/29.html,and get 'ARRAY(0x972f530)' 
+ok 171 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 172 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 173 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 174 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 175 - wrong page for extract_page
+ok 176 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/30_1.html'
+        ];
+ok 177 - extracet pagelist parse http://anfone.com/sort/30.html,and get 'ARRAY(0x979c6c0)' 
+ok 178 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 179 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 180 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 181 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 182 - wrong page for extract_page
+ok 183 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/31_1.html'
+        ];
+ok 184 - extracet pagelist parse http://anfone.com/sort/31.html,and get 'ARRAY(0x97ecc40)' 
+ok 185 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 186 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 187 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 188 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 189 - wrong page for extract_page
+ok 190 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/32_1.html',
+          'http://anfone.com/sort/32_2.html'
+        ];
+ok 191 - extracet pagelist parse http://anfone.com/sort/32.html,and get 'ARRAY(0x9817368)' 
+ok 192 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 193 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 194 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 195 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 196 - wrong page for extract_page
+ok 197 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/33_1.html',
+          'http://anfone.com/sort/33_2.html',
+          'http://anfone.com/sort/33_3.html'
+        ];
+ok 198 - extracet pagelist parse http://anfone.com/sort/33.html,and get 'ARRAY(0x988d828)' 
+ok 199 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 200 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 201 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 202 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 203 - wrong page for extract_page
+ok 204 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/34_1.html'
+        ];
+ok 205 - extracet pagelist parse http://anfone.com/sort/34.html,and get 'ARRAY(0x991b960)' 
+ok 206 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 207 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 208 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 209 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 210 - wrong page for extract_page
+ok 211 - get page_list
+run extract_page_list ............
+$VAR1 = [
+          'http://anfone.com/sort/35_1.html',
+          'http://anfone.com/sort/35_2.html',
+          'http://anfone.com/sort/35_3.html',
+          'http://anfone.com/sort/35_4.html'
+        ];
+ok 212 - extracet pagelist parse http://anfone.com/sort/35.html,and get 'ARRAY(0x991bf30)' 
+ok 213 - pagelist num 
+run extract_page_list ............
+$VAR1 = [];
+ok 214 - undef test args
+run extract_page_list ............
+$VAR1 = {};
+ok 215 - pages hashref 
+run extract_page_list ............
+$VAR1 = '';
+ok 216 - pages empty
+run extract_page_list ............
+$VAR1 = [];
+ok 217 - wrong page for extract_page
+ok 218 - get page_list
+1..218

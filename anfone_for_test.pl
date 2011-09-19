@@ -128,9 +128,6 @@ our %category_mapping=(
     "音乐游戏"    => 809,
     "动作游戏"    => 823,
 	);
-unless( init_gloabl_variable( $conf_file ) ){
-    Carp::carp( 'please check config parameter' );
-}
 
 our $PAGE_MARK  = 'pagebar';
 our $IMG        = 'img';
