@@ -237,7 +237,7 @@ sub get_app_list{
     my $html      = shift;
     my $app_mark  = shift;
     my $apps_href = shift;
-
+    
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
@@ -271,21 +271,28 @@ sub extract_app_from_feeder{
     my $hook	= shift;
     my $params  = shift;
     my $apps    = shift;
+   
+    return 0 unless ref( $params) eq 'HASH' ;
+    return 0 unless ref(  $apps ) eq 'HASH' ;
+    return 0 unless exists $params->{web_page};
 
     print "run extract_app_from_feeder_list ............\n";
     # create a html tree and parse
     #my $tree = init_html_parser( $params->{web_page} );
-    my $html = $params->{web_page};
     # exact app 
+    return 0 if ref($params) ne 'HASH';
+    return 0 unless exists $params->{web_page};
     eval{
+    	my $html = $params->{web_page};
         get_app_list( $html,$APPS_MARK,$apps );
-        use Data::Dumper;
-        print Dumper $apps;
     };
     if($@){
-        Carp::carp('extract_app_from_feeder failed'.$@);
+        warn('extract_app_from_feeder failed'.$@);
+        $apps = {};
+	return 0
     }
-
+    return 0 unless scalar( %{ $apps } );
+	
     return 1;
 }
 

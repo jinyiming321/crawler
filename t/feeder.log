@@ -1,0 +1,133 @@
+ok 1 - use HTML::TreeBuilder;
+ok 2 - use AMMS::Util;
+ok 3 - use AMMS::AppFinder;
+ok 4 - use AMMS::Downloader;
+ok 5 - use AMMS::NewAppExtractor;
+ok 6 - use AMMS::UpdatedAppExtractor;
+ok 7 - use Carp;
+ok 8 - require 'anfone_for_test.pl';
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '3445' => 'http://anfone.com/soft/3445.html',
+          '3484' => 'http://anfone.com/soft/3484.html',
+          '3415' => 'http://anfone.com/soft/3415.html',
+          '3509' => 'http://anfone.com/soft/3509.html',
+          '3661' => 'http://anfone.com/soft/3661.html',
+          '3586' => 'http://anfone.com/soft/3586.html',
+          '3560' => 'http://anfone.com/soft/3560.html',
+          '3611' => 'http://anfone.com/soft/3611.html',
+          '3500' => 'http://anfone.com/soft/3500.html',
+          '3587' => 'http://anfone.com/soft/3587.html',
+          '3442' => 'http://anfone.com/soft/3442.html',
+          '3464' => 'http://anfone.com/soft/3464.html',
+          '3656' => 'http://anfone.com/soft/3656.html',
+          '3660' => 'http://anfone.com/soft/3660.html',
+          '3559' => 'http://anfone.com/soft/3559.html',
+          '3557' => 'http://anfone.com/soft/3557.html',
+          '3588' => 'http://anfone.com/soft/3588.html',
+          '3605' => 'http://anfone.com/soft/3605.html',
+          '3556' => 'http://anfone.com/soft/3556.html',
+          '3531' => 'http://anfone.com/soft/3531.html'
+        };
+ok 9 - extract app from feeder 'http://anfone.com/sort/1_10.html' get 'HASH(0x8ed7838)'
+run extract_app_from_feeder_list ............
+ok 10 - extract app from feeder with wrong html get 'HASH(0x8ed7838)'
+run extract_app_from_feeder_list ............
+$VAR1 = undef;
+not ok 11 - extract app from feeder with undef apps_list
+run extract_app_from_feeder_list ............
+ok 12 - extract app from feeder with undef html
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '1183' => 'http://anfone.com/soft/1183.html',
+          '1677' => 'http://anfone.com/soft/1677.html',
+          '2255' => 'http://anfone.com/soft/2255.html',
+          '1346' => 'http://anfone.com/soft/1346.html',
+          '1218' => 'http://anfone.com/soft/1218.html',
+          '1475' => 'http://anfone.com/soft/1475.html',
+          '1348' => 'http://anfone.com/soft/1348.html',
+          '2261' => 'http://anfone.com/soft/2261.html',
+          '2268' => 'http://anfone.com/soft/2268.html',
+          '2238' => 'http://anfone.com/soft/2238.html',
+          '1988' => 'http://anfone.com/soft/1988.html',
+          '2108' => 'http://anfone.com/soft/2108.html',
+          '1943' => 'http://anfone.com/soft/1943.html',
+          '2098' => 'http://anfone.com/soft/2098.html',
+          '2253' => 'http://anfone.com/soft/2253.html',
+          '1381' => 'http://anfone.com/soft/1381.html',
+          '1300' => 'http://anfone.com/soft/1300.html',
+          '2278' => 'http://anfone.com/soft/2278.html',
+          '2102' => 'http://anfone.com/soft/2102.html',
+          '1526' => 'http://anfone.com/soft/1526.html'
+        };
+ok 13 - extract app from feeder 'http://anfone.com/sort/1_13.html' get 'HASH(0x8e477d0)'
+run extract_app_from_feeder_list ............
+ok 14 - extract app from feeder with wrong html get 'HASH(0x8e477d0)'
+run extract_app_from_feeder_list ............
+$VAR1 = undef;
+not ok 15 - extract app from feeder with undef apps_list
+run extract_app_from_feeder_list ............
+ok 16 - extract app from feeder with undef html
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '2710' => 'http://anfone.com/soft/2710.html',
+          '2868' => 'http://anfone.com/soft/2868.html',
+          '3550' => 'http://anfone.com/soft/3550.html',
+          '2609' => 'http://anfone.com/soft/2609.html',
+          '2726' => 'http://anfone.com/soft/2726.html',
+          '2849' => 'http://anfone.com/soft/2849.html',
+          '3863' => 'http://anfone.com/soft/3863.html',
+          '3413' => 'http://anfone.com/soft/3413.html',
+          '3763' => 'http://anfone.com/soft/3763.html',
+          '3552' => 'http://anfone.com/soft/3552.html',
+          '3553' => 'http://anfone.com/soft/3553.html',
+          '3198' => 'http://anfone.com/soft/3198.html',
+          '2493' => 'http://anfone.com/soft/2493.html',
+          '3554' => 'http://anfone.com/soft/3554.html',
+          '3675' => 'http://anfone.com/soft/3675.html',
+          '3854' => 'http://anfone.com/soft/3854.html',
+          '3551' => 'http://anfone.com/soft/3551.html',
+          '2963' => 'http://anfone.com/soft/2963.html',
+          '2852' => 'http://anfone.com/soft/2852.html',
+          '3481' => 'http://anfone.com/soft/3481.html'
+        };
+ok 17 - extract app from feeder 'http://anfone.com/sort/2_3.html' get 'HASH(0x8ecf8e8)'
+run extract_app_from_feeder_list ............
+ok 18 - extract app from feeder with wrong html get 'HASH(0x8ecf8e8)'
+run extract_app_from_feeder_list ............
+$VAR1 = undef;
+not ok 19 - extract app from feeder with undef apps_list
+run extract_app_from_feeder_list ............
+ok 20 - extract app from feeder with undef html
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '2454' => 'http://anfone.com/soft/2454.html',
+          '771' => 'http://anfone.com/soft/771.html',
+          '2423' => 'http://anfone.com/soft/2423.html',
+          '984' => 'http://anfone.com/soft/984.html',
+          '2230' => 'http://anfone.com/soft/2230.html',
+          '2303' => 'http://anfone.com/soft/2303.html',
+          '1755' => 'http://anfone.com/soft/1755.html',
+          '2450' => 'http://anfone.com/soft/2450.html',
+          '2405' => 'http://anfone.com/soft/2405.html',
+          '863' => 'http://anfone.com/soft/863.html',
+          '1102' => 'http://anfone.com/soft/1102.html',
+          '211' => 'http://anfone.com/soft/211.html',
+          '2376' => 'http://anfone.com/soft/2376.html',
+          '209' => 'http://anfone.com/soft/209.html',
+          '1979' => 'http://anfone.com/soft/1979.html',
+          '2386' => 'http://anfone.com/soft/2386.html',
+          '1402' => 'http://anfone.com/soft/1402.html',
+          '1118' => 'http://anfone.com/soft/1118.html',
+          '1367' => 'http://anfone.com/soft/1367.html',
+          '1109' => 'http://anfone.com/soft/1109.html'
+        };
+ok 21 - extract app from feeder 'http://anfone.com/sort/2_4.html' get 'HASH(0x8f64a08)'
+run extract_app_from_feeder_list ............
+ok 22 - extract app from feeder with wrong html get 'HASH(0x8f64a08)'
+run extract_app_from_feeder_list ............
+$VAR1 = undef;
+not ok 23 - extract app from feeder with undef apps_list
+run extract_app_from_feeder_list ............
+ok 24 - extract app from feeder with undef html
+1..24

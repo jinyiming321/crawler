@@ -68,21 +68,24 @@ for( my $i = 0;$i < @category_feeder_list; $i++){
     my $url = $category_feeder_list[$i];
     my $content = $content_list[$i];
 
-    &test_extract_feeder_list( $url,$content);
+    &test_extract_feeder_list( $url,$content,);
 }
-
 
 sub test_extract_feeder_list{
     my $url = shift;
     my $page = shift;
     my $params  = { web_page => $page};
-    my $app_list = [];
+    my $app_list = {};
     # testing
     is(
         &extract_app_from_feeder( undef,undef,$params,$app_list ),
         1,
         "extract app from feeder '$url' get '$app_list'"
     );
+#    &test_link_vaild( $_ ) foreach ( keys %{$app_list} );
+    for( keys %$app_list){
+        &test_link_vaild($app_list->{$_});
+    }
     is(
         &extract_app_from_feeder( undef,undef,$wrong,$app_list ),
         0,
@@ -91,13 +94,18 @@ sub test_extract_feeder_list{
 
     is(
         &extract_app_from_feeder( undef,undef,$params,undef),
-        1,
+        0,
         "extract app from feeder with undef apps_list"
     );
     is(
         &extract_app_from_feeder( undef,undef,undef,$app_list),
-        1,
+        0,
         "extract app from feeder with undef html"
     );
+}
+
+sub test_link_vaild{
+    my $link = shift;
+    is( defined( LWP::Simple::get($link) ),1," get '$link' link vaild test " );
 }
 
