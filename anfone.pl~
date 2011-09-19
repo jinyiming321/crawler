@@ -1,4 +1,28 @@
-#!/usr/bin/perl
+#!/usr/bin/perl 
+#===============================================================================
+#
+#         FILE: anfone.pl
+#        USAGE: ./anfone.pl  
+#  DESCRIPTION: 
+#      This is a program,which is a adaptor for the crawler of amms system,
+# it can parse html meta data and support extract_page_list,extract_app_from_feeder,
+# extract_app_info.Somewhere used HTML::TreeBuilder to parse html tree, handle 
+# description,stars... with regular expression.
+#
+# REQUIREMENTS: HTML::TreeBuilder,AMMS::UpdatedAppExtractor,AMMS::Downloader,
+#               AMMS::NewAppExtractor,AMMS::AppFinder,AMMS::Util
+#         BUGS: send email to me, if there is any bugs.
+#        NOTES: add support for related app,screenshot,
+#       AUTHOR: James King, jinyiming456@gmail.com
+#      COMPANY: Trustgo
+#      VERSION: 1.0
+#      CREATED: 2011/9/19 0:10:31
+#     REVISION: 1.0
+#===============================================================================
+
+use strict;
+use warnings;
+
 BEGIN{unshift(@INC, $1) if ($0=~m/(.+)\//);}
 use strict;
 use utf8;
@@ -11,6 +35,32 @@ use AMMS::AppFinder;
 use AMMS::Downloader;
 use AMMS::NewAppExtractor;
 use AMMS::UpdatedAppExtractor;
+require Exporter;
+our @ISA 	= qw(Exporter);
+our @EXPORT 	= qw(
+	extract_page_list 
+	extract_app_from_feeder 
+	extract_app_info
+	trim_url 
+	get_content 
+	get_page_list 
+	get_current_version 
+	get_official_rating_stars
+	get_official_category 
+	get_price 
+	get_description 
+	get_app_name 
+	get_app_list 
+	get_price 
+	get_related_app 
+	get_permission 
+	get_last_update 
+	get_total_install_times
+	get_trustgo_category_id 
+	get_size 
+	get_icon 
+	get_app_qr
+);
 
 my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
@@ -42,6 +92,7 @@ our @app_info_list = qw(
     screenshot
     official_rating_stars
     related_app
+    icon
 );
 
 our %category_mapping=(
@@ -78,7 +129,7 @@ our %category_mapping=(
     "动作游戏"    => 823,
 	);
 unless( init_gloabl_variable( $conf_file ) ){
-    Carp::croak( 'please check config parameter' );
+    Carp::carp( 'please check config parameter' );
 }
 
 our $PAGE_MARK  = 'pagebar';
@@ -181,8 +232,6 @@ sub extract_page_list{
         return 0;
     }
 
-    use Data::Dumper;
-    print Dumper $pages;
 
     return 1;
 }
@@ -567,7 +616,7 @@ sub get_screenshot{
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
     my @nodes = $tree->look_down( id => $mark );
-    return undef unless @nodes;
+    return [] unless @nodes;
     my @tags =  $nodes[0]->find_by_tag_name('a') ;
 
     #retrun a arrayref
@@ -587,7 +636,7 @@ sub get_permission{
 
     # find permission
     my @nodes = $tree->look_down( class => $mark );
-    return 0 unless @nodes;
+    return [] unless @nodes;
 
     # foreach @nodes;
     # mark class => 'row' <h3>|<h4>
@@ -611,7 +660,7 @@ sub get_permission{
         }
     }
 
-    return $permission||undef;
+    return $permission;
 }
 
 sub get_related_app{
@@ -624,7 +673,7 @@ sub get_related_app{
     $tree->parse($html);
 
     my @nodes = $tree->look_down( class => 'sort-r' );
-    return undef unless @nodes;
+    return [] unless @nodes;
     # related_apps 
     #my @re_apps_a = find_by_tag_name('a');
 =pod
@@ -648,8 +697,7 @@ sub get_related_app{
 		
 	}
 
-    return scalar(@{ $related_apps }) == 0 
-        ? undef : $related_apps
+    return  $related_apps;
 }
 
 sub extract_app_info
@@ -673,15 +721,7 @@ sub extract_app_info
                 # dymic function invoke
                 # 'get_author' => sub get_author
                 # 'get_price'  => sub get_price
-                if( defined( my $ret = &{ __PACKAGE__."::get_".$meta }($html) ) ){
-                    $app_info->{$meta} = $ret;
-                }else{
-                    Carp::croak(
-                        'not find get meta data method',
-                        "get_".$meta,
-                        "\n"
-                    );
-                }
+                $app_info->{$meta} = &{ __PACKAGE__."::get_".$meta }($html) ;
             }
 
             if (defined($category_mapping{$app_info->{official_category}})){
@@ -698,9 +738,13 @@ sub extract_app_info
     };
     use Data::Dumper;
     #warn Encode::encode_utf8( Dumper $app_info );
-    warn Dumper $app_info;
+#    delete $app_info->{app_page};
 
-    $app_info->{stauts} = 'success';
+    $app_info->{status} = 'success';
+    foreach my $meta(keys %{$app_info}){ 
+         my $value = decode_utf8($app_info->{$meta});
+         warn "$meta => $value\n";
+    }
     if($@){
         $app_info->{status} = 'fail';
         Carp::carp('get app_info failed,reason: '.$@ );
@@ -736,8 +780,7 @@ sub run{
 
 }
 
-&run;
-
+1;
 __END__
 
 

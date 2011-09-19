@@ -69,6 +69,14 @@ my $conf_file   = $ARGV[2];
 my $market      = 'www.anfone.com';
 my $url_base    = 'http://anfone.com';
 #my $downloader  = new AMMS::Downloader;
+my $usage =<<EOF;
+$0 task_type task_id conf_file
+for example:
+    $0 find_app 10 /root/crawler/default.cfg
+EOF
+for(@ARGV){
+    Carp::croak($usage."\n") unless $_;
+}
 
 
 # define a app_info mapping
