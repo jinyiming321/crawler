@@ -27,13 +27,13 @@ my $ret = GetOptions(
     'config=s'    => \$config,
 ) ;
 # $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
-my $dsn  = 'DBI:mysql:database=AMMS;host=192.168.1.130;port=3306';
+my $dsn  = 'DBI:mysql:database=AMMS;host=localhost;port=3306';
 my $user = 'root';
 my $pass = 'root';
 my $feeder_url_match = '';
 my $page_url_match='';
 my $app_url_match='';
-my $dbh = DBI->connect( $dsn,$user,$pass ) or die $@;
+my $dbh = DBI->connect( $dsn,$user,$pass ) or die $DBI::errstr;
 
 my $task_info = {};
 
