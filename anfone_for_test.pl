@@ -36,30 +36,30 @@ use AMMS::Downloader;
 use AMMS::NewAppExtractor;
 use AMMS::UpdatedAppExtractor;
 require Exporter;
-our @ISA 	= qw(Exporter);
-our @EXPORT 	= qw(
-	extract_page_list 
-	extract_app_from_feeder 
-	extract_app_info
-	trim_url 
-	get_content 
-	get_page_list 
-	get_current_version 
-	get_official_rating_stars
-	get_official_category 
-	get_price 
-	get_description 
-	get_app_name 
-	get_app_list 
-	get_price 
-	get_related_app 
-	get_permission 
-	get_last_update 
-	get_total_install_times
-	get_trustgo_category_id 
-	get_size 
-	get_icon 
-	get_app_qr
+our @ISA     = qw(Exporter);
+our @EXPORT  = qw(
+    extract_page_list 
+    extract_app_from_feeder 
+    extract_app_info
+    trim_url 
+    get_content 
+    get_page_list 
+    get_current_version 
+    get_official_rating_stars
+    get_official_category 
+    get_price 
+    get_description 
+    get_app_name 
+    get_app_list 
+    get_price 
+    get_related_app 
+    get_permission 
+    get_last_update 
+    get_total_install_times
+    get_trustgo_category_id 
+    get_size 
+    get_icon 
+    get_app_qr
 );
 
 my $task_type   = $ARGV[0];
@@ -71,14 +71,28 @@ my $url_base    = 'http://anfone.com';
 #my $downloader  = new AMMS::Downloader;
 
 my $usage =<<EOF;
+==================================================
 $0 task_type task_id conf_file
 for example:
-    $0 find_app 10 /root/crawler/default.cfg
+    $0 find_app     10 /root/crawler/default.cfg
+    $0 new_app      158 /root/crawler/default.cfg
+    $0 update_app   168 /root/crawler/default.cfg
+--------------------------------------------------
+explain:
+    task_type   - task type which like as 'find_app' 'new_app' 'update_app'
+    task_id     - task_id number,you can get it from task_detail table
+    conf_file   - the configure file of crawler,default is /root/crawler/default.cfg
+==================================================
 EOF
+
+# check args 
 unless( $task_type && $task_id && $conf_file ){
     die $usage;
 }
 
+# check configure
+die "\nplease check config parameter\n" 
+    unless init_gloabl_variable( $conf_file );
 
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
@@ -741,7 +755,11 @@ sub extract_app_info
                 # dymic function invoke
                 # 'get_author' => sub get_author
                 # 'get_price'  => sub get_price
-                $app_info->{$meta} = &{ __PACKAGE__."::get_".$meta }($html) ;
+                my $ret = $app_info->{$meta} = &{ __PACKAGE__."::get_".$meta }($html) ;
+                if( defined($ret) ){
+                    $app_info->{$meta} = $ret;
+                }
+                next;
             }
 
             if (defined($category_mapping{$app_info->{official_category}})){
