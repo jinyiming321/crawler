@@ -124,16 +124,16 @@ our %category_mapping=(
     "影音媒体"    => 7,
     "文字输入"    => 2217,
     "安全防护"    => 23,
-    "社区聊天"    => 400,
+    "社区聊天"    => "400,18",
     "信息查询"    => 22,
-    "导航地图"    => 2105,
+    "导航地图"    => "13,2105",
     "通讯辅助"    => 2209,
-    "阅读资讯"    => 2209,
+    "阅读资讯"    => "14,1",
     "生活常用"    => 19,
-    "财务工具"    => 16,
-    "学习办公"    => 1604,
+    "财务工具"    => 2, 
+    "学习办公"    => "5,16",
     # TODO sure class?
-    "其他分类"    => '', 
+    "其他分类"    => 0,
     "主题图像"    => 1203,
     "棋牌游戏"    => 802,
     "益智休闲"    => 806,
@@ -246,13 +246,9 @@ sub extract_page_list{
         &get_page_list( $web,$PAGE_MARK,$pages );
     };
     if($@){
-        use Data::Dumper;
-        print Dumper $pages;
-        $pages = [];
-        return 0;
+#        print Dumper $pages;
+        return 0 unless scalar @$pages
     }
-
-
     return 1;
 }
 
@@ -260,33 +256,39 @@ sub get_app_list{
     my $html      = shift;
     my $app_mark  = shift;
     my $apps_href = shift;
-    
+    # <a href="/soft/7880.html">
+    # <a href="/soft/8099.html">极限摩托车</a>
+    #li class="name">
+    if(my @links = $html=~ m{li class="name">.+?"(/soft/\d+\.html)"}sg){
+       for(@links){
+           if($_ =~ m/(\d+)/){
+              $apps_href->{$1} = trim_url($url_base).$_;
+           }
+       }
+       return 1;
+    }
+
+    return 0
+}
+=pod 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
-    # find nodes by this apps mark 'box-lr20'
-    # html: <div class="box-lr20">
-    my @nodes = $tree->look_down( class => $APPS_MARK );
-    Carp::croak('not find apps nodes by this mark '.$APPS_MARK )
+    my @nodes = $tree->look_down( class => "name" );
+    Carp::croak('not find apps nodes by this mark name')
         unless ( scalar(@nodes) );
-
-    # get a ul list apps and a list of app
-    foreach my $ul( $nodes[FIRST_NODE]->content_list() ){
-        next unless ref($ul);
-        # app name list 
-        # html_string:
-        # <li class="name">
-        #	<a href="/soft/17876.html">拉蜂文件管理器</a>
-        # </li>
-        my @list = $ul->find_by_attribute( class => $APP_MARK );
-        next unless @list;
-        my $app_url = ( $list[0]->find_by_tag_name($LINK_TAG) )[FIRST_NODE]->attr($LINK_HREF);
-        if( $app_url =~ m{(?<=/)(\d+)\.html} ){
-            $apps_href->{$1} = trim_url($url_base).$app_url;
-        }
+    foreach my $node(@nodes){
+    	my @a = $node->find_by_tag_name('a');
+        next unless @a;
+        my $app_url = $a[0]->attr('href');
+        $app_url =~ m/(\d+)/;
+        $apps_href->{$1} = trim_url($url_base).$app_url;
     }
+
+    use Data::Dumper;
+    print Dumper $apps_href;
     $tree->delete;
-}
+=cut
 
 sub extract_app_from_feeder{
     # accept args ref from outside
@@ -774,22 +776,12 @@ sub extract_app_info
             }
         }
     };
-    use Data::Dumper;
-    #warn Encode::encode_utf8( Dumper $app_info );
-#    delete $app_info->{app_page};
-    foreach my $meta( keys %$app_info){
-      my $value = $app_info->{$meta};
-      if( ref($value) eq 'ARRAY' ){
-          $value = Dumper $value;
-      }else{
-          $value = decode_utf8($value);
-      }
-      warn "$meta => $value\n";
-    }
+#    use Data::Dumper;
+#    print Dumper $app_info;
+
     $app_info->{status} = 'success';
     if($@){
         $app_info->{status} = 'fail';
-        Carp::carp('get app_info failed,reason: '.$@ );
     }
 
     return scalar %{$app_info};

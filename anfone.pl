@@ -36,30 +36,30 @@ use AMMS::Downloader;
 use AMMS::NewAppExtractor;
 use AMMS::UpdatedAppExtractor;
 require Exporter;
-our @ISA 	= qw(Exporter);
-our @EXPORT 	= qw(
-	extract_page_list 
-	extract_app_from_feeder 
-	extract_app_info
-	trim_url 
-	get_content 
-	get_page_list 
-	get_current_version 
-	get_official_rating_stars
-	get_official_category 
-	get_price 
-	get_description 
-	get_app_name 
-	get_app_list 
-	get_price 
-	get_related_app 
-	get_permission 
-	get_last_update 
-	get_total_install_times
-	get_trustgo_category_id 
-	get_size 
-	get_icon 
-	get_app_qr
+our @ISA     = qw(Exporter);
+our @EXPORT  = qw(
+    extract_page_list 
+    extract_app_from_feeder 
+    extract_app_info
+    trim_url 
+    get_content 
+    get_page_list 
+    get_current_version 
+    get_official_rating_stars
+    get_official_category 
+    get_price 
+    get_description 
+    get_app_name 
+    get_app_list 
+    get_price 
+    get_related_app 
+    get_permission 
+    get_last_update 
+    get_total_install_times
+    get_trustgo_category_id 
+    get_size 
+    get_icon 
+    get_app_qr
 );
 
 my $task_type   = $ARGV[0];
@@ -69,15 +69,30 @@ my $conf_file   = $ARGV[2];
 my $market      = 'www.anfone.com';
 my $url_base    = 'http://anfone.com';
 #my $downloader  = new AMMS::Downloader;
+
 my $usage =<<EOF;
+==================================================
 $0 task_type task_id conf_file
 for example:
-    $0 find_app 10 /root/crawler/default.cfg
+    $0 find_app     10 /root/crawler/default.cfg
+    $0 new_app      158 /root/crawler/default.cfg
+    $0 update_app   168 /root/crawler/default.cfg
+--------------------------------------------------
+explain:
+    task_type   - task type which like as 'find_app' 'new_app' 'update_app'
+    task_id     - task_id number,you can get it from task_detail table
+    conf_file   - the configure file of crawler,default is /root/crawler/default.cfg
+==================================================
 EOF
-for(@ARGV){
-    Carp::croak($usage."\n") unless $_;
+
+# check args 
+unless( $task_type && $task_id && $conf_file ){
+    die $usage;
 }
 
+# check configure
+die "\nplease check config parameter\n" 
+    unless init_gloabl_variable( $conf_file );
 
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
@@ -109,16 +124,16 @@ our %category_mapping=(
     "影音媒体"    => 7,
     "文字输入"    => 2217,
     "安全防护"    => 23,
-    "社区聊天"    => 400,
+    "社区聊天"    => "400,18",
     "信息查询"    => 22,
-    "导航地图"    => 2105,
+    "导航地图"    => "13,2105",
     "通讯辅助"    => 2209,
-    "阅读资讯"    => 2209,
+    "阅读资讯"    => "14,1",
     "生活常用"    => 19,
-    "财务工具"    => 16,
-    "学习办公"    => 1604,
+    "财务工具"    => 2, 
+    "学习办公"    => "5,16",
     # TODO sure class?
-    "其他分类"    => '', 
+    "其他分类"    => 0,
     "主题图像"    => 1203,
     "棋牌游戏"    => 802,
     "益智休闲"    => 806,
@@ -136,9 +151,6 @@ our %category_mapping=(
     "音乐游戏"    => 809,
     "动作游戏"    => 823,
 	);
-unless( init_gloabl_variable( $conf_file ) ){
-    Carp::carp( 'please check config parameter' );
-}
 
 our $PAGE_MARK  = 'pagebar';
 our $IMG        = 'img';
@@ -234,13 +246,9 @@ sub extract_page_list{
         &get_page_list( $web,$PAGE_MARK,$pages );
     };
     if($@){
-        use Data::Dumper;
-        print Dumper $pages;
-        $pages = [];
-        return 0;
+#        print Dumper $pages;
+        return 0 unless scalar @$pages
     }
-
-
     return 1;
 }
 
@@ -248,33 +256,39 @@ sub get_app_list{
     my $html      = shift;
     my $app_mark  = shift;
     my $apps_href = shift;
+    # <a href="/soft/7880.html">
+    # <a href="/soft/8099.html">极限摩托车</a>
+    #li class="name">
+    if(my @links = $html=~ m{li class="name">.+?"(/soft/\d+\.html)"}sg){
+       for(@links){
+           if($_ =~ m/(\d+)/){
+              $apps_href->{$1} = trim_url($url_base).$_;
+           }
+       }
+       return 1;
+    }
 
+    return 0
+}
+=pod 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
-    # find nodes by this apps mark 'box-lr20'
-    # html: <div class="box-lr20">
-    my @nodes = $tree->look_down( class => $APPS_MARK );
-    Carp::croak('not find apps nodes by this mark '.$APPS_MARK )
+    my @nodes = $tree->look_down( class => "name" );
+    Carp::croak('not find apps nodes by this mark name')
         unless ( scalar(@nodes) );
-
-    # get a ul list apps and a list of app
-    foreach my $ul( $nodes[FIRST_NODE]->content_list() ){
-        next unless ref($ul);
-        # app name list 
-        # html_string:
-        # <li class="name">
-        #	<a href="/soft/17876.html">拉蜂文件管理器</a>
-        # </li>
-        my @list = $ul->find_by_attribute( class => $APP_MARK );
-        next unless @list;
-        my $app_url = ( $list[0]->find_by_tag_name($LINK_TAG) )[FIRST_NODE]->attr($LINK_HREF);
-        if( $app_url =~ m{(?<=/)(\d+)\.html} ){
-            $apps_href->{$1} = trim_url($url_base).$app_url;
-        }
+    foreach my $node(@nodes){
+    	my @a = $node->find_by_tag_name('a');
+        next unless @a;
+        my $app_url = $a[0]->attr('href');
+        $app_url =~ m/(\d+)/;
+        $apps_href->{$1} = trim_url($url_base).$app_url;
     }
+
+    use Data::Dumper;
+    print Dumper $apps_href;
     $tree->delete;
-}
+=cut
 
 sub extract_app_from_feeder{
     # accept args ref from outside
@@ -282,21 +296,28 @@ sub extract_app_from_feeder{
     my $hook	= shift;
     my $params  = shift;
     my $apps    = shift;
+   
+    return 0 unless ref( $params) eq 'HASH' ;
+    return 0 unless ref(  $apps ) eq 'HASH' ;
+    return 0 unless exists $params->{web_page};
 
     print "run extract_app_from_feeder_list ............\n";
     # create a html tree and parse
     #my $tree = init_html_parser( $params->{web_page} );
-    my $html = $params->{web_page};
     # exact app 
+    return 0 if ref($params) ne 'HASH';
+    return 0 unless exists $params->{web_page};
     eval{
+    	my $html = $params->{web_page};
         get_app_list( $html,$APPS_MARK,$apps );
-        use Data::Dumper;
-        print Dumper $apps;
     };
     if($@){
-        Carp::carp('extract_app_from_feeder failed'.$@);
+        warn('extract_app_from_feeder failed'.$@);
+        $apps = {};
+	return 0
     }
-
+    return 0 unless scalar( %{ $apps } );
+	
     return 1;
 }
 
@@ -333,12 +354,16 @@ sub get_app_url{
 }
 
 sub get_icon{
-    my $tree = shift;
-    my $web  = shift;
-    my $mark = shift;
+    my $html = shift;
+    
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
+#    return unless @nodes;
 
     #look down brief label;
-    my @nodes = $tree->look_down( class => $mark );
+    my @nodes = $tree->look_down( class => 'brief' );
+    return unless @nodes;
+
     my $title = [ $tree->find_by_attribute( class => 'title') ]->[FIRST_NODE];
     my $icon = [ $title->find_by_tag_name($IMG) ]->[FIRST_NODE]->attr($SRC);
 
@@ -351,7 +376,7 @@ sub get_app_name{
     my $html = shift;
     my $web  = shift;
     my $mark = shift||'qnav';
-
+    
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
@@ -366,7 +391,8 @@ sub get_app_name{
     <li>拉蜂文件管理器</li>
     </div>
 =cut
-    my @nodes = $tree->look_down( class => $mark );
+    my @nodes = $tree->look_down( class => 'qnav' );
+    return unless @nodes;
     my @list = $nodes[0]->find_by_tag_name('li');
     # app name is li=>[3]
     my $app_name = $list[3]->as_text;
@@ -397,6 +423,8 @@ sub get_description{
         $desc =~ s/<br>//g;
         $desc =~ s/<\/br>//g;
         $desc =~ s/<br\s+\/>/\n/g;
+        $desc =~ s/\r//g;
+        $desc =~ s/\n//g;
         return $desc;
     }
 
@@ -729,7 +757,11 @@ sub extract_app_info
                 # dymic function invoke
                 # 'get_author' => sub get_author
                 # 'get_price'  => sub get_price
-                $app_info->{$meta} = &{ __PACKAGE__."::get_".$meta }($html) ;
+                my $ret = $app_info->{$meta} = &{ __PACKAGE__."::get_".$meta }($html) ;
+                if( defined($ret) ){
+                    $app_info->{$meta} = $ret;
+                }
+                next;
             }
 
             if (defined($category_mapping{$app_info->{official_category}})){
@@ -744,18 +776,12 @@ sub extract_app_info
             }
         }
     };
-    use Data::Dumper;
-    #warn Encode::encode_utf8( Dumper $app_info );
-#    delete $app_info->{app_page};
+#    use Data::Dumper;
+#    print Dumper $app_info;
 
     $app_info->{status} = 'success';
-    foreach my $meta(keys %{$app_info}){ 
-         my $value = decode_utf8($app_info->{$meta});
-         warn "$meta => $value\n";
-    }
     if($@){
         $app_info->{status} = 'fail';
-        Carp::carp('get app_info failed,reason: '.$@ );
     }
 
     return scalar %{$app_info};

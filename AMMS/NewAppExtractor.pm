@@ -106,7 +106,8 @@ sub run
     $self->{'MARKET_INFO'} = $self->{'DB_HELPER'}->get_market_info($self->getAttribute('MARKET'));
     $self->finish_task( 'fail' ) and return 0
         if  not $self->get_app_result( \%apps )  or##get app info and apk info 
-            not $self->package_and_send()        or#package and send to center server
+#            not $self->package_and_send()        or#package and send to center server
+#           not $self->package_and_send()        or#package and send to center server
             not $self->save_app_result();     ##insert app info and apk into DB 
 
     ##end a task

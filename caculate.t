@@ -63,7 +63,7 @@ EOF
             $task_info->{get_app_list}{ $ret->{task_id} } = $ret->{detail_info};
         }
         # http://anfone.com/soft/16478.html
-        if( $ret->{detail_info} =~ m{anfone.com/sort/\d+\.html} ){
+        if( $ret->{detail_info} =~ m{anfone.com/soft/\d+\.html} ){
             $task_info->{new_app}->{ $ret->{task_id} } = $ret->{detail_info};
         }
     }
@@ -91,10 +91,12 @@ EOF
 
 sub run_new_app{
     my @task_id_list = keys %{ $task_info->{new_app} };
-    for( my $i = 0;$i<=500;$i++){
+    for( my $i = 0;$i<=30;$i++){
         my $cmd = <<CMD;
-        perl /root/crawler/anfone_for_test.pl new_app $_ /root/crawler/default.cfg
+        perl /root/crawler/anfone_for_test.pl new_app $task_id_list[$i] /root/crawler/default.cfg
 CMD
+        print $cmd."\n";
+        #sleep 5;
         my $ret = system($cmd);
         $ret ? print " run task_id $_ success with url $task_info->{find_app}{$_}\n"
              : warn "run task_id $_ faild with url $task_info->{find_app}{$_}\n";

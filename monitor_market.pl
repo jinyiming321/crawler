@@ -25,6 +25,7 @@ my %program_table = (
         'eoemarket'=>{'host'=>'www.eoemarket.com','script'=>'eoemarket.pl','task_type'=>[qw(find_app new_app update_app)]},
         'goapk'=>{'host'=>'www.goapk.com','script'=>'goapk.pl','task_type'=>[qw(find_app new_app update_app )]},
         'dangle'=>{'host'=>'android.d.cn','script'=>'dangle.pl','task_type'=>[qw(find_app new_app  update_app )]},
+        'anfone'=>{'host'=>'www.anfone.com','script'=>'anfone_for_test.pl','task_type'=>[qw(find_app )]},
         );
 
 foreach( @markets_be_monitored )
