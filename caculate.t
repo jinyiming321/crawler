@@ -26,15 +26,6 @@ my $ret = GetOptions(
     'task_type=s' => \$task_type,
     'config=s'    => \$config,
 ) ;
-
-get_task_info();
-if( $ret->{task_type} eq 'find_app' ){
-    run_find_app();
-}
-if( $ret->{task_type} eq 'new_app' ){
-    run_new_app();
-}
-
 # $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
 my $dsn  = 'DBI:mysql:database=AMMS;host=192.168.1.130;port=3306';
 my $user = 'root';
@@ -45,6 +36,15 @@ my $app_url_match='';
 my $dbh = DBI->connect( $dsn,$user,$pass ) or die $@;
 
 my $task_info = {};
+
+get_task_info();
+if( $ret->{task_type} eq 'find_app' ){
+    run_find_app();
+}
+if( $ret->{task_type} eq 'new_app' ){
+    run_new_app();
+}
+
 
 sub get_task_info{
     # http://anfone.com/sort/2.html
