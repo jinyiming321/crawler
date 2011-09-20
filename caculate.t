@@ -21,13 +21,13 @@ my $temp_html_dir = '/root/crawler/html/';
                         "verbose"  => \$verbose);  # flag
 =cut
 
-my ( $task_type,$config ) = shift;
+my ( $task_type,$config );
 my $ret = GetOptions( 
     'task_type=s' => \$task_type,
     'config=s'    => \$config,
 ) ;
 # $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
-my $dsn  = 'DBI:mysql:database=AMMS;host=192.168.1.130;port=3306';
+my $dsn  = 'DBI:mysql:database=AMMS;host=localhost;port=3306';
 my $user = 'root';
 my $pass = 'root';
 my $feeder_url_match = '';
@@ -38,10 +38,10 @@ my $dbh = DBI->connect( $dsn,$user,$pass ) or die $@;
 my $task_info = {};
 
 get_task_info();
-if( $ret->{task_type} eq 'find_app' ){
+if( $task_type eq 'find_app' ){
     run_find_app();
 }
-if( $ret->{task_type} eq 'new_app' ){
+if( $task_type eq 'new_app' ){
     run_new_app();
 }
 
