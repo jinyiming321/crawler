@@ -7,6 +7,7 @@ use Carp;
 use Test::More 'no_plan';
 use lib '/root/crawler';
 use DBI;
+use Getopt::Long;
 
 my $temp_html_dir = '/root/crawler/html/';
 
@@ -27,10 +28,10 @@ my $ret = GetOptions(
 ) ;
 
 get_task_info();
-if( $task_type eq 'find_app' ){
+if( $ret->{task_type} eq 'find_app' ){
     run_find_app();
 }
-if( $task_type eq 'new_app' ){
+if( $ret->{task_type} eq 'new_app' ){
     run_new_app();
 }
 
