@@ -115,6 +115,16 @@ sub check_extract_page_list{
     return
 }
 
+sub check_url_vaild{
+    my $self = shift;
+    my $url  = shift;
+
+    return unless $url =~ m//; # TODO url regular
+    return unless defined get($url);
+
+    return 1;
+}
+
 1;
 
 #use DataCheck;
