@@ -47,32 +47,13 @@ our @EXPORT  = qw(
     extract_page_list 
     extract_app_from_feeder 
     extract_app_info
-    trim_url 
-    get_content 
-    get_page_list 
-    get_current_version 
-    get_official_rating_stars
-    get_official_category 
-    get_price 
-    get_description 
-    get_app_name 
-    get_app_list 
-    get_price 
-    get_related_app 
-    get_permission 
-    get_last_update 
-    get_total_install_times
-    get_trustgo_category_id 
-    get_size 
-    get_icon 
-    get_app_qr
 );
 
 my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
-my $market      = 'www.anfone.com';
+my $market      = 'www.coolapk.com';
 my $url_base    = 'http://www.coolapk.com';
 #my $downloader  = new AMMS::Downloader;
 
@@ -105,24 +86,61 @@ die "\nplease check config parameter\n"
 # so i remove it from this mapping
 # modify record :
 # 	2011-09-19 add support for screenshot related_app official_rating_starts
-our @app_info_list = qw(
-    author 
-    app_name 
-    official_category 
-    current_version 
-    size 
-    price 
-    description
-    apk_url 
-    last_update 
-    total_install_times 
-    app_qr
-    permission
-    screenshot
-    official_rating_stars
-    related_app
-    icon
+our %app_map_func = (
+        author                  => \&get_author, 
+        app_name                => \&get_app_name,
+        icon                    => \&get_icon,
+        price                   => \&get_price,
+        system_requirement      => \&get_system_requirement,
+        min_os_version          => \&get_min_os_version,
+        max_os_version          => \&get_max_os_version,
+        resolution              => '',
+        last_update             => \&get_last_update,
+        size                    => \&get_size,
+        official_rating_stars   => \&get_official_rating_stars,
+        official_rating_times   => '',
+        app_qr                  => 
+        note                    => '',
+        apk_url                 => '',
+        total_install_times     => \&get_total_install_times,
+        official_rating_times   => '',
+        description             => '',
+        official_category       => '',
+        trustgo_category_id     => '',
+        related_app             => '',
+        creenshot               => '',
+        permission              => '',
+        status                  => '',
+        category_id             => '',
 );
+
+our @app_info_list = qw(
+        author                  
+        app_name                
+        icon                    
+        price                   
+        system_requirement      
+        min_os_version          
+        max_os_version          
+        resolution              
+        last_update             
+        size                    
+        official_rating_stars   
+        official_rating_times   
+        app_qr                  
+        note                    
+        apk_url                 
+        total_install_times     
+        official_rating_times   
+        description             
+        official_category       
+        trustgo_category_id     
+        related_app             
+        creenshot               
+        permission              
+        status                  
+        category_id             
+    );
 
 our %category_mapping=(
     "系统管理"    => 2206,
@@ -351,11 +369,11 @@ sub get_icon{
 #    return unless @nodes;
 
     #look down brief label;
-    my @nodes = $tree->look_down( class => 'brief' );
+    my @nodes = $tree->look_down( class => 'apptitle');
     return unless @nodes;
 
-    my $title = [ $tree->find_by_attribute( class => 'title') ]->[FIRST_NODE];
-    my $icon = [ $title->find_by_tag_name($IMG) ]->[FIRST_NODE]->attr($SRC);
+    my @tags = $nodes[0]->find_by_tag_name('img');
+    my $icon = $url_base.$tags[0]->attr('src');
 
     # delete what I have done
     $tree->delete;
@@ -364,8 +382,7 @@ sub get_icon{
 
 sub get_app_name{
     my $html = shift;
-    my $web  = shift;
-    my $mark = shift||'qnav';
+    my $mark = shift||'apptitle';
     
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
@@ -374,18 +391,15 @@ sub get_app_name{
     # html_string:
     # mark class = "qnav"
 =pod
-    <div class="qnav">
-    <li>
-    <li>
-    <li>
-    <li>拉蜂文件管理器</li>
-    </div>
+<div class="apptitle">
+<img class="applo
+<h1>MyBackup Pro:全能备份专家 3.0.0已付费版</h1>
 =cut
-    my @nodes = $tree->look_down( class => 'qnav' );
+    my @nodes = $tree->look_down( class => $mark );
     return unless @nodes;
-    my @list = $nodes[0]->find_by_tag_name('li');
-    # app name is li=>[3]
-    my $app_name = $list[3]->as_text;
+
+    my @tags = $nodes[0]->find_by_tag_name('h1');
+    my $app_name = $tags[0]->as_text;
 
     # delete what I ever done
     $tree->delete;
@@ -424,27 +438,30 @@ sub get_description{
 sub get_size{
     my $html = shift;
     # mark is class => 'info'
-    my $mark = shift||'info';
+    my $mark = shift||'appdetails';
 
-    # find app size and app info l-list
-    # in this market,size is in list[2]
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => $mark );
-    my @list = $nodes[0]->content_list();
-    my $size = kb_m( $list[2]->as_text );
-
-    $tree->delete;
-
-    return $size || undef;
+=pod
+<span>
+<em>大小：</em>
+3.06 MB
+</span>
+=cut
+    if( $html =~ m{em>大小.*?(\d.*?MB)}s ){
+        my $size = $1;
+        return kb_m($size);
+    }
+    return 
 }
 
 sub get_total_install_times{
     my $html = shift;
-    # mark is class => 'info'
-
-    if( $html =~ m/下载次数(.*?)(\d+)/s ){
-        my $install_times = $2;
+=pod
+<span class="alt">
+约2100次下载，
+<a target="_self" href="#comment">11次评论</a>
+=cut
+    if( $html =~ m/(\d+)次下载/s){
+        my $install_times = $1;
         return $install_times;
     }
 
@@ -453,15 +470,27 @@ sub get_total_install_times{
 
 sub get_last_update{
     my $html = shift;
-    # mark is class => 'info'
-    # <li>
-    # <strong>更新时间：</strong>
-    # 2011-08-29
-    if( $html=~ m/更新时间(.*?)(\d{4}-\d{2}-\d{2})/s ){
-        my $time_stamp = $2;
-        return $time_stamp;
+=pod
+<h2>更新记录 · · ·</h2>
+<div class="changelog">
+<span>
+2010-09-04
+<em>收录版本：0.7付费版</em>
+=cut
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
+    my @nodes = $tree->look_down( class => 'changelog' );
+    return unless @nodes;
+    
+    my @tags = $nodes[0]->find_by_tag_name('span');
+    my $content = $tags[0]->as_text;
+    $tree->delete;
+
+    if(my @date = $content =~ m/(\d{4}-\d{2}-\d{2})/sg){
+        my $last_update = $date[-1];
+        return $last_update;
     }
-    return undef;
+    return ;
 }
 
 sub get_apk_url{
@@ -469,7 +498,6 @@ sub get_apk_url{
     my $mark = shift||'down';
 
     # find apk_url by html_tree
-    # TODO define a global var for apk_url mark class => "down"
     # html content:
 =pod
 <div class="down">
@@ -747,11 +775,11 @@ sub extract_app_info
                 # dymic function invoke
                 # 'get_author' => sub get_author
                 # 'get_price'  => sub get_price
-                my $ret = $app_info->{$meta} = &{ __PACKAGE__."::get_".$meta }($html) ;
+                next unless ref($app_map_func{$meta}) eq 'CODE';
+                my $ret = &{ $app_map_func{$meta} }($html);
                 if( defined($ret) ){
                     $app_info->{$meta} = $ret;
                 }
-                next;
             }
 
             if (defined($category_mapping{$app_info->{official_category}})){
@@ -802,6 +830,43 @@ sub run{
     my $app_info = {};
     extract_app_info( undef,undef,$content,$app_info );
 
+}
+sub get_system_requirement{
+    my $html = shift;
+
+    {
+        no strict 'refs';
+=pod
+<em>支持ROM：</em>
+1.6/2.0/2.1/2.2/2.3
+=cut
+        if($html =~ m{支持ROM.+?(\d+.+?)</span>}s){
+            my $rom_version = $1;
+            my @versions = split('/',$rom_version);
+            if( scalar @versions ){
+                ${ __PACKAGE__."::"."min_os_version" } = $versions[0];
+                ${ __PACKAGE__."::"."max_os_version" } = $versions[-1];
+            }
+            return $rom_version;
+        }
+    }
+    return
+}
+
+sub get_min_os_version{
+    {
+        no strict 'refs';
+        my $min_os_version = ${ __PACKAGE__."::"."min_os_version" };
+        return ref($min_os_version) ? $$min_os_version : undef;
+    }
+}
+
+sub get_max_os_version{
+    {
+        no strict 'refs';
+        my $max_os_version = ${ __PACKAGE__."::"."max_os_version" };
+        return ref($max_os_version) ? $$max_os_version : undef;
+    }
 }
 
 1;
