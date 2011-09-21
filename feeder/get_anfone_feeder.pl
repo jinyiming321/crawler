@@ -3,6 +3,7 @@ use strict;
 use LWP::UserAgent;
 use HTML::TreeBuilder;
 use IO::Handle;
+use Carp;
     
 my $ua = LWP::UserAgent->new;
 $ua->timeout(60);
@@ -11,12 +12,10 @@ $ua->env_proxy;
 open(FEED,">anfone.url");
 FEED->autoflush(1);
 
-my $apps_portal='http://anfone.com/application.html';
-my $games_portal='http://anfone.com/game.html';
+my $apps_portal='http://www.coolapk.com/apk'
 
-foreach my $portal ( $apps_portal,$games_portal){
+foreach my $portal ( $apps_portal){
     my $response = $ua->get($portal);
-
     while( not $response->is_success){
         $response=$ua->get($portal);
     }
@@ -30,21 +29,15 @@ foreach my $portal ( $apps_portal,$games_portal){
         eval {
             $tree = HTML::TreeBuilder->new; # empty tree
             $tree->parse($webpage);
-            
-            @node = $tree->look_down( class => 'sort-r-2col');
-            @li_kids = $node[0]->content_list;
-
-            foreach(@li_kids){
-                next unless ref $_;
-                my $a_tag=$_->find_by_tag_name("a");
-                next unless defined $a_tag;
-                my $category_number=$1 if $a_tag->attr("href")=~/(\d+)/g;
-				#http://anfone.com/sort/21.html
-				my $url = 'http://anfone.com/sort/'.$1.'.html';
-				#$url=~ s/(.*?)(_0_1_1)/$1_${category_number}_1_1/g;
-				print $url."\n";
-                print FEED "$url\n";
-            } 
+            #<div id="leftbar" class="leftfilter">
+            @node = $tree->look_down( id => 'leftbar' );
+            Carp::croak( "not find this mark leftbar" ) unless @node;   
+            my @tags = $node[0]->find_by_tag_name('a');
+            Carp::croak( "not find thi mark a link" ) unless @tags;
+            for(@tags){
+                my $link = $_->attr('href');
+                print FEED $apps_portal.$link."\n";
+            }
         };
         if($@){
             die "fail to extract Hiapk feeder url";

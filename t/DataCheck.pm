@@ -6,6 +6,7 @@ use Encode;
 use FileHandle;
 use LWP::Simple;
 use Carp;
+use Test::more 'no_plan';
 
 sub CHECK_ATTR () {
     return qw(
@@ -70,7 +71,7 @@ sub new{
     return $self;
 }
 
-sub check{
+sub check_meta{
     my $self = shift;
     # author => 'xxx000' meta example
     my $meta = shift;
@@ -85,6 +86,33 @@ sub check{
         ) unless ref($self->[CHECK_FUNC_SUITE]->{$key}) eq 'CODE';
         my $check = $self->[CHECK_FUNC_SUITE]->{$key};
     }
+}
+
+sub check_extract_page_list{
+    my ( $self,$extract_func,$page_ref,$expect ) = @_;
+    # $page_ref is { html => 'string',url => 'xxx';}
+    # page_list 
+    # arrayref
+    my $page_list =[];
+    # test return value
+    is(
+        $extract_func->(
+            undef,undef,{ web_page => $page_ref->{html} },$page_list
+        ),
+        # expect right return
+        1,
+        "test extract return value with right args parse url '$page_ref->{url}'\n "
+    );
+
+    # test page num is right
+    is( scalar($page_list),$expect,"test page num is rigth with '$expect'\n");
+
+    # test page url is valid
+    map{
+        is( defined( get($_) ),1,"test page valid url: '$_' \n" );
+    } @{ $page_list };
+
+    return
 }
 
 1;
