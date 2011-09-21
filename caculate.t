@@ -50,12 +50,13 @@ sub get_task_info{
     # http://anfone.com/sort/2.html
     my $sql =<<EOF;
     select task_id,detail_info from task_detail 
-    where detail_info like '%anfone.com%';
+    where detail_info like '%coolapk%';
 EOF
     my $sth = $dbh->prepare($sql);
     $sth->execute;
     while( my $ret = $sth->fetchrow_hashref ){
-        if( $ret->{detail_info} =~ m{anfone.com/sort/\d+\.html} ){
+#        if( $ret->{detail_info} =~ m{anfone.com/sort/\d+\.html} ){
+        if( $ret->{detail_info} =~ m{coolapk} ){
             $task_info->{find_app}{ $ret->{task_id} } = $ret->{detail_info};
         }
         # http://anfone.com/sort/1_4.html
@@ -74,15 +75,17 @@ sub run_find_app{
     my @task_id_list = keys %{ $task_info->{find_app} };
     for(@task_id_list){
         my $cmd = <<CMD;
-        perl /root/crawler/anfone_for_test.pl find_app $_ /root/crawler/default.cfg
+        perl /root/crawler/coolapk.pl find_app $_ /root/crawler/default.cfg
 CMD
-        my $ret = system($cmd);
-        $ret ? print " run task_id $_ success with url $task_info->{find_app}{$_}\n"
-             : warn "run task_id $_ faild with url $task_info->{find_app}{$_}\n";
+#        my $ret = system($cmd);
+        `$cmd`;
+        my $status = $?;
+         print $cmd;
+        is($status,0,"run '$cmd' test");
     }
 
     my $sql =<<EOF;
-    select count(*) from app_source where market_id = 13 
+    select count(*) from app_source where market_id = 14
 EOF
     my $count = $dbh->selectrow_array($sql);
     print "-------------------------------------\n";
@@ -102,4 +105,3 @@ CMD
              : warn "run task_id $_ faild with url $task_info->{find_app}{$_}\n";
     }
 }
-
