@@ -284,9 +284,10 @@ sub get_app_list{
     my @nodes = $tree->look_down( class => $app_mark );
     Carp::croak('not find apps nodes by this mark name')
         unless ( scalar(@nodes) );
-    
-    my @tags = $nodes[0]->find_by_tag_name('a');
-    # <a target="_blank" href="/apk-3965-com.lingdong.quickpai.compareprice.ui.acitvity/">快拍购物搜索</a>
+
+    map{
+    my @tags = $_->find_by_tag_name('a');
+    # <a target="_blank" href="/apk-3965-com.lingdong.quickpai.compareprice.ui.acitvity/">?ì??1o?????÷</a>
     return unless @tags;
 
     foreach my $tag(@tags){
@@ -294,8 +295,10 @@ sub get_app_list{
         $link =~ m/apk-(\d+)/;
         $apps_href->{$1} = trim_url($url_base).$link;
     }
+    } @nodes;
 
     $tree->delete;
+    return
 }
 
 sub extract_app_from_feeder{
