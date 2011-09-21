@@ -68,15 +68,12 @@ our @EXPORT  = qw(
     get_app_qr
 );
 
-
-
-
 my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
 my $market      = 'www.anfone.com';
-my $url_base    = 'http://anfone.com';
+my $url_base    = 'http://www.coolapk.com';
 #my $downloader  = new AMMS::Downloader;
 
 my $usage =<<EOF;
@@ -167,7 +164,7 @@ our $LINK_TAG   = 'a';
 our $LINK_HREF  = 'href';
 our $APPS_MARK  = 't';
 our $APP_MARK   = 'col2';
-our $AUTHOR     = '安丰网';
+our $AUTHOR     = '酷安网';
 our $ICON_MARK  = 'brief';
 our $DESC_MARK  = 'screen';
 our $SIZE_MARK  = 'info';
@@ -205,27 +202,28 @@ sub init_html_parser{
 
 sub get_page_list{
     my $html        = shift;
-    my $page_mark   = shift||'pagelist';
+    my $page_mark   = shift;
     my $pages       = shift;
 
     my $tree = new HTML::TreeBuilder;
-    $tree->parse($html) or die "can't parse html";
+    $tree->parse($html);
     # <a href="/apk/downloads/list-56/?p=56&sort=lastdown">最末页</a>
-    my @nodes = $tree->look_down( id => $page_mark );
-    Carp::croak('not find page_make :'.$page_mark ) unless scalar(@nodes);
+
+    my @nodes = $tree->look_down( id => 'pagelist' );
+    Carp::croak('not find page_make : pagelist ') unless scalar(@nodes);
 
     my @tags = $nodes[0]->find_by_tag_name('a');
     return unless @tags;
     my $last_page = $tags[-1]->attr('href');
 
     ( my $needed_s_url = $last_page ) =~ s/list-(\d+)/'list-'.'$num'/e;
+    my $total = $1;
     $needed_s_url =~ s/p=\d+/'p='.'$num'/e;
-
-    my $total = $2;
 
     # save pages to pages arrayref
     @{ $pages } = map {
-        ( my $temp = $needed_s_url ) =~ s/\$num/$_/; 
+        ( my $temp = $needed_s_url ) =~ s/\$num/$_/g; 
+        trim_url($url_base).$temp;
     } (1..$total);
     $tree->delete;
 }
@@ -248,7 +246,7 @@ sub extract_page_list{
     # create a html tree and parse
     my $web = $params->{web_page};
     eval{
-        &get_page_list( $web,$PAGE_MARK,$pages );
+        &get_page_list( $web,undef,$pages );
     };
     if($@){
 #        print Dumper $pages;

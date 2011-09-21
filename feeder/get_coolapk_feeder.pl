@@ -36,7 +36,12 @@ foreach my $portal ( $apps_portal){
             Carp::croak( "not find thi mark a link" ) unless @tags;
             for(@tags){
                 my $link = $_->attr('href');
-                print FEED $apps_portal.$link."\n";
+                if($link =~ m/game/ ){
+                    print FEED $apps_portal.$link."\n";
+                }
+                if($link =~ m/apk/ ){
+                    print FEED 'http://www.coolapk.com'.$link."\n";
+                }
             }
         };
         if($@){
