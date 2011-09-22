@@ -324,8 +324,9 @@ sub extract_app_from_feeder{
 sub get_author{
     my $html = shift;
 
-    if($html =~ m/软件作者(.*?)(\S+)/s){
-        return $1;
+    #if($html =~ m/软件作者(.*?)(\S+)/s){
+    if($html =~ m/软件作者(.*?)<\/strong>(.*?)(\w+)/s){
+        return $3;
     }
     return $AUTHOR;
 }
