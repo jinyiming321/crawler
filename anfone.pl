@@ -750,8 +750,8 @@ sub extract_app_info
 
     # create a html tree and parse
     print "extract_app_info  run \n";
-    use Encode;
-    $html = Encode::decode_utf8($html);
+#    use Encode;
+#    $html = Encode::decode_utf8($html);
 
     eval{
         # TODO get note 'not find'

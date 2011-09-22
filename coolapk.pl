@@ -15,7 +15,6 @@
 #         BUGS: send email to me, if there is any bugs.
 #        NOTES: 
 #       AUTHOR: James King, jinyiming456@gmail.com
-#      COMPANY: Trustgo
 #      VERSION: 1.0
 #      CREATED: 2011/9/24 13:35
 #     REVISION: 1.0
@@ -599,9 +598,22 @@ sub get_official_category{
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
+=pod
+<div id="navbar">
+<a href="http://www.coolapk.com/">酷安网</a>
+&gt;
+<a href="/apk/">Android软件</a>
+&gt;
+<a href="/apk/themes/">主题美化</a>
+&gt; Go Launcher桌面 1.41
+=cut
 
     my @nodes = $tree->look_down( id => 'navbar' );
-    return 0 unless @nodes;
+    return unless @nodes;
+    
+    my @tags = $tree->find_by_tag_name('a');
+    my $official_category = $tags[
+    
 
     # fetch category_id and official_category 
     # official_category li->2
