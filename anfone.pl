@@ -16,7 +16,6 @@
 #       AUTHOR: James King, jinyiming456@gmail.com
 #      VERSION: 1.0
 #      CREATED: 2011/9/19 0:10:31
-#     REVISION: 1.0
 #===============================================================================
 
 use strict;
