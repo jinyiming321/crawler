@@ -577,6 +577,10 @@ sub get_apk_url{
     # <img class="qrcode" src="/qr.php?sid=MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==">
     $html =~ m{img class="qrcode".*?sid=(\w+?==)}s;
     my $sid = $1;
+    {
+        no strict 'refs';
+        ${ __PACKAGE__."::"."SID" } = \$sid;
+    }
 
     use HTTP::Request;
     use HTTP::Cookies;
@@ -801,7 +805,9 @@ sub get_permission{
     use HTTP::Cookies;
     use LWP::UserAgent;
     use LWP::Simple;
-    my $sid = ''; # TODO
+    my $sid = ${__PACKAGE__."::"."SID"};
+    ${__PACKAGE__."::"."APP_URL"} =~ m/(\d+)/;
+    my $app_id = $1;
     my $cookie_file = 'cookie.coolapk';
     unless( -e $cookie_file ){
         return unless get_cookie();
@@ -827,7 +833,7 @@ sub get_permission{
     my $res = $ua->post( 
         $perm_download_url,[
             ac      => 'ajax',
-            id      => '',# TODO GET ID from app_url;
+            id      => $app_id,
             sid     => $sid,
             inajax  => 1,
             op      => 'viewpermissions',
@@ -836,6 +842,7 @@ sub get_permission{
     );
     if( $res->status_line =~ m/200/ ){
         # TODO GET PERMISSION
+        return $permission;
     }else{
         get_cookie && goto DOWN_LOAD_APK unless $retry;
         ++$retry;
@@ -882,6 +889,11 @@ sub extract_app_info
     my $hook	 = shift;
     my $html     = shift;
     my $app_info = shift;
+    
+    { 
+        no strict 'refs';
+        *{ __PACKAGE__."::"."APP_URL" } = \$app_info->{app_url};
+    }
 
     # create a html tree and parse
     print "extract_app_info  run \n";
