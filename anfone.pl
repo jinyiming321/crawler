@@ -322,6 +322,11 @@ sub extract_app_from_feeder{
 }
 
 sub get_author{
+    my $html = shift;
+
+    if($html =~ m/软件作者(.*?)(\S+)/s){
+        return $1;
+    }
     return $AUTHOR;
 }
 
@@ -605,9 +610,9 @@ sub get_current_version{
     my @list = $nodes[0]->find_by_tag_name('li');
     my $version_s = $list[1]->as_text ;
     #print $version_s;
-    $version_s =~ m/软件版本(.*?)(\d\S+)/s;
+    $version_s =~ m/软件版本(.*?)([0-9\.]+)/s;
     $tree->delete;
-    return $2||undef;
+    return $2||'unknow';
 }
 
 sub get_app_qr{

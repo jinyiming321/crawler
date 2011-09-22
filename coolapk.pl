@@ -33,12 +33,14 @@ use warnings;
 use HTML::TreeBuilder;
 use Carp ;
 
+=pod
 # use AMMS Module
 use AMMS::Util;
 use AMMS::AppFinder;
 use AMMS::Downloader;
 use AMMS::NewAppExtractor;
 use AMMS::UpdatedAppExtractor;
+=cut
 
 # Export function for test
 require Exporter;
@@ -78,8 +80,10 @@ unless( $task_type && $task_id && $conf_file ){
 }
 
 # check configure
+=pod
 die "\nplease check config parameter\n" 
     unless init_gloabl_variable( $conf_file );
+=cut
 
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
@@ -98,14 +102,13 @@ our %app_map_func = (
         last_update             => \&get_last_update,
         size                    => \&get_size,
         official_rating_stars   => \&get_official_rating_stars,
-        official_rating_times   => '',
-        app_qr                  => 
+        official_rating_times   => \&get_official_rating_times,
+        app_qr                  => \&get_app_qr,
         note                    => '',
-        apk_url                 => '',
+        apk_url                 => \&get_apk_url, #TODO write cookie code
         total_install_times     => \&get_total_install_times,
-        official_rating_times   => '',
-        description             => '',
-        official_category       => '',
+        description             => \&get_description,
+        official_category       => \&get_official_category,
         trustgo_category_id     => '',
         related_app             => '',
         creenshot               => '',
@@ -187,6 +190,7 @@ our $ICON_MARK  = 'brief';
 our $DESC_MARK  = 'screen';
 our $SIZE_MARK  = 'info';
 
+=pod
 if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
@@ -206,6 +210,8 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->run($task_id);
 }
+=cut
+
 
 sub FIRST_NODE			(){		0		}
 
@@ -313,11 +319,9 @@ sub extract_app_from_feeder{
     return 0 unless exists $params->{web_page};
 
     print "run extract_app_from_feeder_list ............\n";
-    # create a html tree and parse
-    #my $tree = init_html_parser( $params->{web_page} );
-    # exact app 
     return 0 if ref($params) ne 'HASH';
     return 0 unless exists $params->{web_page};
+
     eval{
     	my $html = $params->{web_page};
         get_app_list( $html,'t',$apps );
@@ -325,7 +329,7 @@ sub extract_app_from_feeder{
     if($@){
         warn('extract_app_from_feeder failed'.$@);
         $apps = {};
-	return 0
+	    return 0
     }
     return 0 unless scalar( %{ $apps } );
 	
@@ -415,16 +419,40 @@ sub get_price{
 
 sub get_description{
     my $html = shift;
-    my $mark = shift;
 
-    # find app description
-    # match for chinese description
-    # <div class="clear">
-    #if( $html =~ m/应用介绍:(.*?)<div class="clear">/s ){
-    # \u7cfb\u7edf\u5e94\u7528
-    if( $html =~ m/(应用介绍.*?)<div/s ){
+=pod
+start 应用详细介绍 
+end   酷安网点评
+<div class="appinfo1">
+<h2>应用详细介绍 · · ·</h2>
+<div>
+<p>点心桌面DXHome DXR是创新工场推出的一款适用于安卓系统的桌面软件，内置海量超炫桌面主题，以及丰富桌面滑屏特效。</p>
+<p> 功能特性：</p>
+<p> 1、 丰富炫酷桌面主题（点击菜单-主题更换）</p>
+<p> 2、 屏幕切换特效（点击菜单&mdash;桌面设置&mdash;滑屏效果）</p>
+<p> 3、 应用管理（抽屉中，长按应用图标即弹出操作菜单，轻拖删除或添加至桌面）</p>
+<p> 4、 文件夹操作（将桌面图标拖动重叠，可快速新建文件夹）</p>
+<p>
+<p>1、新增 主题推荐小部件-打开主题推荐，海量主题滚滚而来！</p>
+<p></p>
+<p> </p>
+<p>2、新增 快乐女生、老北京，植物大战僵尸主题！</p>
+<p></p>
+<p> </p>
+<p>3、优化 编辑状态UI</p>
+<p></p>
+<p> </p>
+<p>4、优化 抽屉滑动性能</p>
+<p></p>
+<p> </p>
+<p>5、修复 多处“强制关闭”问题</p>
+</div>
+<h2>酷安网点评 · · ·</h2>
+=cut
+    if( $html =~ m{(应用详细介绍.*?)</div>}s ){
         #( my $desc = $1 ) = ~ s/[\000-\037]//g;
         my $desc = $1;
+        $desc =~ s/[\000-\037]//g;
         $desc =~ s/<h\d+>//g;
         $desc =~ s/<\/h\d+>//g;
         $desc =~ s/<br>//g;
@@ -432,10 +460,14 @@ sub get_description{
         $desc =~ s/<br\s+\/>/\n/g;
         $desc =~ s/\r//g;
         $desc =~ s/\n//g;
+        $desc =~ s/<p>//g;
+        $desc =~ s#</p>##g;
+        $desc =~ s#<h2>##g;
+        $desc =~ s#</h2>##g;
         return $desc;
     }
 
-    return undef 
+    return 
 }
 
 sub get_size{
@@ -530,22 +562,25 @@ sub get_official_rating_stars{
     # find stars for app
     # html_string:
 =pod
-<div class="brief">
-<div class="down">
-<ul class="title">
-<p class="icon">
-<li class="h1">拉蜂文件管理器</li>
-<li>
-<i class="df-star star-4"></i>
-</li>
-</ul>
+<span class="ratingstars" rank="4.0" star="4" style="background-position: 0px -80px;">
+    <a class="s1" params="id=3446&star=1" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
+    <a class="s2" params="id=3446&star=2" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
+    <a class="s3" params="id=3446&star=3" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
+    <a class="s4" params="id=3446&star=4" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
+    <a class="s5" params="id=3446&star=5" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
+    <em>4.0</em>
+</span>
 =cut
-    # here, star and match by regular expression
-    if( $html =~ m/df-star star-(\d+)/s ){
-        return $1;
-    }
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
 
-    return undef;
+    my @nodes = $tree->look_down( class => 'ratingstars' );
+    return unless @nodes;
+
+    my @tags = $nodes[0]->find_by_tag_name('em');
+    my $rating_star = $tags[0]->as_text();
+
+    return $rating_star ||undef;
 }
 
 sub kb_m{
@@ -561,13 +596,11 @@ sub kb_m{
 
 sub get_official_category{
     my $html = shift;
-    my $web  = shift;
-    my $mark = 'qnav';
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
-    my @nodes = $tree->look_down( class => $mark );
+    my @nodes = $tree->look_down( id => 'navbar' );
     return 0 unless @nodes;
 
     # fetch category_id and official_category 
@@ -637,20 +670,18 @@ sub get_app_qr{
 
     # html sinppet
 =pod
-<div class="down">
-	<img src="/qrcode/17876.jpg">
-<br>
+<img src="/qr.php?sid=MzQ0NiwxOCw2LDEsLGNiNDdkOTcx" class="qrcode">
 =cut
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'down' );
+    my @nodes = $tree->look_down( class => 'qrcode' );
     return 0 unless @nodes;
 
     # fetch img from this snippet
-    my $img = ( $nodes[0]->find_by_tag_name($IMG) )[0]->attr($SRC);
+    my $qr = $nodes[0]->attr('src');
     $tree->delete;
 
-    return trim_url($url_base).$img || undef;
+    return trim_url($url_base).$qr||undef;
 }
 sub get_screenshot{
     my $html = shift;
@@ -870,6 +901,21 @@ sub get_max_os_version{
         my $max_os_version = ${ __PACKAGE__."::"."max_os_version" };
         return ref($max_os_version) ? $$max_os_version : undef;
     }
+}
+
+sub get_official_rating_times{
+    my $html = shift;
+   
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
+    # <span class="ratinglabel">135个评分：</span>
+    my @nodes = $tree->look_down( class => 'ratinglabel' );
+    return unless @nodes;
+
+    $nodes[0]->as_text =~ m/(\d+)/;
+    my $rating_times = $1;
+    $tree->delete;
+    return $rating_times;
 }
 
 1;
