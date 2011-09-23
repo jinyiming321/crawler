@@ -37,12 +37,14 @@ use HTTP::Cookies;
 use LWP::UserAgent;
 use LWP::Simple;
 
+=pod
 # use AMMS Module
 use AMMS::Util;
 use AMMS::AppFinder;
 use AMMS::Downloader;
 use AMMS::NewAppExtractor;
 use AMMS::UpdatedAppExtractor;
+=cut
 
 # Export function for test
 require Exporter;
@@ -83,6 +85,7 @@ explain:
 ==================================================
 EOF
 
+=pod
 # check args 
 unless( $task_type && $task_id && $conf_file ){
     die $usage;
@@ -91,6 +94,7 @@ unless( $task_type && $task_id && $conf_file ){
 # check configure
 die "\nplease check config parameter\n" 
     unless init_gloabl_variable( $conf_file );
+=cut
 
 our %category_mapping=(
     "系统工具"    => 22,
@@ -173,6 +177,7 @@ our @app_info_list = qw(
 );
 
 our $AUTHOR     = '酷安网';
+=pod
 if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
@@ -192,7 +197,7 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->run($task_id);
 }
-
+=cut
 
 sub get_page_list{
     my $html        = shift;
@@ -208,7 +213,14 @@ sub get_page_list{
 
     my @tags = $nodes[0]->find_by_tag_name('a');
     return unless @tags;
+    # /apk/news/list-4/?p=4&sort=default
     my $last_page = $tags[-1]->attr('href');
+    if( $last_page =~ m/###/ ){
+        $last_page = 1;
+        my @page = $nodes[0]->look_down( class => 'selc');
+        push @{$pages},  $url_base.$page[0]->attr('href');
+        return
+    }
 
     ( my $needed_s_url = $last_page ) =~ s/list-(\d+)/'list-'.'$num'/e;
     my $total = $1;
@@ -240,7 +252,7 @@ sub extract_page_list{
     # create a html tree and parse
     my $web = $params->{web_page};
     eval{
-        &get_page_list( $web,undef,$pages );
+        get_page_list( $web,undef,$pages );
     };
     if($@){
 #        print Dumper $pages;
@@ -289,19 +301,16 @@ sub extract_app_from_feeder{
     return 0 unless exists $params->{web_page};
 
     print "run extract_app_from_feeder_list ............\n";
-    return 0 if ref($params) ne 'HASH';
-    return 0 unless exists $params->{web_page};
-
     eval{
     	my $html = $params->{web_page};
         get_app_list( $html,'t',$apps );
     };
     if($@){
-        warn('extract_app_from_feeder failed'.$@);
+        Carp::croak('extract_app_from_feeder failed'.$@);
         $apps = {};
 	    return 0
     }
-    return 0 unless scalar( %{ $apps } );
+    return 0 unless scalar(keys %{ $apps } );
 	
     return 1;
 }
@@ -946,7 +955,26 @@ sub get_official_rating_times{
 sub run{
     use LWP::Simple;
     #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
+    # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
+    my $content = get('http://www.coolapk.com/game/shoot/');
+    my @pages = ();
+    extract_page_list(undef,undef,{web_page=>$content},\@pages);
+    use Data::Dumper;
+    print Dumper \@pages;
+    exit 0;
+
+	use Data::Dumper;
+    print Dumper \@pages;
+    
+    my $apps = {};
+    foreach my $page( @pages ){
+        $content = get($page);
+        &extract_app_from_feeder(undef,undef,{web_page=>$content},$apps);
+    }
+	my $app_num = scalar (keys %{$apps});
+	print Dumper $apps;
+	print "app_num is $app_num\n";
+	exit 0;
     my $html = 'coolapk-htc.html';
     use FileHandle;
     my $fh = new FileHandle(">>$html")||die $@;
@@ -961,8 +989,8 @@ sub run{
 
 }
 1;
+&run;
 
-#&run;
 __END__
 
 
