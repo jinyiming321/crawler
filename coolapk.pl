@@ -31,7 +31,16 @@ use utf8;
 use warnings;
 use HTML::TreeBuilder;
 use Carp ;
+use File::Path;
+use URI::URL;
+use IO::File;
+use English;
+use Encode qw( encode );
+use File::Path;
+use Digest::MD5 qw(md5_hex);
 
+use HTTP::Status;
+use HTTP::Date;
 use HTTP::Request;
 use HTTP::Cookies;
 use LWP::UserAgent;
@@ -47,7 +56,7 @@ use AMMS::UpdatedAppExtractor;
 # Export function for test
 require Exporter;
 our @ISA     = qw(Exporter);
-our @EXPORT  = qw(
+our @EXPORT_OK  = qw(
     extract_page_list 
     extract_app_from_feeder 
     extract_app_info
@@ -113,7 +122,7 @@ our %category_mapping=(
     "棋牌游戏"    => 802,
     "体育运动"    => 814,
     "动作射击"    => 821,
-	);
+);
 
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
@@ -121,7 +130,7 @@ our %category_mapping=(
 our %app_map_func = (
         author                  => \&get_author, 
         app_name                => \&get_app_name,
-		current_version         => \&get_current_version,
+        current_version         => \&get_current_version,
         icon                    => \&get_icon,
         price                   => \&get_price,
         system_requirement      => \&get_system_requirement,
@@ -140,7 +149,7 @@ our %app_map_func = (
         official_category       => \&get_official_category,
         trustgo_category_id     => '',
         related_app             => \&get_related_app,
-        creenshot               => \&get_screenshot,
+        screenshot               => \&get_screenshot,
         permission              => \&get_permission,
         status                  => '',
         category_id             => '',
@@ -149,7 +158,7 @@ our %app_map_func = (
 our @app_info_list = qw(
         author                  
         app_name
-		current_version
+        current_version
         icon                    
         price                   
         system_requirement      
@@ -167,12 +176,13 @@ our @app_info_list = qw(
         official_category       
         trustgo_category_id     
         related_app             
-        creenshot               
+        screenshot               
         permission              
         status                  
 );
 
 our $AUTHOR     = '酷安网';
+
 if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
@@ -184,6 +194,7 @@ elsif( $task_type eq 'new_app' )##download new app info and apk
 {
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
+    $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $NewAppExtractor->run($task_id);
 }
 elsif( $task_type eq 'update_app' )##download updated app info and apk
@@ -192,7 +203,6 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->run($task_id);
 }
-
 
 sub get_page_list{
     my $html        = shift;
@@ -208,7 +218,14 @@ sub get_page_list{
 
     my @tags = $nodes[0]->find_by_tag_name('a');
     return unless @tags;
+    # /apk/news/list-4/?p=4&sort=default
     my $last_page = $tags[-1]->attr('href');
+    if( $last_page =~ m/###/ ){
+        $last_page = 1;
+        my @page = $nodes[0]->look_down( class => 'selc');
+        push @{$pages},  $url_base.$page[0]->attr('href');
+        return
+    }
 
     ( my $needed_s_url = $last_page ) =~ s/list-(\d+)/'list-'.'$num'/e;
     my $total = $1;
@@ -240,7 +257,7 @@ sub extract_page_list{
     # create a html tree and parse
     my $web = $params->{web_page};
     eval{
-        &get_page_list( $web,undef,$pages );
+        get_page_list( $web,undef,$pages );
     };
     if($@){
 #        print Dumper $pages;
@@ -267,8 +284,9 @@ sub get_app_list{
     return unless @tags;
 
     foreach my $tag(@tags){
+        return unless ref($tag);
         my $link = $tag->attr('href');
-        $link =~ m/apk-(\d+)/;
+        $link =~ m/-(\d+)/;
         $apps_href->{$1} = trim_url($url_base).$link;
     }
     } @nodes;
@@ -289,20 +307,16 @@ sub extract_app_from_feeder{
     return 0 unless exists $params->{web_page};
 
     print "run extract_app_from_feeder_list ............\n";
-    return 0 if ref($params) ne 'HASH';
-    return 0 unless exists $params->{web_page};
-
     eval{
-    	my $html = $params->{web_page};
+        my $html = $params->{web_page};
         get_app_list( $html,'t',$apps );
     };
     if($@){
-        warn('extract_app_from_feeder failed'.$@);
         $apps = {};
-	    return 0
+        return 0
     }
-    return 0 unless scalar( %{ $apps } );
-	
+    return 0 unless scalar(keys %{ $apps } );
+
     return 1;
 }
 
@@ -396,8 +410,8 @@ sub get_description{
         $desc =~ s/[\000-\037]//g;
         $desc =~ s/<.+?>//g;
         #$desc =~ s#<a.+?</strong>##g;
-		$desc =~ s#&ldquo#"#g;
-		$desc =~ s#&rdquo#"#g;
+        $desc =~ s#&ldquo#"#g;
+        $desc =~ s#&rdquo#"#g;
         return $desc;
     }
 
@@ -519,7 +533,7 @@ sub get_apk_url{
     # <img class="qrcode" src="/qr.php?sid=MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==">
     $html =~ m{img class="qrcode".*?sid=(.+?)"}s;
     my $sid = $1;
-	# save sid for get_permission's sid
+    # save sid for get_permission's sid
     {
         no strict 'refs';
         ${ __PACKAGE__."::"."SID" } = $sid;
@@ -527,20 +541,19 @@ sub get_apk_url{
 
     unless( -e $cookie_file ){
         Carp::croak("can't get cookie from coolapk")
-			unless get_cookie($cookie_file);
+            unless get_cookie($cookie_file);
     }
 
     my $ua = LWP::UserAgent->new;
     my $cookie_jar = HTTP::Cookies->new(
-		file 		=> $cookie_file,
-	);
-	$cookie_jar->load($cookie_file);
+         file => $cookie_file,
+    );
+    $cookie_jar->load($cookie_file);
     $ua->cookie_jar($cookie_jar);
     $ua->agent("Mozilla/4.0");
     my $retry = 0;
-	
-    DOWN_LOAD_APK:
 
+    DOWN_LOAD_APK:
     my $apk_download_url = "http://www.coolapk.com/dl";
     # http://www.coolapk.com/dl?sid=MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==&inajax=1&op=download&d=1316691530671
     # header
@@ -634,45 +647,15 @@ sub get_official_category{
 }
 
 #-------------------------------------------------------------
-=head
- app_info:
-	-author
-	-app_url
-	-app_name
-	-icon
-	-price
-	-system_requirement
-	-min_os_version
-	-max_os_version
-	-resolution
-	-last_update
-	-size
-	-official_rating_stars
-	-official_rating_times
-	-app_qr
-	-note
-	-apk_url
-	-total_install_times
-	-official_rating_times
-	-description
-	-official_category
-	-trustgo_category_id
-	-related_app
-	-creenshot
-	-permission
-	-status
- app_feeder
-	category_id
-=cut
 
 sub get_current_version{
     my $html = shift;
     #print $version_s;
-	my $tree = new HTML::TreeBuilder;
-	$tree->parse($html);
-	my @nodes = $tree->look_down( class => 'appdetails');
-	return unless @nodes;
-	my $text = $nodes[0]->as_text;
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
+    my @nodes = $tree->look_down( class => 'appdetails');
+    return unless @nodes;
+    my $text = $nodes[0]->as_text;
     $text =~ m/版本(.*?)([0-9\.]+)/s;
     return $2||undef;
 }
@@ -690,7 +673,7 @@ sub get_app_qr{
     return 0 unless @nodes;
 
     # fetch img from this snippet
-	my @tags = $nodes[0]->find_by_tag_name('img');
+    my @tags = $nodes[0]->find_by_tag_name('img');
     my $qr = $tags[0]->attr('src');
     $tree->delete;
 
@@ -740,12 +723,12 @@ sub get_permission{
     my $permission = [];
     my $sid;
     my $app_url;
-	my $app_id;
-    {	
+    my $app_id;
+    {
         no strict 'refs';
         $sid = ${__PACKAGE__."::"."SID"};
         ($app_url = ${__PACKAGE__."::"."APP_URL"}) =~ m/(\d+)/;
-		$app_id = $1;
+        $app_id = $1;
     }
     unless( -e $cookie_file ){
         return unless get_cookie($cookie_file);
@@ -753,9 +736,9 @@ sub get_permission{
 
     my $ua = LWP::UserAgent->new;
     my $cookie_jar = HTTP::Cookies->new(
-		file 		=> $cookie_file,
-	);
-	$cookie_jar->load($cookie_file);
+        file    => $cookie_file,
+    );
+    $cookie_jar->load($cookie_file);
     $ua->cookie_jar($cookie_jar);
     $ua->agent("Mozilla/4.0");
     my $retry = 0;
@@ -768,14 +751,10 @@ sub get_permission{
     #   op	download
     #   sid	MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==
     #
-	# ac	ajax
-	#d	1316753629742
-	#  inajax	1
-   # 	op	viewpermissions
     my $res = $ua->post( 
         $permission_url,
-		[
-			id		=> $app_id,
+        [
+            id=> $app_id,
         ]
     );
     if( $res->status_line =~ m/200/ ){
@@ -946,23 +925,95 @@ sub get_official_rating_times{
 sub run{
     use LWP::Simple;
     #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
+    # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
+    my $content = get('http://www.coolapk.com/game/shoot/');
+    my @pages = ();
+    extract_page_list(undef,undef,{web_page=>$content},\@pages);
+    use Data::Dumper;
+    print Dumper \@pages;
+    exit 0;
+
+    use Data::Dumper;
+    print Dumper \@pages;
+    
+    my $apps = {};
+    foreach my $page( @pages ){
+        $content = get($page);
+        &extract_app_from_feeder(undef,undef,{web_page=>$content},$apps);
+    }
+    my $app_num = scalar (keys %{$apps});
+    print Dumper $apps;
+    print "app_num is $app_num\n";
+    exit 0;
     my $html = 'coolapk-htc.html';
     use FileHandle;
     my $fh = new FileHandle(">>$html")||die $@;
     $fh->print($content);
     $fh->close;
     my $app_info = {};
-	$app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
+    $app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
     extract_app_info( undef,undef,$content,$app_info );
-	use Data::Dumper;
+    use Data::Dumper;
     print Dumper $app_info;
     #    print "key => ".decode_utf8($app_info->{$_}\n";
-
 }
-1;
+sub download_app_apk 
+{
+    my $self    = shift;
+    my $hook_name  = shift;
+    my $apk_info= shift;
 
+    my $apk_file;
+    my $md5 =   $apk_info->{'app_url_md5'};
+    my $apk_dir= $self->{'TOP_DIR'}.'/'. get_app_dir( $self->getAttribute('MARKET'),$md5).'/apk';
+    my $cookie_jar = HTTP::Cookies->new(
+         file => $cookie_file,
+    );
+    $cookie_jar->load($cookie_file);
+
+    my $downloader  = new AMMS::Downloader;
+    $downloader->header({Referer=>$apk_info->{'app_url'}});
+    $downloader->{USERAGENT}->cookie_jar($cookie_jar);
+
+    if( $apk_info->{price} ne '0' ){
+        $apk_info->{'status'}='paid';
+        return 1;
+    }
+    eval { 
+        rmtree $apk_dir if -e $apk_dir;
+        mkpath $apk_dir;
+    };
+    if ( $@ )
+    {
+        $self->{ 'LOGGER'}->error( sprintf("fail to create directory,App ID:%s,Error: %s",
+                                    $md5,$@)
+                                 );
+        $apk_info->{'status'}='fail';
+        return 0;
+    }
+
+    $downloader->timeout($self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime'));
+    $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
+    if (!$downloader->is_success)
+    {
+        $apk_info->{'status'}='fail';
+        return 0;
+    }
+
+    my $unique_name=md5_hex("$apk_dir/$apk_file")."__".$apk_file;
+
+    rename("$apk_dir/$apk_file","$apk_dir/$unique_name");
+
+
+    $apk_info->{'status'}='success';
+    $apk_info->{'app_unique_name'} = $unique_name;
+
+    return 1;
+}
+
+1;
 #&run;
+
 __END__
 
 

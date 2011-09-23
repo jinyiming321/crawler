@@ -35,6 +35,7 @@ PRIOR_CHECK_ATTR	t/DataCheck.pm	/^sub PRIOR_CHECK_ATTR () {$/;"	s
 PRIOR_CHECK_ATTR	t/lib/DataCheck.pm	/^sub PRIOR_CHECK_ATTR () {$/;"	s
 a1	coolapk-htc.html	/^<a href="###" class="gray">第一页<\/a><a href="###" class="gray">&lt;<\/a><a name="a1" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=1" class="selc">1<\/a><a name="a2" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=2">2<\/a><a name="a3" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=3">3<\/a><a name="a4" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=4">4<\/a><a name="a5" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=5">5<\/a><a name="a6" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=6">6<\/a><a name="a7" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=7">7<\/a><a href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=2">&gt;<\/a><a href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=1555&p=9">最末页<\/a><\/div>$/;"	a
 a1	coolapk-htc.html	/^<a href="###" class="gray">第一页<\/a><a href="###" class="gray">&lt;<\/a><a name="a1" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=2316&p=1" class="selc">1<\/a><a name="a2" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=2316&p=2">2<\/a><a name="a3" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=2316&p=3">3<\/a><a name="a4" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=2316&p=4">4<\/a><a name="a5" href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=2316&p=5">5<\/a><a href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=2316&p=2">&gt;<\/a><a href="javascript:void(0);" onclick="doAjaxLoad(this,'get_commentlist')" params="id=2316&p=5">最末页<\/a><\/div>$/;"	a
+a7	coolapk-htc.html	/^	<tr><td colspan="4"><div id="pagelist"><a href="\/apk\/system\/list-1\/?p=1&sort=default">第一页<\/a><a href="\/apk\/system\/list-9\/?p=9&sort=default">&lt;<\/a><a name="a7" href="\/apk\/system\/list-7\/?p=7&sort=default">7<\/a><a name="a8" href="\/apk\/system\/list-8\/?p=8&sort=default">8<\/a><a name="a9" href="\/apk\/system\/list-9\/?p=9&sort=default">9<\/a><a name="a10" href="\/apk\/system\/list-10\/?p=10&sort=default" class="selc">10<\/a><a href="###" class="gray">&gt;<\/a><a href="###" class="gray">最末页<\/a><\/div><\/td><\/tr>$/;"	a
 addHook	AMMS/ApkDownloader.pm	/^sub addHook$/;"	s
 addHook	AMMS/AppExtractor.pm	/^sub addHook$/;"	s
 addHook	AMMS/AppFinder.pm	/^sub addHook$/;"	s
@@ -43,7 +44,6 @@ addHook	AMMS/UpdatedAppExtractor.pm	/^sub addHook$/;"	s
 addHook	AMMS/test.pl	/^sub addHook$/;"	s
 app_info	anfone.pl	/^ app_info:$/;"	l
 app_info	anfone_for_test.pl	/^ app_info:$/;"	l
-app_info	coolapk.pl	/^ app_info:$/;"	l
 app_info	parse_template.pl	/^ app_info:$/;"	l
 cancel_transaction	AMMS/DBHelper.pm	/^sub cancel_transaction$/;"	s
 check	t/lib/DataCheck.pm	/^sub check{$/;"	s
@@ -61,6 +61,7 @@ clean_app_data	AMMS/UpdatedAppExtractor.pm	/^sub clean_app_data$/;"	s
 clean_app_data	AMMS/test.pl	/^sub clean_app_data$/;"	s
 comment	coolapk-htc.html	/^<div class="tlt"><span class="selc"><a name="comment" href="#comment" target="_self">评论(共111条评论)<\/a><\/span><\/div>$/;"	a
 comment	coolapk-htc.html	/^<div class="tlt"><span class="selc"><a name="comment" href="#comment" target="_self">评论(共208条评论)<\/a><\/span><\/div>$/;"	a
+comment	coolapk-htc.html	/^<div class="tlt"><span class="selc"><a name="comment" href="#comment" target="_self">评论(共6条评论)<\/a><\/span><\/div>$/;"	a
 comment	t/8766.html	/^<h1><a name="comment"><\/a>发表评论：<\/h1>$/;"	a
 concatenate_numeric_field	AMMS/DBHelper.pm	/^sub concatenate_numeric_field$/;"	s
 concatenate_string_field	AMMS/DBHelper.pm	/^sub concatenate_string_field$/;"	s
@@ -197,6 +198,7 @@ fn_turnPage	t/7.html	/^		function fn_turnPage(obj_go){$/;"	f
 fn_turnPage	t/8.html	/^		function fn_turnPage(obj_go){$/;"	f
 fn_turnPage	t/9.html	/^		function fn_turnPage(obj_go){$/;"	f
 format_category	generate_package.pl	/^sub format_category{$/;"	s
+func	hello.pl	/^sub func{$/;"	s
 generate_meta_file	AMMS/AppExtractor.pm	/^sub generate_meta_file$/;"	s
 generate_meta_file	AMMS/NewAppExtractor.pm	/^sub generate_meta_file$/;"	s
 generate_meta_file	AMMS/UpdatedAppExtractor.pm	/^sub generate_meta_file$/;"	s
@@ -500,6 +502,17 @@ warn	AMMS/AppFinder.pm	/^sub warn$/;"	s
 warn	AMMS/NewAppExtractor.pm	/^sub warn$/;"	s
 warn	AMMS/UpdatedAppExtractor.pm	/^sub warn$/;"	s
 warn	AMMS/test.pl	/^sub warn$/;"	s
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=15582282" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=17767111" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=21778182" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=22252261" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=27622224" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=29625167" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=34698172" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=43033230" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=50027160" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=58019173" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
+冷笑话:joke	coolapk-htc.html	/^	<a href="\/dl?sid=MjQ1MCwxOCw5LDEsLDUwNGU0M2Ex&rc=90886123" name="冷笑话:joke" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 冷笑话:joke">$/;"	a
 墨迹天气	coolapk-htc.html	/^	<a href="\/dl?sid=MTU1NSwxOCw1OSwxLCw2M2JmMmQzYQ&rc=30925019" name="墨迹天气" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 墨迹天气">$/;"	a
 墨迹天气	coolapk-htc.html	/^	<a href="\/dl?sid=MTU1NSwxOCw1OSwxLCw2M2JmMmQzYQ&rc=31856062" name="墨迹天气" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 墨迹天气">$/;"	a
 墨迹天气	coolapk-htc.html	/^	<a href="\/dl?sid=MTU1NSwxOCw1OSwxLCw2M2JmMmQzYQ&rc=48067048" name="墨迹天气" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 墨迹天气">$/;"	a
