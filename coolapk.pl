@@ -201,6 +201,7 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
 {
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
+    $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $UpdatedAppExtractor->run($task_id);
 }
 

@@ -12,9 +12,10 @@ $ua->env_proxy;
 open(FEED,">coolapk.url");
 FEED->autoflush(1);
 
-my $apps_portal='http://www.coolapk.com/apk';
+my $apps_portal='http://www.coolapk.com/apk/';
+my $base_url = 'http://www.coolapk.com';
 
-foreach my $portal ( $apps_portal){
+foreach my $portal ( $apps_portal  ){
     my $response = $ua->get($portal);
     while( not $response->is_success){
         $response=$ua->get($portal);
@@ -37,15 +38,15 @@ foreach my $portal ( $apps_portal){
             for(@tags){
                 my $link = $_->attr('href');
                 if($link =~ m/game/ ){
-                    print FEED $apps_portal.$link."\n";
+                    print FEED $base_url.$link."\n";
                 }
                 if($link =~ m/apk/ ){
-                    print FEED 'http://www.coolapk.com'.$link."\n";
+                    print FEED $base_url.$link."\n";
                 }
             }
         };
         if($@){
-            die "fail to extract Hiapk feeder url";
+            die "fail to extract Hiapk feeder url: $@";
         }
     }
 }
