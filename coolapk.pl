@@ -173,7 +173,6 @@ our @app_info_list = qw(
 );
 
 our $AUTHOR     = '酷安网';
-=pod
 if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
@@ -194,7 +193,6 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     $UpdatedAppExtractor->run($task_id);
 }
 
-=cut
 
 sub get_page_list{
     my $html        = shift;
