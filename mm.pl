@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 #===============================================================================
-#         FILE: ?? 
+#         FILE: mm.pl
 #        USAGE: task_type task_id configure
 # for example => $0 find_app 144 ./default.cfg
 #  DESCRIPTION: 
