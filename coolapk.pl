@@ -522,8 +522,6 @@ sub get_apk_url{
         ${ __PACKAGE__."::"."SID" } = $sid;
     }
 
-    my $cookie_file = 'd:\crawler\cookie.coolapk';
-#	get_cookie($cookie_file);
     unless( -e $cookie_file ){
         Carp::croak("can't get cookie from coolapk")
 			unless get_cookie($cookie_file);
