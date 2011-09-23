@@ -535,8 +535,8 @@ sub kb_m{
     my $size = shift;
 
     # MB -> KB 
-    $size = $1*1024 if( $size =~ s/([\d\.]+)(.*MB.*)/$1/ );
-    $size = $1  if( $size =~ s/([\d\.]+)(.*KB.*)/$1/ );
+    $size = $1*1024 if( $size =~ s/([\d\.]+)(.*MB.*)/$1/i );
+    $size = $1  if( $size =~ s/([\d\.]+)(.*KB.*)/$1/i );
 
     # return byte
     return int($size*1024);
