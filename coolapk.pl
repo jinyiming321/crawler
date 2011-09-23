@@ -63,6 +63,7 @@ my $url_base    = 'http://www.coolapk.com';
 
 my $login_url = 'http://www.coolapk.com/do.php?ac=login';
 my $cookie_file = "/root/crawler/cookie.coolapk";
+#my $cookie_file = "f:/crawler/cookie.coolapk";
 # for permission ajax fetch content
 my $permission_url
 	= 'http://www.coolapk.com/do.php?ac=ajax&inajax=1&op=viewpermissions&d=1316753629742';
@@ -120,6 +121,7 @@ our %category_mapping=(
 our %app_map_func = (
         author                  => \&get_author, 
         app_name                => \&get_app_name,
+		current_version         => \&get_current_version,
         icon                    => \&get_icon,
         price                   => \&get_price,
         system_requirement      => \&get_system_requirement,
@@ -146,7 +148,8 @@ our %app_map_func = (
 
 our @app_info_list = qw(
         author                  
-        app_name                
+        app_name
+		current_version
         icon                    
         price                   
         system_requirement      
@@ -170,7 +173,6 @@ our @app_info_list = qw(
 );
 
 our $AUTHOR     = '酷安网';
-
 if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
@@ -190,6 +192,7 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->run($task_id);
 }
+
 
 sub get_page_list{
     my $html        = shift;
@@ -664,21 +667,13 @@ sub get_official_category{
 
 sub get_current_version{
     my $html = shift;
-    my $web  = shift;
-    # mark is class => 'info'
-    my $mark = shift||'info';
-
-    # find app install time and app info l-list
-    # in this market,install time is in list[4]
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => $mark );
-
-    my @list = $nodes[0]->find_by_tag_name('li');
-    my $version_s = $list[1]->as_text ;
     #print $version_s;
-    $version_s =~ m/软件版本(.*?)(\d\S+)/s;
-    $tree->delete;
+	my $tree = new HTML::TreeBuilder;
+	$tree->parse($html);
+	my @nodes = $tree->look_down( class => 'appdetails');
+	return unless @nodes;
+	my $text = $nodes[0]->as_text;
+    $text =~ m/版本(.*?)([0-9\.]+)/s;
     return $2||undef;
 }
 
@@ -951,7 +946,7 @@ sub get_official_rating_times{
 sub run{
     use LWP::Simple;
     #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    my $content = get('http://www.coolapk.com/apk-1555-com.moji.mjweather/');
+    my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
     my $html = 'coolapk-htc.html';
     use FileHandle;
     my $fh = new FileHandle(">>$html")||die $@;
@@ -961,16 +956,8 @@ sub run{
 	$app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
     extract_app_info( undef,undef,$content,$app_info );
 	use Data::Dumper;
-    #print Dumper $app_info;
+    print Dumper $app_info;
     #    print "key => ".decode_utf8($app_info->{$_}\n";
-    foreach my $attr(@app_info_list){
-		if( ref($app_info->{$attr}) ){
-			my $value = Dumper $app_info->{$attr};
-			print "attr : $attr => ".$value."\n";
-		}
-		
-        else{print "attr : $attr => ".decode_utf8($app_info->{$attr})."\n";}
-    }
 
 }
 1;
