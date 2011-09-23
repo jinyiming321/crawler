@@ -171,7 +171,6 @@ our @app_info_list = qw(
 
 our $AUTHOR     = '酷安网';
 
-=pod
 if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
@@ -190,19 +189,6 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->run($task_id);
-}
-=cut
-
-
-sub FIRST_NODE			(){		0		}
-
-sub init_html_parser{
-    my $html = shift;
-    my $tree = new HTML::TreeBuilder;
-
-    $tree->parse($html);
-
-    return $tree;
 }
 
 sub get_page_list{
@@ -859,8 +845,6 @@ sub extract_app_info
 
     # create a html tree and parse
     print "extract_app_info  run \n";
-    use Encode;
-    $html = Encode::decode_utf8($html);
 
     eval{
         # TODO get note 'not find'
