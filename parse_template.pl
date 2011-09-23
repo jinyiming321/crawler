@@ -14,7 +14,7 @@
 #               AMMS::NewAppExtractor,AMMS::AppFinder,AMMS::Util
 #         BUGS: send email to me, if there is any bugs.
 #        NOTES: 
-#       AUTHOR: James King, jinyiming456@gmail.com
+#       AUTHOR: 
 #      VERSION: 1.0
 #      CREATED: 2011/9/24 13:35
 #     REVISION: 1.0
@@ -31,11 +31,6 @@ use utf8;
 use warnings;
 use HTML::TreeBuilder;
 use Carp ;
-
-use HTTP::Request;
-use HTTP::Cookies;
-use LWP::UserAgent;
-use LWP::Simple;
 
 # use AMMS Module
 use AMMS::Util;
@@ -57,15 +52,9 @@ my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
-my $market      = 'www.coolapk.com';
-my $url_base    = 'http://www.coolapk.com';
+my $market      = ''
+my $url_base    = ''
 #my $downloader  = new AMMS::Downloader;
-
-my $login_url = 'http://www.coolapk.com/do.php?ac=login';
-my $cookie_file = "/root/crawler/cookie.coolapk";
-# for permission ajax fetch content
-my $permission_url
-	= 'http://www.coolapk.com/do.php?ac=ajax&inajax=1&op=viewpermissions&d=1316753629742';
 
 my $usage =<<EOF;
 ==================================================
@@ -91,29 +80,6 @@ unless( $task_type && $task_id && $conf_file ){
 die "\nplease check config parameter\n" 
     unless init_gloabl_variable( $conf_file );
 
-our %category_mapping=(
-    "系统工具"    => 22,
-    "主题美化"    => 1203,
-    "社交聊天"    => "18,400",
-    "网络工具"    => "2210,2206",
-    "媒体娱乐"    => 7,
-    "桌面插件"    => 1206,
-    "资讯阅读"    => 1,
-    "出行购物"    => "17,21",
-    "生活助手"    => 19,
-    "实用工具"    => 9,
-    "财经投资"    => 2,
-
-    "其他"        => 0,
-
-    # 游戏
-    "休闲游戏"    => 818,
-    "益智游戏"    => 810,
-    "棋牌游戏"    => 802,
-    "体育运动"    => 814,
-    "动作射击"    => 821,
-	);
-
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
 # so i remove it from this mapping
@@ -131,8 +97,8 @@ our %app_map_func = (
         official_rating_stars   => \&get_official_rating_stars,
         official_rating_times   => \&get_official_rating_times,
         app_qr                  => \&get_app_qr,
-        note                    => '',
-        apk_url                 => \&get_apk_url, 
+        note                    => \&get_note,
+        apk_url                 => \&get_apk_url,
         total_install_times     => \&get_total_install_times,
         description             => \&get_description,
         official_category       => \&get_official_category,
@@ -140,7 +106,7 @@ our %app_map_func = (
         related_app             => \&get_related_app,
         creenshot               => \&get_screenshot,
         permission              => \&get_permission,
-        status                  => '',
+        status                  => ''
         category_id             => '',
 );
 
@@ -158,8 +124,10 @@ our @app_info_list = qw(
         official_rating_stars   
         official_rating_times   
         app_qr                  
+        note                    
         apk_url                 
         total_install_times     
+        official_rating_times   
         description             
         official_category       
         trustgo_category_id     
@@ -167,11 +135,44 @@ our @app_info_list = qw(
         creenshot               
         permission              
         status                  
-);
+        category_id             
+    );
+
+our %category_mapping=(
+    "系统管理"    => 2206,
+    "网络浏览"    => 2210,
+    "影音媒体"    => 7,
+    "文字输入"    => 2217,
+    "安全防护"    => 23,
+    "社区聊天"    => "400,18",
+    "信息查询"    => 22,
+    "导航地图"    => "13,2105",
+    "通讯辅助"    => 2209,
+    "阅读资讯"    => "14,1",
+    "生活常用"    => 19,
+    "财务工具"    => 2, 
+    "学习办公"    => "5,16",
+    "其他分类"    => 0,
+    "主题图像"    => 1203,
+    "棋牌游戏"    => 802,
+    "益智休闲"    => 806,
+    "体育运动"    => 814,
+    "竞速游戏"    => 811,
+    "射击游戏"    => 821,
+    "角色扮演"    => 812,
+    "冒险游戏"    => 800,
+    "模拟经营"    => 813,
+    "策略塔防"    => 815,
+    "养成游戏"    => 813,
+    "格斗游戏"    => 825,
+    "飞行游戏"    => 826,
+    "其他游戏"    => 8,
+    "音乐游戏"    => 809,
+    "动作游戏"    => 823,
+	);
 
 our $AUTHOR     = '酷安网';
 
-=pod
 if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
@@ -191,19 +192,8 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->run($task_id);
 }
-=cut
 
 
-sub FIRST_NODE			(){		0		}
-
-sub init_html_parser{
-    my $html = shift;
-    my $tree = new HTML::TreeBuilder;
-
-    $tree->parse($html);
-
-    return $tree;
-}
 
 sub get_page_list{
     my $html        = shift;
@@ -212,24 +202,6 @@ sub get_page_list{
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-    # <a href="/apk/downloads/list-56/?p=56&sort=lastdown">最末页</a>
-
-    my @nodes = $tree->look_down( id => 'pagelist' );
-    Carp::croak('not find page_make : pagelist ') unless scalar(@nodes);
-
-    my @tags = $nodes[0]->find_by_tag_name('a');
-    return unless @tags;
-    my $last_page = $tags[-1]->attr('href');
-
-    ( my $needed_s_url = $last_page ) =~ s/list-(\d+)/'list-'.'$num'/e;
-    my $total = $1;
-    $needed_s_url =~ s/p=\d+/'p='.'$num'/e;
-
-    # save pages to pages arrayref
-    @{ $pages } = map {
-        ( my $temp = $needed_s_url ) =~ s/\$num/$_/g; 
-        trim_url($url_base).$temp;
-    } (1..$total);
     $tree->delete;
 }
 
@@ -272,17 +244,6 @@ sub get_app_list{
     Carp::croak('not find apps nodes by this mark name')
         unless ( scalar(@nodes) );
 
-    map{
-    my @tags = $_->find_by_tag_name('a');
-    # <a target="_blank" href="/apk-3965-com.lingdong.quickpai.compareprice.ui.acitvity/">?ì??1o?????÷</a>
-    return unless @tags;
-
-    foreach my $tag(@tags){
-        my $link = $tag->attr('href');
-        $link =~ m/apk-(\d+)/;
-        $apps_href->{$1} = trim_url($url_base).$link;
-    }
-    } @nodes;
 
     $tree->delete;
     return
@@ -335,17 +296,6 @@ sub get_app_url{
     $tree->parse($html);
     my @nodes = $tree->look_down( class => 'down' );
     return 0 unless @nodes;
-    my @tags = $nodes[0]->find_by_tag_name('img');
-    my $src = $tags[0]->attr('src');
-
-    # img string
-    # <img src="/qrcode/18387.jpg">
-    $tree->delete;
-
-    if( $src =~ m{/(\d+)\.jpg}i ){
-        return trim_url($url_base).'/soft/'.$1.'.html';
-    }
-
     return undef;
 }
 
@@ -360,10 +310,6 @@ sub get_icon{
     my @nodes = $tree->look_down( class => 'apptitle');
     return unless @nodes;
 
-    my @tags = $nodes[0]->find_by_tag_name('img');
-    my $icon = $url_base.$tags[0]->attr('src');
-
-    # delete what I have done
     $tree->delete;
     return $icon || undef;
 }
@@ -371,25 +317,11 @@ sub get_icon{
 sub get_app_name{
     my $html = shift;
     my $mark = shift||'apptitle';
+    my $app_name;
     
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
-    # find app name for app_info
-    # html_string:
-    # mark class = "qnav"
-=pod
-<div class="apptitle">
-<img class="applo
-<h1>MyBackup Pro:全能备份专家 3.0.0已付费版</h1>
-=cut
-    my @nodes = $tree->look_down( class => $mark );
-    return unless @nodes;
-
-    my @tags = $nodes[0]->find_by_tag_name('h1');
-    my $app_name = $tags[0]->as_text;
-
-    # delete what I ever done
     $tree->delete;
     return $app_name || undef;
 }
@@ -402,13 +334,19 @@ sub get_description{
     my $html = shift;
 
     if( $html =~ m{(应用详细介绍.*?)</div>}s ){
-        #( my $desc = $1 ) = ~ s/[\000-\037]//g;
         my $desc = $1;
         $desc =~ s/[\000-\037]//g;
-        $desc =~ s/<.+?>//g;
-        #$desc =~ s#<a.+?</strong>##g;
-		$desc =~ s#&ldquo#"#g;
-		$desc =~ s#&rdquo#"#g;
+        $desc =~ s/<h\d+>//g;
+        $desc =~ s/<\/h\d+>//g;
+        $desc =~ s/<br>//g;
+        $desc =~ s/<\/br>//g;
+        $desc =~ s/<br\s+\/>/\n/g;
+        $desc =~ s/\r//g;
+        $desc =~ s/\n//g;
+        $desc =~ s/<p>//g;
+        $desc =~ s#</p>##g;
+        $desc =~ s#<h2>##g;
+        $desc =~ s#</h2>##g;
         return $desc;
     }
 
@@ -420,12 +358,6 @@ sub get_size{
     # mark is class => 'info'
     my $mark = shift||'appdetails';
 
-=pod
-<span>
-<em>大小：</em>
-3.06 MB
-</span>
-=cut
     if( $html =~ m{em>大小.*?(\d.*?MB)}s ){
         my $size = $1;
         return kb_m($size);
@@ -462,9 +394,6 @@ sub get_last_update{
     my @nodes = $tree->look_down( class => 'changelog' );
     return unless @nodes;
     
-    my $content = $nodes[0]->as_text;
-    $tree->delete;
-
     if(my @date = $content =~ m/(\d{4}-\d{2}-\d{2})/sg){
         my $last_update = $date[-1];
         return $last_update;
@@ -472,141 +401,27 @@ sub get_last_update{
     return ;
 }
 
-sub get_cookie{
-    my $cookie_file = shift;
-    my $login_html  = get($login_url);
-
-    my %info = $login_html =~ m{<input type="hidden" name="(.+?)" value="(.*?)"}sg;
-    my $cookie_jar = HTTP::Cookies->new(
-        file        => $cookie_file,
-        autosave    => 1,
-    );
-
-    my $ua = LWP::UserAgent->new;
-    my $username ="jinyiming321";
-    my $pwd ="19841002";
-    
-    $ua->cookie_jar($cookie_jar);
-    $ua->agent("Mozilla/4.0");
-    #$res = $ua->get($url);
-    
-    # post form
-    $ua->cookie_jar($cookie_jar);
-    push @{$ua->requests_redirectable}, 'POST';
-    my $res = $ua->post(
-        $login_url,
-        [
-            login       => 'jinyiming321',
-            pwd         => '19841002',
-            op          => $info{op},
-            formhash    => $info{formhash},
-            forward     => '',
-            postsubmit  => $info{postsubmit},
-            remember    => 1
-        ]
-    );
-=pod
-    my $apk_download_url = "http://www.coolapk.com/dl";
-    $res = $ua->post( 
-        $apk_download_url,[
-            sid     => 3,
-            inajax  => 1,
-            op      => 'download',
-            d       => 1316691530671,# a ad id,task easy
-        ]
-    );
-=cut
-    if( Encode::decode_utf8($res->content) =~/退出登录/s){
-        return 1;
-    }
-
-    return 
-}
-
 sub get_apk_url{
     my $html = shift;
+    my $mark = shift||'down';
 
-    # <img src="/qr.php?sid=MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==" class="qrcode">
-    # <img class="qrcode" src="/qr.php?sid=MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==">
-    $html =~ m{img class="qrcode".*?sid=(.+?)"}s;
-    my $sid = $1;
-	# save sid for get_permission's sid
-    {
-        no strict 'refs';
-        ${ __PACKAGE__."::"."SID" } = $sid;
-    }
+    # find apk_url by html_tree
+    # html content:
+=pod
 
-    my $cookie_file = 'd:\crawler\cookie.coolapk';
-#	get_cookie($cookie_file);
-    unless( -e $cookie_file ){
-        Carp::croak("can't get cookie from coolapk")
-			unless get_cookie($cookie_file);
-    }
+=cut
 
-    my $ua = LWP::UserAgent->new;
-    my $cookie_jar = HTTP::Cookies->new(
-		file 		=> $cookie_file,
-	);
-	$cookie_jar->load($cookie_file);
-    $ua->cookie_jar($cookie_jar);
-    $ua->agent("Mozilla/4.0");
-    my $retry = 0;
-	
-    DOWN_LOAD_APK:
-
-    my $apk_download_url = "http://www.coolapk.com/dl";
-    # http://www.coolapk.com/dl?sid=MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==&inajax=1&op=download&d=1316691530671
-    # header
-    #   d	1316691530671
-    #   inajax	1
-    #   op	download
-    #   sid	MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==
-    # 
-    my $res = $ua->post( 
-        $apk_download_url,[
-            sid     => $sid,
-            inajax  => 1,
-            op      => 'download',
-            d       => 1316691530671,# a ad id,task easy
-        ]
-    );
-    if( $res->status_line =~ m/200/ ){
-		# window.location.href='\/dl?dl=1&sid=&authimg=&hash=4ef3b755'
-        if( $res->content =~ m/href='(.+?)'/s ){
-            my $download = $1;
-            $download =~ s/\\//g;
-			$download =~ s/sid=/'sid='.$sid/e;
-            return $url_base.$download;
-        }
-    }else{
-        get_cookie($cookie_file) && goto DOWN_LOAD_APK unless $retry;
-        ++$retry;
-        return;
-    }
+    return $url || undef;
 }
 
 sub get_official_rating_stars{
     my $html  = shift;
-    # find stars for app
-    # html_string:
-=pod
-<span class="ratingstars" rank="4.0" star="4" style="background-position: 0px -80px;">
-    <a class="s1" params="id=3446&star=1" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
-    <a class="s2" params="id=3446&star=2" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
-    <a class="s3" params="id=3446&star=3" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
-    <a class="s4" params="id=3446&star=4" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
-    <a class="s5" params="id=3446&star=5" onclick="doAjaxPost(this,'voteapk');" href="javascript:;"></a>
-    <em>4.0</em>
-</span>
-=cut
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
     my @nodes = $tree->look_down( class => 'ratingstars' );
     return unless @nodes;
-
-    my @tags = $nodes[0]->find_by_tag_name('em');
-    my $rating_star = $tags[0]->as_text();
+    my $rating_star;
 
     return $rating_star ||undef;
 }
@@ -615,8 +430,8 @@ sub kb_m{
     my $size = shift;
 
     # MB -> KB 
-    $size = $1*1024 if( $size =~ s/([\d\.]+)(.*MB.*)/$1/i );
-    $size = $1  if( $size =~ s/([\d\.]+)(.*KB.*)/$1/i );
+    $size = $1*1024 if( $size =~ s/([\d\.]+)(.*MB.*)/$1/ );
+    $size = $1  if( $size =~ s/([\d\.]+)(.*KB.*)/$1/ );
 
     # return byte
     return int($size*1024);
@@ -627,21 +442,10 @@ sub get_official_category{
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-=pod
-<div id="navbar">
-<a href="http://www.coolapk.com/">酷安网</a>
-&gt;
-<a href="/apk/">Android软件</a>
-&gt;
-<a href="/apk/themes/">主题美化</a>
-&gt; Go Launcher桌面 1.41
-=cut
-
     my @nodes = $tree->look_down( id => 'navbar' );
     return unless @nodes;
     
-    my @tags = $nodes[0]->find_by_tag_name('a');
-    my $official_category = $tags[2]->as_text;
+    my $official_category ;
 
     return $official_category||'unknown';
 }
@@ -690,16 +494,15 @@ sub get_current_version{
     $tree->parse($html);
     my @nodes = $tree->look_down( class => $mark );
 
-    my @list = $nodes[0]->find_by_tag_name('li');
-    my $version_s = $list[1]->as_text ;
-    #print $version_s;
-    $version_s =~ m/软件版本(.*?)(\d\S+)/s;
-    $tree->delete;
-    return $2||undef;
+    my $version ;
+
+    return $version;
+
 }
 
 sub get_app_qr{
     my $html = shift;
+    my $mark = shift||'down';
 
     # html sinppet
 =pod
@@ -711,107 +514,38 @@ sub get_app_qr{
     return 0 unless @nodes;
 
     # fetch img from this snippet
-	my @tags = $nodes[0]->find_by_tag_name('img');
-    my $qr = $tags[0]->attr('src');
+    my $qr;
     $tree->delete;
 
     return trim_url($url_base).$qr||undef;
 }
 sub get_screenshot{
     my $html = shift;
-    
-    #var $imgs = ['/~/uploads/allimg/110107/2_110107091032_1.jpg','/~/uploads/allimg/110107/2_110107091032_2.jpg'];
-    if( $html =~ m/var \$imgs = \[(.*?)\]/s){
-        my @screenshot = $1 =~ m/'(.+?)'/g;
-        return [ map{ $url_base.$_ } @screenshot ];
-    }
+    my $mark = shift||'screen-div';
 
-    return ;
-    # screenshot is 'screen-div'
-    # fetch src
-    # html_string
-=pod
-=cut
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-    # screencount
-    my @nodes = $tree->look_down( id => 'screencount');
-    (my $count = $nodes[0]->as_text) =~ m{\d+/(\d+)};
-    $count = $1;
-=pod
-<div id=> 'screenpreview'
-<img alt="截图预览" src="/~/uploads/allimg/110906/2_110906145600_1.jpg" style="width: 240px; display: inline; height: 360px;">
-=cut
-    my @img= [$tree->look_down( id => 'screenpreview' )]->[0]
-        ->find_by_tag_name('img');
-    my $src = $img[0]->attr('src');
-    return [ map{
-            $src =~ s#(\d+)(?=jpg)#$count#e;
-            trim_url($url_base).$src;
-        }(1..$count)
-    ]
+    # return []
+    return ;
 }
 
 
 #-------------------------------------------------------------
 sub get_permission{
     my $html = shift;
+    my $mark = shift||'row';
 
     # the list needed to return 
     my $permission = [];
-    my $sid;
-    my $app_url;
-	my $app_id;
-    {	
-        no strict 'refs';
-        $sid = ${__PACKAGE__."::"."SID"};
-        ($app_url = ${__PACKAGE__."::"."APP_URL"}) =~ m/(\d+)/;
-		$app_id = $1;
-    }
-    unless( -e $cookie_file ){
-        return unless get_cookie($cookie_file);
-    }
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
 
-    my $ua = LWP::UserAgent->new;
-    my $cookie_jar = HTTP::Cookies->new(
-		file 		=> $cookie_file,
-	);
-	$cookie_jar->load($cookie_file);
-    $ua->cookie_jar($cookie_jar);
-    $ua->agent("Mozilla/4.0");
-    my $retry = 0;
+    # find permission
+    my @nodes = $tree->look_down( class => $mark );
+    return [] unless @nodes;
 
-    DOWN_LOAD_PERM:
-    # http://www.coolapk.com/do.php?ac=ajax&inajax=1&op=viewpermissions&d=1316693842750
-    # header
-    #   d	1316691530671
-    #   inajax	1
-    #   op	download
-    #   sid	MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==
-    #
-	# ac	ajax
-	#d	1316753629742
-	#  inajax	1
-   # 	op	viewpermissions
-    my $res = $ua->post( 
-        $permission_url,
-		[
-			id		=> $app_id,
-        ]
-    );
-    if( $res->status_line =~ m/200/ ){
-        # TODO GET PERMISSION
-        if( @{$permission} = $res->content =~ m{(android\.permission\..+?)<}sg){
-            return $permission;
-        }
-        return 
-    }else{
-        get_cookie && goto DOWN_LOAD_APK unless $retry;
-        ++$retry;
-        return;
-    }
 
-    return 
+    return $permission;
 }
 
 sub get_related_app{
@@ -823,23 +557,8 @@ sub get_related_app{
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
-=pod
-div class="appinfo">
-    <p>
-    <em>免费</em>
-    <strong>
-    <a target="_blank" href="/apk-4018-com.icbc/">工行手机银行 1.0.0.1</a>
-</strong>
-=cut
     my @nodes = $tree->look_down( class => 'appinfo');
     return unless @nodes;
-
-    for(@nodes){
-        push (
-            @{ $related_apps },
-            $url_base.[$_->find_by_tag_name('a')]->[0]->attr('href')
-        );
-    }
 
     return  $related_apps;
 }
@@ -851,11 +570,6 @@ sub extract_app_info
     my $hook	 = shift;
     my $html     = shift;
     my $app_info = shift;
-    
-    { 
-        no strict 'refs';
-        ${ __PACKAGE__."::"."APP_URL" } = $app_info->{app_url};
-    }
 
     # create a html tree and parse
     print "extract_app_info  run \n";
@@ -913,6 +627,19 @@ sub get_content{
     return $content;
 }
 
+sub run{
+    use LWP::Simple;
+    my $content = get('http://www.anfone.com/soft/19389.html');
+=pod
+    my $worker	 = shift;
+    my $hook	 = shift;
+    my $html     = shift;
+    my $app_info = shift;
+=cut
+    my $app_info = {};
+    extract_app_info( undef,undef,$content,$app_info );
+
+}
 sub get_system_requirement{
     my $html = shift;
 
@@ -939,7 +666,7 @@ sub get_min_os_version{
     {
         no strict 'refs';
         my $min_os_version = ${ __PACKAGE__."::"."min_os_version" };
-        return $min_os_version || undef;
+        return ref($min_os_version) ? $$min_os_version : undef;
     }
 }
 
@@ -947,7 +674,7 @@ sub get_max_os_version{
     {
         no strict 'refs';
         my $max_os_version = ${ __PACKAGE__."::"."max_os_version" };
-        return $max_os_version || undef;
+        return ref($max_os_version) ? $$max_os_version : undef;
     }
 }
 
@@ -956,45 +683,16 @@ sub get_official_rating_times{
    
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-    # <span class="ratinglabel">135个评分：</span>
     my @nodes = $tree->look_down( class => 'ratinglabel' );
     return unless @nodes;
-
-    $nodes[0]->as_text =~ m/(\d+)/;
-    my $rating_times = $1;
+    my $rating_times;
     $tree->delete;
-    return $rating_times||undef;
+    return $rating_times;
 }
 
-sub run{
-    use LWP::Simple;
-    #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    my $content = get('http://www.coolapk.com/apk-1555-com.moji.mjweather/');
-    my $html = 'coolapk-htc.html';
-    use FileHandle;
-    my $fh = new FileHandle(">>$html")||die $@;
-    $fh->print($content);
-    $fh->close;
-    my $app_info = {};
-	$app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
-    extract_app_info( undef,undef,$content,$app_info );
-	use Data::Dumper;
-    #print Dumper $app_info;
-    #    print "key => ".decode_utf8($app_info->{$_}\n";
-    foreach my $attr(@app_info_list){
-		if( ref($app_info->{$attr}) ){
-			my $value = Dumper $app_info->{$attr};
-			print "attr : $attr => ".$value."\n";
-		}
-		
-        else{print "attr : $attr => ".decode_utf8($app_info->{$attr})."\n";}
-    }
-
-}
 1;
-
-#&run;
 __END__
+
 
 
 

@@ -1,0 +1,13 @@
+{"type":"js","success":true,"data":"window.location.
+href='\/dl?dl=1&sid=MzQzMywxOCw1NSwxLCxjYjNiYjNjNQ==&authimg=&hash=4ef3b755'
+;","dataTarget":"","msg":"\u5f00\u59cb\u4e0b\u8f7d..","msgTarget":"","alert":false}
+
+{"type":"js","success":true,"data":"window.location.href='\/dl?dl=1&sid=&authimg=&hash=4ef3b755'
+;","dataTarget":"","msg":"\u5f00\u59cb\u4e0b\u8f7d..","msgTarget":"","alert":false}
+
+
+
+href='\/dl?dl=1&sid=MzQzMywxOCw1NSwxLCxjYjNiYjNjNQ==&authimg=&hash=4ef3b755'
+
+
+href='\/dl?dl=1&sid=&authimg=&hash=4ef3b755'
