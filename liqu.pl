@@ -71,6 +71,7 @@ my $url_base    = 'www.liqucn.com';
 my $login_url   = '';
 my $cookie_file = '';
 
+my $tree = new HTML::TreeBuilder;
 
 my $usage =<<EOF;
 ==================================================
@@ -88,27 +89,78 @@ explain:
 EOF
 
 our %category_mapping=(
-    "系统工具"    => 22,
-    "主题美化"    => 1203,
-    "社交聊天"    => "18,400",
-    "网络工具"    => "2210,2206",
-    "媒体娱乐"    => 7,
-    "桌面插件"    => 1206,
-    "资讯阅读"    => 1,
-    "出行购物"    => "17,21",
-    "生活助手"    => 19,
-    "实用工具"    => 9,
-    "财经投资"    => 2,
+    #手机安全
+    "杀毒"        => 2302,
+    "加密"        => 2304,
+    "防盗"        => 2305,
+    "备份"        => 2200,
+    "防火墙"      => 2301,
 
+    # 掌上资讯
+    "导航"        => 2100,
+    "炒股"        => 202,
+    "阅读"        => 2500,
+    "学习"        => 504, 
+    "天气"        => 24,
+    "字典"        => 103,
+    "保健"        => 902,
+    "占卜"        => 19,
+    "购物"        => 1701,
+    "娱乐"        => 6,
     "其他"        => 0,
 
+    # 网络通讯
+    "交友"        => "18,400",
+    "浏览"        => 2210,
+    "通讯"        => 2209,
+    "邮件"        => 401,
+    # 系统增强
+    "输入法"      => 2217,
+    "美化"        => 1203,
+    "管理"        => "220,222",
+    "清理"        => 2206,
+    "下载"        => 2212,
+    "同步"        => 2216,
+    "刷机"        => 22,
+
+    # 拍照音乐
+    "音乐"        => "703,704,709",
+    "视频"        => "707,708",
+    "拍照"        => 15,
+
+    # 办公
+    "文档"        => '1604,1608',
+    "日程"        => 1605,
+    "名片"        => 1907,
+
     # 游戏
-    "休闲游戏"    => 818,
-    "益智游戏"    => 810,
-    "棋牌游戏"    => 802,
-    "体育运动"    => 814,
-    "动作射击"    => 821,
+    "角色"        => 812,
+    "动作"        => 823,
+    "射击"        => 821,
+    "竞速"        => 811,
+    "益智"        => 810,
+    "棋牌"        => "802,803",
+    "格斗"        => 825,
+    "冒险"        => 800,
+    "策略"        => 815,
+    "体育"        => 814,
+    "养成"        => 815,
+    "休闲"        => 818,
+    "经营"        => 815,
+    "数据包"      => 8,
+    "即时"        => 822,
+    "回合"        => 822,
+    "GBA"         => 813,
+    "NES(FC)"     => 813,
+    "MD"          => 813,
+    "SFC"         => 813,
+    "GB/GBC"      => 813,
 );
+=pod
+    GBA NES(FC) MD SFC
+        GB/GBC 
+=cut
+        
 
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
@@ -119,26 +171,25 @@ our %app_map_func = (
         current_version         => \&get_current_version,
         icon                    => \&get_icon,
         price                   => \&get_price,
-        system_requirement      => \&get_system_requirement,
-        min_os_version          => \&get_min_os_version,
-        max_os_version          => \&get_max_os_version,
-        resolution              => '',
+        system_requirement      => '', # no find
+        min_os_version          => '', # not find
+        max_os_version          => '', # not find
+        resolution              => '', # not find
         last_update             => \&get_last_update,
         size                    => \&get_size,
         official_rating_stars   => \&get_official_rating_stars,
-        official_rating_times   => \&get_official_rating_times,
+        official_rating_times   => '', #can't get it
         app_qr                  => \&get_app_qr,
-        note                    => '',
+        note                    => '', #not find
         apk_url                 => \&get_apk_url, 
         total_install_times     => \&get_total_install_times,
         description             => \&get_description,
         official_category       => \&get_official_category,
-        trustgo_category_id     => '',
+        trustgo_category_id     => '',# mapping
         related_app             => \&get_related_app,
-        screenshot               => \&get_screenshot,
+        screenshot              => \&get_screenshot,
         permission              => \&get_permission,
         status                  => '',
-        category_id             => '',
 );
 
 our @app_info_list = qw(
@@ -147,15 +198,9 @@ our @app_info_list = qw(
         current_version
         icon                    
         price                   
-        system_requirement      
-        min_os_version          
-        max_os_version          
         resolution              
         last_update             
         size                    
-        official_rating_stars   
-        official_rating_times   
-        app_qr                  
         apk_url                 
         total_install_times     
         description             
@@ -163,17 +208,16 @@ our @app_info_list = qw(
         trustgo_category_id     
         related_app             
         screenshot               
-        permission              
         status                  
 );
-
-&run;
 
 our $AUTHOR     = '??';
 # check args 
 unless( $task_type && $task_id && $conf_file ){
     die $usage;
 }
+
+#&run;
 
 # check configure
 die "\nplease check config parameter\n" 
@@ -191,14 +235,12 @@ elsif( $task_type eq 'new_app' )##download new app info and apk
 {
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
-    $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $NewAppExtractor->run($task_id);
 }
 elsif( $task_type eq 'update_app' )##download updated app info and apk
 {
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
-    $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $UpdatedAppExtractor->run($task_id);
 }
 
@@ -217,21 +259,28 @@ sub get_page_list{
     <li class="page_nor">
     <a href="http://www.liqucn.com/os/android/yx/c/339/index_162.shtml">3</a>
 =cut 
-    
     my $page_tab = $tree->look_down( class => 'page_tab');
     return unless $page_tab;
 
+    #my $index = 'http://www.liqucn.com/os/android/yx/index_268.shtml'
     push @{ $pages },$params->{base_url};
+    my $total_page_num = 0;
 
     if( my @nodes = $tree->find_by_attribute( class => 'page_nor' ) ){
-        for(@nodes){
-            next unless ref($_);
-            my $tag = $_->find_by_tag_name('a');
-            next unless ref($tag);
-            push @{ $pages },$tag->attr('href');
+        my $last_page_url 
+            = ($nodes[0]->find_by_tag_name('a') )[0]->attr('href');
+        if( $last_page_url =~ m/(.*?)index_(\d+)\.shtml/ ){
+            $total_page_num = $2;
         }
     }
+
     $tree->delete;
+    return unless $total_page_num;
+
+    map{
+        push @{ $pages },trim_url($params->{base_url})."/index_$_.shtml"
+    } ( 1..$total_page_num );
+    
     return  1;
 }
 
@@ -323,35 +372,43 @@ sub get_trustgo_category_id{
 
 sub get_app_url{
     my $html = shift;
+    my $app_info = pop;
 
-    # html_string
-    # match app url from html 
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'down' );
-    return 0 unless @nodes;
-    $tree->delete;
-
+    return  $app_info->{app_url};
 }
 
 sub get_icon{
     my $html = shift;
     
-    my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 #    return unless @nodes;
 
     #look down brief label;
-    my @nodes = $tree->look_down( class => 'apptitle');
+    my @nodes = $tree->look_down( id => 'screenshot_1');
     return unless @nodes;
+
+    my $icon = $nodes[0]->attr('src');
+    return $icon;
 }
 
 sub get_app_name{
     my $html = shift;
-    my $mark = shift||'apptitle';
-    
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
+    my @nodes =  $tree->look_down( class => 'soft_down');
+    my $tag = ($nodes[0]->find_by_tag_name('h2'))[0];
+    # <div class="soft_down">
+    # <h2>360手机卫士1.9简介</h2
+    if( $tag->as_text =~ m{(.+?)简介}s ){
+        my $app_name = $1;
+        if( $app_name =~ m/([\d\.]+)$/ ){
+            print "version is $1\n";
+            my $version = $1;
+            $app_map_func{current_version} = sub{
+                return $version;
+            }
+        }
+        return $app_name
+    }
+    return
 }
 
 sub get_price{ 
@@ -360,29 +417,43 @@ sub get_price{
 
 sub get_description{
     my $html = shift;
+    my @nodes = $tree->look_down( id => 'p_content' );
+    my $desc = $nodes[0]->as_text;
 
-    return 
+    $desc =~ s/\r//g;
+    $desc =~ s/\n//g;
+    $desc =~ s/\?//sg;
+    return  $desc;
 }
 
 sub get_size{
     my $html = shift;
-    return 
+
+    my @nodes = $tree->look_down(class => 'down_btn');
+    return unless @nodes;
+
+    my @tags = $nodes[0]->find_by_tag_name('span');
+    my $size = kb_m($tags[0]->as_text);
+    return  $size||"未知"
 }
 
 sub get_total_install_times{
     my $html = shift;
+
+    if( $html =~ m/下载次数.*?(\d+)/s ){
+        return $1;
+    }
     return undef;
 }
 
 sub get_last_update{
     my $html = shift;
-
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'changelog' );
-    return unless @nodes;
-    
-    return ;
+    my $last_update;
+    if( $html =~ m/更新时间(.*?)(\d{4}-\d{2}-\d{2})/s ){
+        $last_update = $2;
+        return $last_update;
+    }
+    return 
 }
 
 sub get_cookie{
@@ -437,14 +508,40 @@ sub get_cookie{
 }
 
 sub get_apk_url{
+    my $app_info = pop;
     my $apk_url;
     
-#my @nodes = $TREE->look_down( class => '');
+    # refer : http://www.liqucn.com/os/android/rj/11114.shtml
+#    my @nodes = $tree->look_down( 
+#   # find html tree
+    
+    my @nodes = $tree->look_down( id => 'content_mobile_href');
+    my $link = $nodes[0]->attr('href');
+    my $ua = LWP::UserAgent->new(keep_alive => 1);
+    $ua->max_redirect(0);
+    my $res = $ua->get($link);
+    $apk_url = $res->header('location');
 
+    my $downloader = new AMMS::Downloader;
+    $downloader->header( { Referer => $app_info->{app_url} } );  
+    my $content = $downloader->download(
+        "http://www.liqucn.com/api/ajax.php?".
+        "action=dialog&type=downloadDialog"
+        );
+
+    my $root = new HTML::TreeBuilder;
+    $root->parse( Encode::decode_utf8($content) );
+
+    @nodes = $root->look_down( id => 'qr_code_img');
+    return unless @nodes;
+    #<img id="qr_code_img"
+    #src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chld=Q|0&chl=">
+    my $src = $nodes[0]->attr('src');
+    return $apk_url;
 }
 
 sub get_official_rating_stars{
-    my $html  = shift;
+    return 0;
 }
 
 sub kb_m{
@@ -460,36 +557,44 @@ sub kb_m{
 
 sub get_official_category{
     my $html = shift;
+    my $app_info = shift;
 
+    my @nodes = $tree->look_down( class => 'subNav2');
+    return unless @nodes;
+
+    my @tags = $nodes[0]->find_by_tag_name('a');
+    my $official_category = $tags[-1]->as_text;
+
+    return $official_category||undef;
 }
 
 #-------------------------------------------------------------
 
 sub get_current_version{
-    my $html = shift;
-    #print $version_s;
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'appdetails');
-    return unless @nodes;
+    my $html     = shift;
+    my $app_info = shift;
+
+    if($html =~ m/([\d\.]+)简介/s){
+        my $version = $1;
+    }
+
+    return "未知"
 }
 
 sub get_app_qr{
-    my $html = shift;
-
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-
-    my $qr;
-    my @nodes = $tree->look_down( class => 'qrcode' );
-    return 0 unless @nodes;
-
-    return trim_url($url_base).$qr||undef;
 }
+
 sub get_screenshot{
     my $html = shift;
-    return ;
+    my $screenshot = [];
 
+    my @nodes = $tree->look_down( class => 'play_top');
+    return unless @nodes;
+
+    my @imgs = $nodes[0]->find_by_tag_name('img');
+    push @{$screenshot},$_->attr('src') for @imgs;
+    
+    return $screenshot;
 }
 
 #-------------------------------------------------------------
@@ -504,11 +609,15 @@ sub get_permission{
 sub get_related_app{
     my $html = shift;
     
-    # a related apps 
     my $related_apps = [];
     # create a empty html tree
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
+    my @nodes = $tree->look_down(class => 'top_text top_line');
+    return unless @nodes;
+    for(@nodes){
+        my $tag = [$_->find_by_tag_name('a')]->[0];
+        next unless ref($tag);
+        push @{ $related_apps },$tag->attr('href');
+    }
 
     return  $related_apps;
 }
@@ -521,16 +630,11 @@ sub extract_app_info
     my $html     = shift;
     my $app_info = shift;
     
-    { 
-        no strict 'refs';
-        ${ __PACKAGE__."::"."APP_URL" } = $app_info->{app_url};
-    }
 
     # create a html tree and parse
     print "extract_app_info  run \n";
-    our $TREE = new HTML::TreeBuilder;
-    $TREE->parse($html);
-    $TREE->eof;
+    $tree->parse($html) or die "html is empty";
+    $tree->eof;
 
     eval{
         # TODO get note 'not find'
@@ -540,7 +644,7 @@ sub extract_app_info
                 # 'get_author' => sub get_author
                 # 'get_price'  => sub get_price
                 next unless ref($app_map_func{$meta}) eq 'CODE';
-                my $ret = &{ $app_map_func{$meta} }($html);
+                my $ret = &{ $app_map_func{$meta} }($html,$app_info);
                 if( defined($ret) ){
                     $app_info->{$meta} = $ret;
                 }
@@ -558,8 +662,8 @@ sub extract_app_info
             }
         }
     };
-#    use Data::Dumper;
-#    print Dumper $app_info;
+    use Data::Dumper;
+    print Dumper $app_info;
 
     $app_info->{status} = 'success';
     if($@){
@@ -605,21 +709,18 @@ sub get_max_os_version{
 }
 
 sub get_official_rating_times{
-    my $html = shift;
-   
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    # <span class="ratinglabel">135个评分：</span>
-    my @nodes = $tree->look_down( class => 'ratinglabel' );
-    return unless @nodes;
 
 }
 
 sub run{
     use LWP::Simple;
+
     #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
     # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
-    my $content = get('http://www.liqucn.com/os/android/yx/c/332/');
+#    my $content = get('http://www.liqucn.com/os/android/yx/c/332/');
+    my $content = get('http://www.liqucn.com/os/android/rj/10737.shtml');
+    
+    goto APP_INFO;
     my @pages = ();
     extract_page_list(undef,undef,{
             web_page => $content,
@@ -645,67 +746,21 @@ sub run{
     my $fh = new FileHandle(">>$html")||die $@;
     $fh->print($content);
     $fh->close;
+APP_INFO:
     my $app_info = {};
-    $app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
+    $app_info->{app_url} = 'http://www.liqucn.com/os/android/rj/10737.shtml';
+    $app_info->{app_url_md5} = '4esdfsdfs;fsd;fdf;';
     extract_app_info( undef,undef,$content,$app_info );
     use Data::Dumper;
-    print Dumper $app_info;
+#print Dumper $app_info;
+    use Encode;
+    my $desc = decode_utf8($app_info->{description});
+    print $desc."\n";    
     #    print "key => ".decode_utf8($app_info->{$_}\n";
-}
-sub download_app_apk 
-{
-    my $self    = shift;
-    my $hook_name  = shift;
-    my $apk_info= shift;
-
-    my $apk_file;
-    my $md5 =   $apk_info->{'app_url_md5'};
-    my $apk_dir= $self->{'TOP_DIR'}.'/'. get_app_dir( $self->getAttribute('MARKET'),$md5).'/apk';
-    my $cookie_jar = HTTP::Cookies->new(
-         file => $cookie_file,
-    );
-    $cookie_jar->load($cookie_file);
-
-    my $downloader  = new AMMS::Downloader;
-    $downloader->header({Referer=>$apk_info->{'app_url'}});
-    $downloader->{USERAGENT}->cookie_jar($cookie_jar);
-
-    if( $apk_info->{price} ne '0' ){
-        $apk_info->{'status'}='paid';
-        return 1;
-    }
-    eval { 
-        rmtree $apk_dir if -e $apk_dir;
-        mkpath $apk_dir;
-    };
-    if ( $@ )
-    {
-        $self->{ 'LOGGER'}->error( sprintf("fail to create directory,App ID:%s,Error: %s",
-                                    $md5,$@)
-                                 );
-        $apk_info->{'status'}='fail';
-        return 0;
-    }
-
-    $downloader->timeout($self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime'));
-    $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
-    if (!$downloader->is_success)
-    {
-        $apk_info->{'status'}='fail';
-        return 0;
-    }
-
-    my $unique_name=md5_hex("$apk_dir/$apk_file")."__".$apk_file;
-
-    rename("$apk_dir/$apk_file","$apk_dir/$unique_name");
-
-
-    $apk_info->{'status'}='success';
-    $apk_info->{'app_unique_name'} = $unique_name;
-
-    return 1;
+#    }
 }
 
+$tree->delete;
 1;
 #&run;
 

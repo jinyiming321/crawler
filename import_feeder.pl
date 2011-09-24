@@ -18,8 +18,10 @@ my %market_feed     = (
     'www.goapk.com'=>'goapk.url',
     'android.d.cn'=>'dangle.url',
     'm.163.com'=>'163.url',
+    'www.liqucn.com'=> 'liqu.url'
 #    'www.anfone.com'=> 'anfone.url',
-    'www.coolapk.com'=> 'coolapk.url',
+#    'www.coolapk.com'=> 'coolapk.url',
+#    'www.liqucn.com'=> 'liqu.url'
         );
 
 die "\nplease check config parameter\n" unless init_gloabl_variable( $conf_file );

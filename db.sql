@@ -377,3 +377,4 @@ replace INTO `market` set id=11,name='android.d.cn',language='zh_cn',feeder_enti
 replace INTO `market` set id=12,name='m.163.com',language='zh_cn',feeder_entity_of_task=2,status='good';
 replace INTO `market` set id=13,name='www.anfone.com',language='zh_cn',feeder_entity_of_task=2,status='good';
 replace INTO `market` set id=14,name='www.coolapk.com',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=15,name='www.liqucn.com',language='zh_cn',feeder_entity_of_task=2,status='good';

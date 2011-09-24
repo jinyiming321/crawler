@@ -22,30 +22,34 @@ my @portals = (
 
 foreach my $portal ( @portals ){
     my $response = $ua->get($portal);
-
     while( not $response->is_success){
-        $response=$ua->get($portal);
+         $response=$ua->get($portal);
     }
-                                         
+                                                     
     if ($response->is_success) {
         my $tree;
-
         my $webpage=$response->content;
         eval {
-            $tree = HTML::TreeBuilder->new; # empty tree
+            $tree =
+                    HTML::TreeBuilder->new;
             $tree->parse($webpage);
-            
+                         
             my @nodes = $tree->look_down( class => 'last_cat' );
             for(@nodes){
-                my @tags = $nodes[0]->find_by_tag_name('a');
+                my @tags = $_->find_by_tag_name('a');
                 foreach my $tag(@tags){
-                    next unless ref($tag);
-                    print FEED $tag->attr('href')."\n";
+                        next unless ref($tag);
+                #    GBA NES(FC) MD SFC
+                #        GB/GBC 
+                        # filter 刷机and模拟器     
+                        next if $tag->as_text =~ m/刷机|数据包|GB|NE|MD|SF/i;                   
+                        print $tag->as_text."\n";
+                        print FEED $tag->attr('href')."\n";
                 }
             }
         };
         if($@){
-            die "fail to extract liqu  feeder url";
+            die "fail to $@\n";
         }
     }
 }

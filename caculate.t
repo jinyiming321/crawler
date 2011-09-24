@@ -55,7 +55,7 @@ sub get_task_info{
     task a,
     task_detail b
     WHERE
-    b.detail_info LIKE '%coolapk%' 
+    b.detail_info LIKE '%liqu%' 
     AND a.task_type='$task_type';
 EOF
     my $sth = $dbh->prepare($sql);
@@ -73,7 +73,7 @@ sub run_find_app{
     my @task_id_list = keys %{ $task_info->{find_app} };
     for(@task_id_list){
         my $cmd = <<CMD;
-        perl /root/crawler/coolapk.pl find_app $_ /root/crawler/default.cfg
+        perl /root/crawler/liqu.pl find_app $_ /root/crawler/default.cfg
 CMD
 #        my $ret = system($cmd);
         `$cmd`;
@@ -83,7 +83,7 @@ CMD
     }
 
     my $sql =<<EOF;
-    select count(*) from app_source where market_id = 14
+    select count(*) from app_source where market_id = 15
 EOF
     my $count = $dbh->selectrow_array($sql);
     print "-------------------------------------\n";
@@ -94,7 +94,7 @@ sub run_new_app{
     my @task_id_list = keys %{ $task_info->{new_app} };
     for( my $i = 0;$i<=30;$i++){
         my $cmd = <<CMD;
-        perl /root/crawler/coolapk.pl new_app $task_id_list[$i] /root/crawler/default.cfg
+        perl /root/crawler/liqu.pl new_app $task_id_list[$i] /root/crawler/default.cfg
 CMD
         print $cmd."\n";
         #sleep 5;
