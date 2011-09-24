@@ -18,6 +18,8 @@ CHECK_ATTR	t/lib/DataCheck.pm	/^sub CHECK_ATTR () {$/;"	s
 CHECK_FUNC_SUITE	t/DataCheck.pm	/^sub CHECK_FUNC_SUITE (){$/;"	s
 CHECK_FUNC_SUITE	t/lib/DataCheck.pm	/^sub CHECK_FUNC_SUITE (){$/;"	s
 DOWN_LOAD_APK	coolapk.pl	/^    DOWN_LOAD_APK:$/;"	l
+DOWN_LOAD_APK	mm.pl	/^    DOWN_LOAD_APK:$/;"	l
+DOWN_LOAD_APK	parse_template.pl	/^    DOWN_LOAD_APK:$/;"	l
 DOWN_LOAD_PERM	coolapk.pl	/^    DOWN_LOAD_PERM:$/;"	l
 DataCheck	t/DataCheck.pm	/^package DataCheck;$/;"	p
 DataCheck	t/lib/DataCheck.pm	/^package DataCheck;$/;"	p
@@ -44,7 +46,6 @@ addHook	AMMS/UpdatedAppExtractor.pm	/^sub addHook$/;"	s
 addHook	AMMS/test.pl	/^sub addHook$/;"	s
 app_info	anfone.pl	/^ app_info:$/;"	l
 app_info	anfone_for_test.pl	/^ app_info:$/;"	l
-app_info	parse_template.pl	/^ app_info:$/;"	l
 cancel_transaction	AMMS/DBHelper.pm	/^sub cancel_transaction$/;"	s
 check	t/lib/DataCheck.pm	/^sub check{$/;"	s
 check_app_info	AMMS/NewAppExtractor.pm	/^sub check_app_info{$/;"	s
@@ -85,8 +86,11 @@ download_app_apk	AMMS/AppExtractor.pm	/^sub download_app_apk $/;"	s
 download_app_apk	AMMS/NewAppExtractor.pm	/^sub download_app_apk $/;"	s
 download_app_apk	AMMS/UpdatedAppExtractor.pm	/^sub download_app_apk $/;"	s
 download_app_apk	AMMS/test.pl	/^sub download_app_apk $/;"	s
+download_app_apk	coolapk.pl	/^sub download_app_apk $/;"	s
 download_app_apk	google.pl	/^sub download_app_apk $/;"	s
 download_app_apk	google_apk.pl	/^sub download_app_apk $/;"	s
+download_app_apk	mm.pl	/^sub download_app_apk $/;"	s
+download_app_apk	parse_template.pl	/^sub download_app_apk $/;"	s
 download_to_disk	AMMS/Downloader.pm	/^sub download_to_disk$/;"	s
 download_webpage	google_multi_lang.pl	/^sub download_webpage{$/;"	s
 end_transaction	AMMS/DBHelper.pm	/^sub end_transaction$/;"	s
@@ -103,6 +107,7 @@ execute_cmd	AMMS/Util.pm	/^sub execute_cmd{$/;"	s
 explain	anfone.pl	/^explain:$/;"	l
 explain	anfone_for_test.pl	/^explain:$/;"	l
 explain	coolapk.pl	/^explain:$/;"	l
+explain	mm.pl	/^explain:$/;"	l
 explain	parse_template.pl	/^explain:$/;"	l
 extra_processing	google.pl	/^sub extra_processing$/;"	s
 extract_app_from_feeder	163.pl	/^sub extract_app_from_feeder$/;"	s
@@ -119,6 +124,7 @@ extract_app_from_feeder	gfan.pl	/^sub extract_app_from_feeder {$/;"	s
 extract_app_from_feeder	goapk.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	google.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	hiapk.pl	/^sub extract_app_from_feeder$/;"	s
+extract_app_from_feeder	mm.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	mumayi.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	nduoa.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	parse_template.pl	/^sub extract_app_from_feeder{$/;"	s
@@ -137,6 +143,7 @@ extract_app_info	goapk.pl	/^sub extract_app_info$/;"	s
 extract_app_info	google.pl	/^sub extract_app_info$/;"	s
 extract_app_info	google_multi_lang.pl	/^sub extract_app_info$/;"	s
 extract_app_info	hiapk.pl	/^sub extract_app_info$/;"	s
+extract_app_info	mm.pl	/^sub extract_app_info$/;"	s
 extract_app_info	mumayi.pl	/^sub extract_app_info$/;"	s
 extract_app_info	nduoa.pl	/^sub extract_app_info$/;"	s
 extract_app_info	parse_template.pl	/^sub extract_app_info$/;"	s
@@ -154,6 +161,7 @@ extract_page_list	gfan.pl	/^sub extract_page_list {$/;"	s
 extract_page_list	goapk.pl	/^sub extract_page_list$/;"	s
 extract_page_list	google.pl	/^sub extract_page_list$/;"	s
 extract_page_list	hiapk.pl	/^sub extract_page_list$/;"	s
+extract_page_list	mm.pl	/^sub extract_page_list{$/;"	s
 extract_page_list	mumayi.pl	/^sub extract_page_list$/;"	s
 extract_page_list	nduoa.pl	/^sub extract_page_list$/;"	s
 extract_page_list	parse_template.pl	/^sub extract_page_list{$/;"	s
@@ -216,6 +224,7 @@ get_apk_info	AMMS/DBHelper.pm	/^sub get_apk_info$/;"	s
 get_apk_url	anfone.pl	/^sub get_apk_url{$/;"	s
 get_apk_url	anfone_for_test.pl	/^sub get_apk_url{$/;"	s
 get_apk_url	coolapk.pl	/^sub get_apk_url{$/;"	s
+get_apk_url	mm.pl	/^sub get_apk_url{$/;"	s
 get_apk_url	parse_template.pl	/^sub get_apk_url{$/;"	s
 get_app_dir	AMMS/Util.pm	/^sub get_app_dir{$/;"	s
 get_app_info_from_db	AMMS/DBHelper.pm	/^sub get_app_info_from_db$/;"	s
@@ -223,14 +232,17 @@ get_app_info_url	AMMS/DBHelper.pm	/^sub get_app_info_url$/;"	s
 get_app_list	anfone.pl	/^sub get_app_list{$/;"	s
 get_app_list	anfone_for_test.pl	/^sub get_app_list{$/;"	s
 get_app_list	coolapk.pl	/^sub get_app_list{$/;"	s
+get_app_list	mm.pl	/^sub get_app_list{$/;"	s
 get_app_list	parse_template.pl	/^sub get_app_list{$/;"	s
 get_app_name	anfone.pl	/^sub get_app_name{$/;"	s
 get_app_name	anfone_for_test.pl	/^sub get_app_name{$/;"	s
 get_app_name	coolapk.pl	/^sub get_app_name{$/;"	s
+get_app_name	mm.pl	/^sub get_app_name{$/;"	s
 get_app_name	parse_template.pl	/^sub get_app_name{$/;"	s
 get_app_qr	anfone.pl	/^sub get_app_qr{$/;"	s
 get_app_qr	anfone_for_test.pl	/^sub get_app_qr{$/;"	s
 get_app_qr	coolapk.pl	/^sub get_app_qr{$/;"	s
+get_app_qr	mm.pl	/^sub get_app_qr{$/;"	s
 get_app_qr	parse_template.pl	/^sub get_app_qr{$/;"	s
 get_app_result	AMMS/ApkDownloader.pm	/^sub get_app_result$/;"	s
 get_app_result	AMMS/AppExtractor.pm	/^sub get_app_result$/;"	s
@@ -247,12 +259,14 @@ get_app_url	anfone.pl	/^sub get_app_url{$/;"	s
 get_app_url	anfone_for_test.pl	/^sub get_app_url{$/;"	s
 get_app_url	coolapk.pl	/^sub get_app_url{$/;"	s
 get_app_url	google_multi_lang.pl	/^sub get_app_url$/;"	s
+get_app_url	mm.pl	/^sub get_app_url{$/;"	s
 get_app_url	parse_template.pl	/^sub get_app_url{$/;"	s
 get_assetid	google.pl	/^sub get_assetid{$/;"	s
 get_assetid	google_apk.pl	/^sub get_assetid{$/;"	s
 get_author	anfone.pl	/^sub get_author{$/;"	s
 get_author	anfone_for_test.pl	/^sub get_author{$/;"	s
 get_author	coolapk.pl	/^sub get_author{$/;"	s
+get_author	mm.pl	/^sub get_author{$/;"	s
 get_author	parse_template.pl	/^sub get_author{$/;"	s
 get_category_from_feeder	AMMS/DBHelper.pm	/^sub get_category_from_feeder$/;"	s
 get_comment_times	amazon.pl	/^sub get_comment_times$/;"	s
@@ -261,21 +275,27 @@ get_comment_times	mumayi.pl	/^sub get_comment_times$/;"	s
 get_content	anfone.pl	/^sub get_content{$/;"	s
 get_content	anfone_for_test.pl	/^sub get_content{$/;"	s
 get_content	coolapk.pl	/^sub get_content{$/;"	s
+get_content	mm.pl	/^sub get_content{$/;"	s
 get_content	parse_template.pl	/^sub get_content{$/;"	s
 get_cookie	coolapk.pl	/^sub get_cookie{$/;"	s
+get_cookie	mm.pl	/^sub get_cookie{$/;"	s
+get_cookie	parse_template.pl	/^sub get_cookie{$/;"	s
 get_current_version	anfone.pl	/^sub get_current_version{$/;"	s
 get_current_version	anfone_for_test.pl	/^sub get_current_version{$/;"	s
 get_current_version	coolapk.pl	/^sub get_current_version{$/;"	s
+get_current_version	mm.pl	/^sub get_current_version{$/;"	s
 get_current_version	parse_template.pl	/^sub get_current_version{$/;"	s
 get_db_handle	AMMS/DBHelper.pm	/^sub get_db_handle$/;"	s
 get_description	anfone.pl	/^sub get_description{$/;"	s
 get_description	anfone_for_test.pl	/^sub get_description{$/;"	s
 get_description	coolapk.pl	/^sub get_description{$/;"	s
+get_description	mm.pl	/^sub get_description{$/;"	s
 get_description	parse_template.pl	/^sub get_description{$/;"	s
 get_feed_url	AMMS/DBHelper.pm	/^sub get_feed_url$/;"	s
 get_icon	anfone.pl	/^sub get_icon{$/;"	s
 get_icon	anfone_for_test.pl	/^sub get_icon{$/;"	s
 get_icon	coolapk.pl	/^sub get_icon{$/;"	s
+get_icon	mm.pl	/^sub get_icon{$/;"	s
 get_icon	parse_template.pl	/^sub get_icon{$/;"	s
 get_install_times	amazon.pl	/^sub get_install_times$/;"	s
 get_install_times	mumayi.pl	/^sub get_install_times$/;"	s
@@ -284,48 +304,61 @@ get_last_modified_time	AMMS/DBHelper.pm	/^sub get_last_modified_time $/;"	s
 get_last_update	anfone.pl	/^sub get_last_update{$/;"	s
 get_last_update	anfone_for_test.pl	/^sub get_last_update{$/;"	s
 get_last_update	coolapk.pl	/^sub get_last_update{$/;"	s
+get_last_update	mm.pl	/^sub get_last_update{$/;"	s
 get_last_update	parse_template.pl	/^sub get_last_update{$/;"	s
 get_market_info	AMMS/DBHelper.pm	/^sub get_market_info$/;"	s
 get_markets	AMMS/DBHelper.pm	/^sub get_markets$/;"	s
 get_max_os_version	coolapk.pl	/^sub get_max_os_version{$/;"	s
+get_max_os_version	mm.pl	/^sub get_max_os_version{$/;"	s
 get_max_os_version	parse_template.pl	/^sub get_max_os_version{$/;"	s
 get_min_os_version	coolapk.pl	/^sub get_min_os_version{$/;"	s
+get_min_os_version	mm.pl	/^sub get_min_os_version{$/;"	s
 get_min_os_version	parse_template.pl	/^sub get_min_os_version{$/;"	s
 get_official_category	anfone.pl	/^sub get_official_category{$/;"	s
 get_official_category	anfone_for_test.pl	/^sub get_official_category{$/;"	s
 get_official_category	coolapk.pl	/^sub get_official_category{$/;"	s
+get_official_category	mm.pl	/^sub get_official_category{$/;"	s
 get_official_category	parse_template.pl	/^sub get_official_category{$/;"	s
 get_official_rating_stars	anfone.pl	/^sub get_official_rating_stars{$/;"	s
 get_official_rating_stars	anfone_for_test.pl	/^sub get_official_rating_stars{$/;"	s
 get_official_rating_stars	coolapk.pl	/^sub get_official_rating_stars{$/;"	s
+get_official_rating_stars	mm.pl	/^sub get_official_rating_stars{$/;"	s
 get_official_rating_stars	parse_template.pl	/^sub get_official_rating_stars{$/;"	s
 get_official_rating_times	coolapk.pl	/^sub get_official_rating_times{$/;"	s
+get_official_rating_times	mm.pl	/^sub get_official_rating_times{$/;"	s
 get_official_rating_times	parse_template.pl	/^sub get_official_rating_times{$/;"	s
 get_page_list	anfone.pl	/^sub get_page_list{$/;"	s
 get_page_list	anfone_for_test.pl	/^sub get_page_list{$/;"	s
 get_page_list	coolapk.pl	/^sub get_page_list{$/;"	s
+get_page_list	mm.pl	/^sub get_page_list{$/;"	s
 get_page_list	parse_template.pl	/^sub get_page_list{$/;"	s
 get_permission	anfone.pl	/^sub get_permission{$/;"	s
 get_permission	anfone_for_test.pl	/^sub get_permission{$/;"	s
 get_permission	coolapk.pl	/^sub get_permission{$/;"	s
+get_permission	mm.pl	/^sub get_permission{$/;"	s
 get_permission	parse_template.pl	/^sub get_permission{$/;"	s
 get_price	anfone.pl	/^sub get_price{ $/;"	s
 get_price	anfone_for_test.pl	/^sub get_price{ $/;"	s
 get_price	coolapk.pl	/^sub get_price{ $/;"	s
+get_price	mm.pl	/^sub get_price{ $/;"	s
 get_price	parse_template.pl	/^sub get_price{ $/;"	s
 get_related_app	anfone.pl	/^sub get_related_app{$/;"	s
 get_related_app	anfone_for_test.pl	/^sub get_related_app{$/;"	s
 get_related_app	coolapk.pl	/^sub get_related_app{$/;"	s
+get_related_app	mm.pl	/^sub get_related_app{$/;"	s
 get_related_app	parse_template.pl	/^sub get_related_app{$/;"	s
 get_screenshot	anfone.pl	/^sub get_screenshot{$/;"	s
 get_screenshot	anfone_for_test.pl	/^sub get_screenshot{$/;"	s
 get_screenshot	coolapk.pl	/^sub get_screenshot{$/;"	s
+get_screenshot	mm.pl	/^sub get_screenshot{$/;"	s
 get_screenshot	parse_template.pl	/^sub get_screenshot{$/;"	s
 get_size	anfone.pl	/^sub get_size{$/;"	s
 get_size	anfone_for_test.pl	/^sub get_size{$/;"	s
 get_size	coolapk.pl	/^sub get_size{$/;"	s
+get_size	mm.pl	/^sub get_size{$/;"	s
 get_size	parse_template.pl	/^sub get_size{$/;"	s
 get_system_requirement	coolapk.pl	/^sub get_system_requirement{$/;"	s
+get_system_requirement	mm.pl	/^sub get_system_requirement{$/;"	s
 get_system_requirement	parse_template.pl	/^sub get_system_requirement{$/;"	s
 get_task	AMMS/DBHelper.pm	/^sub get_task $/;"	s
 get_task	AMMS/Util.pm	/^sub get_task $/;"	s
@@ -333,10 +366,12 @@ get_task_detail	AMMS/DBHelper.pm	/^sub get_task_detail{$/;"	s
 get_total_install_times	anfone.pl	/^sub get_total_install_times{$/;"	s
 get_total_install_times	anfone_for_test.pl	/^sub get_total_install_times{$/;"	s
 get_total_install_times	coolapk.pl	/^sub get_total_install_times{$/;"	s
+get_total_install_times	mm.pl	/^sub get_total_install_times{$/;"	s
 get_total_install_times	parse_template.pl	/^sub get_total_install_times{$/;"	s
 get_trustgo_category_id	anfone.pl	/^sub get_trustgo_category_id{$/;"	s
 get_trustgo_category_id	anfone_for_test.pl	/^sub get_trustgo_category_id{$/;"	s
 get_trustgo_category_id	coolapk.pl	/^sub get_trustgo_category_id{$/;"	s
+get_trustgo_category_id	mm.pl	/^sub get_trustgo_category_id{$/;"	s
 get_trustgo_category_id	parse_template.pl	/^sub get_trustgo_category_id{$/;"	s
 get_url	AMMS/ApkDownloader.pm	/^sub get_url$/;"	s
 google_account_info	AMMS/DBHelper.pm	/^sub google_account_info$/;"	s
@@ -378,6 +413,7 @@ is_success	AMMS/Downloader.pm	/^sub is_success$/;"	s
 kb_m	anfone.pl	/^sub kb_m{$/;"	s
 kb_m	anfone_for_test.pl	/^sub kb_m{$/;"	s
 kb_m	coolapk.pl	/^sub kb_m{$/;"	s
+kb_m	mm.pl	/^sub kb_m{$/;"	s
 kb_m	parse_template.pl	/^sub kb_m{$/;"	s
 language_suffix	google.pl	/^sub language_suffix$/;"	s
 ltrim	AMMS/Util.pm	/^sub ltrim($)$/;"	s
@@ -439,6 +475,7 @@ run	AMMS/test.pl	/^sub run$/;"	s
 run	anfone.pl	/^sub run{$/;"	s
 run	anfone_for_test.pl	/^sub run{$/;"	s
 run	coolapk.pl	/^sub run{$/;"	s
+run	mm.pl	/^sub run{$/;"	s
 run	parse_template.pl	/^sub run{$/;"	s
 run_one_time	submit_sample.pl	/^sub run_one_time$/;"	s
 save_app_into_source	AMMS/DBHelper.pm	/^sub save_app_into_source$/;"	s
@@ -473,6 +510,7 @@ trim	AMMS/Util.pm	/^sub trim($)$/;"	s
 trim_url	anfone.pl	/^sub trim_url{$/;"	s
 trim_url	anfone_for_test.pl	/^sub trim_url{$/;"	s
 trim_url	coolapk.pl	/^sub trim_url{$/;"	s
+trim_url	mm.pl	/^sub trim_url{$/;"	s
 trim_url	parse_template.pl	/^sub trim_url{$/;"	s
 untar_task	untar_task.pl	/^sub untar_task $/;"	s
 update_apk_info	AMMS/DBHelper.pm	/^sub update_apk_info$/;"	s

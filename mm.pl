@@ -65,11 +65,13 @@ my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
-my $market      = '?';
-my $url_base    = '?';
+my $market      = 'http://mm.10086.cn';
+my $url_base    = 'http://mm.10086.cn';
 #my $downloader  = new AMMS::Downloader;
 my $login_url   = '';
 my $cookie_file = '';
+my $login_user  = '';
+my $longi_pass  = '';
 
 
 my $usage =<<EOF;
@@ -86,16 +88,6 @@ explain:
     conf_file   - the configure file of crawler,default is /root/crawler/default.cfg
 ==================================================
 EOF
-
-# check args 
-unless( $task_type && $task_id && $conf_file ){
-    die $usage;
-}
-
-# check configure
-die "\nplease check config parameter\n" 
-    unless init_gloabl_variable( $conf_file );
-
 our %category_mapping=(
     "系统工具"    => 22,
     "主题美化"    => 1203,
@@ -176,7 +168,20 @@ our @app_info_list = qw(
         status                  
 );
 
-our $AUTHOR     = '??';
+our $AUTHOR     = '未知';
+
+goto RUN;
+
+
+
+# check args 
+unless( $task_type && $task_id && $conf_file ){
+    die $usage;
+}
+
+# check configure
+die "\nplease check config parameter\n" 
+    unless init_gloabl_variable( $conf_file );
 
 if( $task_type eq 'find_app' )##find new android app
 {
@@ -224,9 +229,13 @@ sub extract_page_list{
     my $params  = shift;
     my $pages	= shift;
 
+    our $TREE = new HTML::TreeBuilder;
+
     print "run extract_page_list ............\n";
     # create a html tree and parse
     my $web = $params->{web_page};
+    $TREE->parse($web) ;
+    $TREE->eof;
     eval{
         get_page_list( $web,undef,$pages );
     };
@@ -239,19 +248,34 @@ sub extract_page_list{
 
 sub get_app_list{
     my $html      = shift;
-    my $app_mark  = shift||'t';
+    my $mark      = shift;
     my $apps_href = shift;
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-
-    my @nodes = $tree->look_down( class => $app_mark );
+=pod
+    <dl class="goodItem">
+    <dt>
+    <dd class="tit">
+    <a title="爆笑西游之大话美猴王" target="_blank"
+    href="/1009/300001200231.html?p=1815682&fw=430034">爆笑西游之大话</a>
+=cut
+    my @nodes = $tree->look_down( class => 'tit' );
     Carp::croak('not find apps nodes by this mark name')
         unless ( scalar(@nodes) );
-
-
+    
+    foreach my $node( @nodes ){
+        next unless ref($node);
+        my @tags = $node->find_by_tag_name('a');
+        next unless @tags;
+        my $href = $tags[0]->attr('href');
+        if( $href =~ m{(\d+)\.html} ){
+            $apps_href->{$1} = $url_base.$href;
+        }
+    }
     $tree->delete;
-    return
+    return 0 if scalar (keys %{$apps_href});
+    return 1;
 }
 
 sub extract_app_from_feeder{
@@ -280,6 +304,7 @@ sub extract_app_from_feeder{
 }
 
 sub get_author{
+
     return $AUTHOR;
 }
 
@@ -630,38 +655,22 @@ sub get_official_rating_times{
 
 sub run{
     use LWP::Simple;
-    #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
-    my $content = get('http://www.coolapk.com/game/shoot/');
-    my @pages = ();
-    extract_page_list(undef,undef,{web_page=>$content},\@pages);
     use Data::Dumper;
-    print Dumper \@pages;
+
+    my $content =
+        getstore(
+          'http://mm.10086.cn/game/gameResult.html?fw=430031&'.
+           'appcateid=16&appcatename=%E5%8A%A8%E4%BD%9C&categoryId=&'.
+           'orderby=&ordertype=&categoryname=',
+           'app_list.html'
+           ) or die $@;
+    my $apps = {};
+    extract_app_from_feeder( undef,undef,{web_page=>$content},$apps);
     exit 0;
 
-    use Data::Dumper;
-    print Dumper \@pages;
+
+
     
-    my $apps = {};
-    foreach my $page( @pages ){
-        $content = get($page);
-        &extract_app_from_feeder(undef,undef,{web_page=>$content},$apps);
-    }
-    my $app_num = scalar (keys %{$apps});
-    print Dumper $apps;
-    print "app_num is $app_num\n";
-    exit 0;
-    my $html = 'coolapk-htc.html';
-    use FileHandle;
-    my $fh = new FileHandle(">>$html")||die $@;
-    $fh->print($content);
-    $fh->close;
-    my $app_info = {};
-    $app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
-    extract_app_info( undef,undef,$content,$app_info );
-    use Data::Dumper;
-    print Dumper $app_info;
-    #    print "key => ".decode_utf8($app_info->{$_}\n";
 }
 sub download_app_apk 
 {
@@ -718,7 +727,8 @@ sub download_app_apk
 }
 
 1;
-#&run;
+RUN:
+&run;
 
 __END__
 

@@ -1,0 +1,992 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--万能插件-->
+<!--插件取二级分类名称-->
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>Mobile Market 游戏</title>
+<meta name="keywords" content="Mobile Market,MM,移动MM,移动应用商场,软件,手机软件,手机软件下载,免费手机软件,免费手机软件下载,手机软件应用,下载手机软件,免费下载软件" />
+<meta name="description" content="Mobile Market 移动应用商场是中国移动旗下网站，提供手机游戏、手机软件、手机主题等手机应用下载，Mobile Market 让你的手机更精彩。" />
+<link href="http://mm.10086.cn/moneditor/cs/style/skin/v4/common.css" rel="stylesheet" type="text/css" />
+<link href="http://mm.10086.cn/moneditor/cs/style/skin/v4/channel.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/moneditor/cs/include/js/common/common.js"></script>
+<script type="text/javascript" src="/moneditor/cs/js/MSClass.js "></script>
+</head>
+<body class="game_channel">
+
+<div id="navBarContent" style="display:none;">&gt;<a href="/moneditor/cs/game/">游戏</a>&gt;<em id="secondNav"></em></div>
+<div id="navBarContentAppcate" style="display:none;">
+	&gt;<a href="/moneditor/cs/game/index.html">游戏</a>
+	&gt;<a  key="secondNav" href="/moneditor/cs/game/index.html"></a>&gt;<em key="appcatename"></em>
+</div>
+<script>
+$(document).ready(function(){
+ $('#secondNav').html( mm.common.util.request.getParameter("categoryname") );
+ var secondNav ="/moneditor/cs/soft/index.html?appcateid="+mm.common.util.request.getParameter("appcateid");
+ $("#navBarContentAppcate [key='secondNav']").attr("href",secondNav).text(mm.common.util.request.getParameter("categoryname")); 
+})
+
+
+
+</script>
+		<!--header start-->
+<link rel="shortcut icon" href="http://i1.mm-img.com/moneditor/cs/image/favicon.ico" />
+<script>
+function hSearch(){
+		var str = encodeURIComponent($('#searchsuggest').val());
+		location.href="/moneditor/cs/search/hSearch.html?keyword=" + str;
+};
+
+//飞信活动链接
+function openFetionApi(fw){
+	jQuery.ajax({
+		url: "/portal/web/getFetionMsisdn.do",
+		dataType: "text",
+		success: function(msisdn){
+             msisdn=encodeURIComponent(msisdn);
+			var api = "http://huodong.feixin.10086.cn/fetionmm/friendlist.aspx?c="+msisdn+"&domain=mm.10086.cn&TB_iframe=true&KeepThis=true&modal=true&height=461&width=533";
+			tb_show(null,api,false);
+			$("body").append('<iframe id="detailsbanruolog" style="display:none;" src="/moneditor/cs/api/detailsbanruo.html?fw='+fw+'"></iframe>');
+			//thickBox.show(url, null, '');
+		},
+		error : function(){
+			alert('程序加载失败');
+		}
+	});
+};
+
+
+$(document).ready(function(e) {
+	$('#jsFocus a').each(function(index, element) {
+		var href = $(this).attr('href');
+		if(href){
+			if(href.indexOf('javascript:')>-1){
+				$(this).attr('target','_self');
+			}
+		}
+	});
+});
+
+</script>
+<style type="text/css">
+.nav_v5 .channelMenu li{ width:120px;}
+a.username img{display:inline-block;}
+#logonHeadSpan img{width:16px; height:16px;position:relative;padding-right:3px;*vertical-align: middle;}
+.alist .loginTip a{color:#26719A;padding:0;}
+.username{position:relative;z-index:19;}
+.alist .loginTip{position:absolute;top:-2px;left:47px;z-index:18;width:119px;height:67px;background-color:#fff;border:1px solid #dad7d0;color:#878787;padding:26px 0 0 9px;display:none;text-align:left;}
+.loginTip i{font-style:normal;display:block;line-height:18px;}
+img.level ,img.lv_0 ,img.lv_1 ,img.lv_2 ,img.lv_3 ,img.lv_4 ,img.lv_5{background-image:url(/moneditor/cs/style/skin/v4/images/level_ico.png);background-repeat:no-repeat;width:16px;height:16px;}
+.lv_0{background-position:0 0;}
+.lv_1{background-position:0 -26px;}
+.lv_2{background-position: 0 -52px;}
+.lv_3{background-position: 0 -78px;}
+.lv_4{background-position: 0 -104px;}
+.lv_5{background-position: 0 -130px;}
+
+.blessadv{margin-left:10px;display:inline;}
+.blessadv em{font-style:normal;}
+.blessadv span{display:none;}
+/*元宵0113
+.header_v5 {background:url(/moneditor/cs/style/skin/v5/images/yuanxiao0113_head.jpg) no-repeat 0 0;}
+.header_v5 .topTool a {color:#cf486b;}
+.header_v5 .sethome a {color:#666;}
+.header_v5 .sethome{padding:9px 2px 0 0;}
+.subTool a.mymmHandler {background: url(/moneditor/cs/style/skin/v5/images/gray_drop.gif) no-repeat scroll right 6px ;}
+*/
+.topbanner{margin:auto;width:987px;background:url(/image/banner/banner71.jpg);height:60px; position:relative; }
+.topbanner a{ cursor:pointer; position:absolute; width:53px; height:24px; display:block; right:11px; bottom:6px;}
+</style>
+<link href="/moneditor/cs/style/skin/v5/tips110324/tips.css" rel="stylesheet" type="text/css" />
+<!--
+<div class="topbanner" id="topbanner" style="display:none;"><a id="colseBanner"></a></div>
+<script type="text/javascript">
+function setCookies(name, value, day){
+　　 var exp = new Date();　
+　　 exp.setTime(exp.getTime() + day*24*60*60*1000);
+　　 document.cookie = name + "="+ encodeURIComponent(value) +";expires="+ exp.toGMTString();
+};
+
+function getCookies(name){
+	var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
+	if (arr != null) {
+		return decodeURIComponent(arr[2]);
+	}
+	else {
+		return null;
+	};
+};
+
+function delCookies(name){
+	var exp = new Date();
+　　 exp.setTime(exp.getTime() - 1);
+　　 var cval = getCookies(name);
+　　 if(cval!=null){
+		document.cookie = name +"="+encodeURIComponent(cval)+";expires="+exp.toGMTString();
+	};
+};
+var topBanner = document.getElementById('topbanner');
+var colseBanner = document.getElementById('colseBanner');
+if(getCookies('topBanner') != 'colse'){
+	topBanner.style.display = "block";
+};
+colseBanner.onclick = function(){
+	topBanner.style.display = "none";
+	setCookies('topBanner','colse',1);
+};
+</script>
+-->
+
+<div class="header_v5">
+  <div class="topTool">
+    <ul>
+      <!--
+			<li class="login"><a><span id="logonHeadSpan"></span> </a><em style="cursor:default;" id="logonRegisteredTip"></em></li>
+			<li class="mymm" id="mymm"><a id="mm_a" title="我的MM" >我的MM</a></li>
+			-->
+    </ul>
+    <div class="subTool">
+      <div class="cmSite" style="display:none;">
+        <div id="moreSite" class="sites"> <a class="moreSite" title="推荐业务" href="#">更多服务</a>
+          <div style="display: none;" class="siteList"> <a title="139说客" target="_blank" href="http://shuoke.10086.cn/">139说客</a> <a title="音乐" target="_blank" href="http://music.10086.cn">音乐</a> <a title="飞信" target="_blank" href="http://fetion.10086.cn">飞信</a> <a title="139邮箱" target="_blank" href="http://mail.10086.cn">139邮箱</a> <a title="手机支付" target="_blank" href="http://cmpay.10086.cn">手机支付</a> <a title="游戏" target="_blank" href="http://game.10086.cn">游戏</a> </div>
+        </div>
+      </div>
+      <div class="alist"> <span id="logonHeadSpan">登录</span>
+                            <span class="loginTip" id ="userpoint_show">
+                                <i>您的等级:<b key="clubberlevel">1级会员</b></i>
+                                <i>经验值:<b key="clubberexp">242</b></i>
+                                <a href="/mmnewpage/mymm2/member_area.html">什么是MM会员</a>
+                            </span>
+      
+      <span>|</span> <em style="cursor:default;" id="logonRegisteredTip"></em> <span class="mymm" id="mymm"><a id="mm_a" title="我的MM"  class="mymmHandler">我的MM</a>
+        <div class="mymmDropdown" style=" display:none;"> <a onClick="mm.common.business.base.location('/home/homeIndex.html?pagename=mydown')">我购买过的商品</a>| <a onClick="mm.common.business.base.location('/home/homeIndex.html?pagename=mymessage')">站内信息</a>| <a onClick="mm.common.business.base.location('/home/homeIndex.html?pagename=mycollection')">我收藏的商品</a>| <a onClick="mm.common.business.base.location('/home/homeIndex.html?pagename=mytribe')">我的MM部落</a> </div>
+        </span> <span>|</span> <a href="/services/help.html" title="帮助中心">帮助中心</a><span>|</span> <a href="http://10086.cn/service/">网上营业厅</a><span>|</span> <a href="http://www.10086.cn/index_sitemap_3137.htm">站点导航</a><span>|</span> <a href="http://jf.10086.cn/">积分商城</a><span>|</span> <a href="http://www.10086.cn/">中国移动</a> <span>|</span><a href="http://weibo.com/cmmarket" style="background:url(/moneditor/cs/image/sina.png) no-repeat 5px top; padding-left:30px;"> 到新浪微博关注MM</a> </div>
+    </div>
+  </div>
+  <div class="logoArea">
+    <div class="cmccLogo"> <a href="http://www.10086.cn/" target="_blank"><img src="/moneditor/cs/style/skin/v4/header_v5/cmcc.png" /></a> </div>
+    <div class="mmLogo"> <a href="/"><img src="/moneditor/cs/style/skin/v4/header_v5/mmLogo.png" width="148" height="49" /></a> </div>
+    <div class="searchForm">
+      <div class="hotKey"><span class="keyLabel">热搜：</span>
+        <div class="keyList"> <a  class="left"  id="searchLeft">&lt;&lt;</a>
+          <div class="mask" id="hotSearch"> <span style="width:500px; display:block;"> 
+<a href="/moneditor/cs/search/search.html?keyword=%25E8%2582%25A1%25E7%25A5%25A8%25E8%25AF%2581%25E5%2588%25B8&xtype=&searchType=10&fw=400140" title="股票证券">股票证券</a>
+<a href="/moneditor/cs/search/search.html?keyword=%25E6%2588%25BF%25E8%25B4%25B7&xtype=&searchType=10&fw=400141" title="房贷">房贷</a>
+<a href="/moneditor/cs/search/search.html?keyword=%25E7%25A9%25BA%25E6%2588%2598%25E8%258B%25B1%25E8%25B1%25AA&xtype=&searchType=10&fw=400142" title="空战英豪">空战英豪</a>
+<a href="/moneditor/cs/search/search.html?keyword=%25E5%25A9%25B4%25E5%2584%25BF%25E6%2597%25A9%25E6%2595%2599&xtype=&searchType=10&fw=400143" title="婴儿早教">婴儿早教</a>
+<a href="/moneditor/cs/search/search.html?keyword=QQ&xtype=&searchType=10&fw=400144" title="QQ">QQ</a>	
+<a href="/moneditor/cs/search/search.html?keyword=%25E7%25AF%25AE%25E7%2590%2583&xtype=&searchType=10&fw=400145" title="篮球">篮球</a>
+<a href="/moneditor/cs/search/search.html?keyword=%25E6%2589%258B%25E6%259C%25BA%25E6%2594%25AF%25E4%25BB%2598&xtype=&searchType=10&fw=400146" title="手机支付">手机支付</a>
+<a href="/moneditor/cs/search/search.html?keyword=%25E5%25BE%25AE%25E5%258D%259A&xtype=&searchType=10&fw=400147" title="微博">微博</a>
+
+</span> </div>
+          <a class="right"  id="searchRight">&gt;&gt;</a> </div>
+      </div>
+      <div class="searchInput" id="searchStrip">
+        <div class="searchBar">
+          <input type="text" class="keyword" name="keyword" id="searchsuggest" keysize="11" num="12" maxlength="25" />
+          <input type="button" name="go" value="搜全部" class="searchBtn" />
+          <div class="chooseOption" id="chooseOption">
+            <div class="searchOption" style="display:none;" id="channelLayout">
+              <ul>
+                <li xtype=" " ><a href="javascript://">搜全部</a></li>
+                <li xtype="s"><a href="javascript://">搜软件</a></li>
+                <li xtype="g"><a href="javascript://">搜游戏</a></li>
+                <li xtype="t"><a href="javascript://">搜主题</a></li>
+				<li xtype="sp" ><a href="javascript://">搜开发者</a></li> 
+              </ul>
+            </div>
+          </div>
+        </div>
+        <a id="advSearch" href="#" onClick="hSearch();" class="advSearch" >高级搜索</a> </div>
+    </div>
+    <div class="sethome"> <a onClick="setHomePage(this);">设为首页</a> <a onClick="addFavorite();">加入收藏</a> </div>
+  </div>
+  <div class="nav_v5" id="changephone">
+    <div class="myPhone"> <img src="http://mm.10086.cn/moneditor/cs/style/skin/v4/images/noPhone.gif" width="65" height="75"  key="imageUrl"/> <a class="delPhone" key="delectButton" style="display:none;" href="javascript:void(0);" tip="hover"></a>
+<div style="position:absolute; display:none; top:47px; left:6px;" id="selectphonetip_new">
+<div class="tips" style="width:500px;">
+	<div class="tips_arrow tips_arrow_left"></div>
+    <div class="tips_angle tips_angle_left"></div>
+    <div class="tips_content">
+    	<div class="tips_robot tips_robot_type1"></div>
+        <div class="tips_text tips_noSelect">
+        	<h2>选择手机，可以进入您的专区！</h2>
+            <p>专门适配您手机的精彩应用、丰富资讯、热情粉丝尽在其中！</p>
+            <a key="iknow" class="tips_iknow">我知道了</a>
+        </div>
+    </div>
+    <div class="tips_angle tips_angle_right"></div>
+</div>
+</div>
+<div style="position:absolute; display:none; top:47px; left:6px;" id="phonemodeltip_new">
+<div class="tips" style="width:500px;">
+	<div class="tips_arrow tips_arrow_left"></div>
+    <div class="tips_angle tips_angle_left"></div>
+    <div class="tips_content">
+    	<div class="tips_robot tips_robot_type2"></div>
+        <div class="tips_text tips_selected">
+        	<h2>点此进入您的手机专区，快速找到适配应用！</h2>
+            <a key="iknow" class="tips_iknow">我知道了</a>
+        </div>
+    </div>
+    <div class="tips_angle tips_angle_right"></div>
+</div>
+</div>
+      <div class="entry_tip_v2 t3" style="display:none" id="phonedelectTip">
+        <div class="wrapper">
+          <p>点这里可取消机型选择，</p>
+          <p>显示所有机型的应用。</p>
+        </div>
+      </div>
+    </div>
+    <div  key="selectButton" url="/moneditor/cs/common/choosePhone.html"  style="display:none;"> <a style="display:none;">选择手机型号</a> </div>
+    <div class="menu_v5" id="menu_v5">
+      <div class="warpleft">
+        <div class="warpright">
+          <ul class="channelMenu" id="channelMenu">
+            <li class="home  menu1"><a href="/?fw=000001" title="首页" ><span>首页</span></a></li>
+            <li class="menu2"><a href="/moneditor/cs/soft/?fw=000003" title="软件" >软件</a></li>
+            <li class="menu3"><a href="/moneditor/cs/game/?fw=000005" title="游戏" >游戏</a></li>
+            <li class="menu4"><a href="/moneditor/cs/mobiletheme/?fw=000007" title="主题" >主题</a></li>
+            <li class="tieba menu5"><a href="http://mm.10086.cn/brand/index.html?fw=211200" target="_blank">品牌店</a></li>
+        <!--    <li class="tieba menu5"><a id="forum" href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/&fw=000009" target="_blank" style="position:relative;">MM社区<img src="/moneditor/cs/style/new1.gif" style="position:absolute; top:5px; right:-3px;" /></a></li>-->
+            <li class="cyjh menu7"><a href="http://mm.10086.cn/mm2011" target="_blank">MM创业计划</a></li>
+          </ul>
+          <ul class="subMenu" id="subMenu">
+            <li class="" style="display:block;"> <a  href="http://mm.10086.cn/moneditor/cs/newAdd/?fw=000030" title="最新上架手机应用" style="color:red;">最新上架</a> <!--<a  href="/smartApps/index.html?fw=000024" title="精品手机应用">精品应用</a> --><a  href="/freeApps/index.html?fw=000025" title="免费手机应用">免费应用</a> <a  href="/moneditor/cs/ranking/index.html?fw=000002" title="手机应用排行榜">排行榜</a> <a  href="/moneditor/cs/topic/index.html?fw=000027" title="MM专题汇总">专题频道</a> <a  href="/moneditor/cs/ac2010/life/index.html?fw=000028" title="移动生活手机应用">移动生活</a> <a  href="/moneditor/cs/review/index.html?fw=000029" title="手机应用玩家测评">玩家测评</a> <!--<a  href="/moneditor/cs/recommended/?fw=000023" title="小编推荐手机应用">小编推荐</a>--></li>
+            <li>                <a href="/moneditor/cs/soft/index.html?appcateid=1&fw=000004" title="工具类手机软件"  appcateid="1">工具</a>  <a href="/moneditor/cs/soft/index.html?appcateid=10&fw=000004" title="摄影类手机软件"  appcateid="10">摄影</a>  <a href="/moneditor/cs/soft/index.html?appcateid=11&fw=000004" title="商务类手机软件"  appcateid="11">商务</a>  <a href="/moneditor/cs/soft/index.html?appcateid=12&fw=000004" title="健康类手机软件"  appcateid="12">健康</a>  <a href="/moneditor/cs/soft/index.html?appcateid=13&fw=000004" title="动漫类手机软件"  appcateid="13">动漫</a>  <a href="/moneditor/cs/soft/index.html?appcateid=2&fw=000004" title="娱乐类手机软件"  appcateid="2">娱乐</a>  <a href="/moneditor/cs/soft/index.html?appcateid=3&fw=000004" title="生活类手机软件"  appcateid="3">生活</a>  <a href="/moneditor/cs/soft/index.html?appcateid=4&fw=000004" title="书籍类手机软件"  appcateid="4">书籍</a>  <a href="/moneditor/cs/soft/index.html?appcateid=5&fw=000004" title="新闻类手机软件"  appcateid="5">新闻</a>  <a href="/moneditor/cs/soft/index.html?appcateid=6&fw=000004" title="视频类手机软件"  appcateid="6">视频</a>  <a href="/moneditor/cs/soft/index.html?appcateid=7&fw=000004" title="社交类手机软件"  appcateid="7">社交</a>  <a href="/moneditor/cs/soft/index.html?appcateid=8&fw=000004" title="教育类手机软件"  appcateid="8">教育</a>  <a href="/moneditor/cs/soft/index.html?appcateid=9&fw=000004" title="财务类手机软件"  appcateid="9">财务</a>  </li>
+            <li>                <a href="/moneditor/cs/game/index.html?appcateid=14&fw=000006" title="休闲类手机游戏" appcateid="14">休闲</a>  <a href="/moneditor/cs/game/index.html?appcateid=15&fw=000006" title="棋牌类手机游戏" appcateid="15">棋牌</a>  <a href="/moneditor/cs/game/index.html?appcateid=16&fw=000006" title="动作类手机游戏" appcateid="16">动作</a>  <a href="/moneditor/cs/game/index.html?appcateid=17&fw=000006" title="体育类手机游戏" appcateid="17">体育</a>  <a href="/moneditor/cs/game/index.html?appcateid=18&fw=000006" title="射击类手机游戏" appcateid="18">射击</a>  <a href="/moneditor/cs/game/index.html?appcateid=19&fw=000006" title="冒险类手机游戏" appcateid="19">冒险</a>  <a href="/moneditor/cs/game/index.html?appcateid=20&fw=000006" title="策略类手机游戏" appcateid="20">策略</a>  <a href="/moneditor/cs/game/index.html?appcateid=21&fw=000006" title="赛车类手机游戏" appcateid="21">赛车</a>  <a href="/moneditor/cs/game/index.html?appcateid=22&fw=000006" title="飞行类手机游戏" appcateid="22">飞行</a>  <a href="/moneditor/cs/game/index.html?appcateid=23&fw=000006" title="格斗类手机游戏" appcateid="23">格斗</a>  <a href="/moneditor/cs/game/index.html?appcateid=24&fw=000006" title="角色类手机游戏" appcateid="24">角色</a>  <a href="/moneditor/cs/game/index.html?appcateid=25&fw=000006" title="益智类手机游戏" appcateid="25">益智</a>  <a href="/moneditor/cs/game/index.html?appcateid=26&fw=000006" title="其他类手机游戏" appcateid="26">其他</a>  </li>
+            <li>                <a href="/moneditor/cs/mobiletheme/index.html?appcateid=27&fw=000008" title="节日类手机主题" appcateid="27">节日</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=28&fw=000008" title="体育类手机主题" appcateid="28">体育</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=29&fw=000008" title="动物类手机主题" appcateid="29">动物</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=30&fw=000008" title="植物类手机主题" appcateid="30">植物</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=31&fw=000008" title="插画类手机主题" appcateid="31">插画</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=32&fw=000008" title="搞笑类手机主题" appcateid="32">搞笑</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=33&fw=000008" title="建筑类手机主题" appcateid="33">建筑</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=34&fw=000008" title="汽车类手机主题" appcateid="34">汽车</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=35&fw=000008" title="卡通类手机主题" appcateid="35">卡通</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=36&fw=000008" title="风景类手机主题" appcateid="36">风景</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=37&fw=000008" title="人物类手机主题" appcateid="37">人物</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=38&fw=000008" title="爱情类手机主题" appcateid="38">爱情</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=39&fw=000008" title="创意类手机主题" appcateid="39">创意</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=40&fw=000008" title="色彩类手机主题" appcateid="40">色彩</a>  <a href="/moneditor/cs/mobiletheme/index.html?appcateid=41&fw=000008" title="军事类手机主题" appcateid="41">军事</a>  </li>
+             <li><a href="http://mm.10086.cn/package/index.html" target="_blank" style="display: none;" id="package">品牌套餐</a> <a 
+href="http://mm.10086.cn/ap/the9/index.html?fw=211214" target="_blank">第九城市</a> <a 
+
+href="http://mm.10086.cn/ap/rock/index.html?fw=211215" target="_blank">滚石娱乐</a> <a 
+
+href="http://mm.10086.cn/ap/viva_brand/index.html?fw=211204" target="_blank">VIVA报刊亭</a> <a 
+
+href="http://mm.10086.cn/ap/socogame/index.html?fw=211206" target="_blank">索乐游戏</a> <a
+
+href="http://mm.10086.cn/ap/IFENGSTORE_brand/index.html?fw=211205" target="_blank">凤凰专卖店</a> <a 
+
+href="http://mm.10086.cn/ap/Smart/index.html?fw=211201" target="_blank">S市集</a> <a 
+
+href="http://mm.10086.cn/ap/olleh/index.html?fw=211213" target="_blank">kt奥乐</a> <a 
+
+href="http://mm.10086.cn/ap/EA_brand/index.html?fw=211202" target="_blank">EA Mobile</a> <a 
+
+href="http://mm.10086.cn/ap/chengopress/index.html?fw=211212" target="_blank">橙果出版</a>  <a 
+
+href="http://mm.10086.cn/ap/voson/index.html?fw=211216" target="_blank">外研社</a> <a 
+
+href="http://mm.10086.cn/ap/Glu_brand/index.html?fw=211208" target="_blank">Glu</a> <a 
+
+href="http://mm.10086.cn/ap/youku/index.html?fw=211217" target="_blank">优酷</a> <a 
+
+href="http://mm.10086.cn/ap/zy/index.html?fw=211218" target="_blank">掌阅科技</a> </li>
+<!--
+<li><a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-172-1.html&fw=000010">玩转MM</a> <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-158-1.html&fw=000010">潮流速递</a> <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-161-1.html&fw=000010">软件讨论</a> <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-162-1.html&fw=000010">游戏讨论</a> <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-163-1.html&fw=000010
+">主题讨论</a> <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-164-1.html&fw=000010">Android教程</a> <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-165-1.html&fw=000010">Android资讯</a> <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-166-1.html&fw=000010">Android手机讨论</a>  <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-169-1.html&fw=000010">热门手机讨论</a>  <a href="http://mm.10086.cn/goto.html?url=http://dev.10086.cn/cmdn/bbs/forum-170-1.html&fw=000010">小白课堂</a></li>
+-->
+            <li> <a href="http://dev.10086.cn/mm2011">报名参赛</a> <a href="http://mm.10086.cn/mm2011/tech/index.html?programsize=2001
+">软件游戏作品</a> <a href="http://mm.10086.cn/mm2011/tech/index.html?programsize=2002
+">创意孵化作品</a> <a href="http://mm.10086.cn/moneditor/cs/carve_2011/comment.html">测评赢大奖</a> <a href="http://mm.10086.cn/moneditor/cs/carve_2011/faq.html">Q&A</a> </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navBar_v5">
+     <!-- <div  id="boluoforum" style="display: none;" class="boluoforum" > <a key="forumLink"  target="_blank" >进入<span key="name"></span>粉丝部落</a></div> -->
+      <div> <span class="navPos" id="navPos" style="display:none;"> 我的位置： <a href="/">首页</a> <em id="navPosTxt"></em>　（</span><span key='selectArea'>请选择<a key='selectButton'>手机机型</a>，查看适合您的应用</span><span key='chooseArea' style="display:none;">您的机型是<strong id="modelurl" style="font-weight:normal;"><a key='url'><em key='deviceDesc'></em>[专区入口]</a></strong>　<a key='chooseButton'>更换</a>/<a key='delectButton'>取消机型</a></span><span class="navPos" id="navPos1" style="display:none;">）</span>
+      <!--  <div class="blessadv"> <span class="unlogin" id="masBeforeLogon"><a href="/topic/y2011/m03/surprise/">下载赢IPAD 推荐送话费！</a></span> <span class="login"  id="masAfterLogon"><a href="/topic/y2011/m03/surprise/">种子:<em key="count"></em>个</a></span> </div>-->
+      </div>
+    </div>
+  </div>
+</div>
+<div style="clear:both; float:none;"></div>
+<script type="text/javascript">	
+		var bl = $('#masBeforeLogon');
+		var al = $('#masAfterLogon');      
+        al.hide();
+		bl.show();
+	function  setDuijiangInfo(){
+	    var json=masRetData;
+		var bl = $('#masBeforeLogon');
+		var al = $('#masAfterLogon');
+        bl.hide();
+        al.hide();
+		if(json){
+			if(json.ret == 0){
+/**
+                var options = {
+                    success: function(o){
+						if(!o)
+						{
+							return;
+						};
+						if(o.data.provinceId == 11 || o.data.provinceId == 24 )
+						{
+**/
+							 $('*[key="count"]', al).text(json.data.seedsCount);
+							 al.show();
+/**
+						};
+					}
+                };
+                mm.common.business.service.send(mm.common.business.url.logon.isLogon, options);
+**/
+			}
+			else if(json.ret == -100 ){
+				bl.show();
+			}
+		}
+		//alert(json);
+	}	
+</script>
+<SCRIPT LANGUAGE="JavaScript">
+    function request(id,url){
+		  oScript = document.getElementById(id);
+		  var head = document.getElementsByTagName("head").item(0);
+		  if (oScript) {
+		  head.removeChild(oScript);
+		  }
+		  oScript = document.createElement("script");
+		  oScript.setAttribute("src", url);
+		  oScript.setAttribute("id",id);
+		  oScript.setAttribute("type","text/javascript");
+		  oScript.setAttribute("language","javascript");
+		  head.appendChild(oScript);
+		  return oScript;
+	} 
+	 var options={success:function(obj){
+	                      if( obj.ret == 0){
+						    var url="http://mmarket.10086.cn/portal/web/logon/activityAction.do?action=sendReq&activityId=20110315&flowCode=QueryRestSeedReq&serviceCode=blessingSeed&ReqSource=WWW";
+							request("masScript",url);
+							setTimeout(setDuijiangInfo,2000);
+						  } }};
+	 mm.common.business.service.send(mm.common.business.url.logon.isLogon, options);
+     
+</SCRIPT>
+<script type="text/javascript">
+var Dropdown = function(options){
+	this.setting = {
+		id:'',
+		contentClass:'dropDownContent',
+		handlerClass : 'selected'
+	};
+	jQuery.extend(this.setting, options);
+	
+	this.obj = $('#'+this.setting.id);
+	this.oContent = this.obj.find('.'+this.setting.contentClass);
+	this.init();
+ 
+};
+Dropdown.prototype = {
+	init : function(){
+		var _this = this;
+		this.obj.mouseover(function(){ 
+			_this.oContent.show();
+			_this.obj.addClass(_this.setting.handlerClass);
+		});
+		this.obj.bind("mouseleave", function(){
+			_this.oContent.hide();
+			_this.obj.removeClass(_this.setting.handlerClass);
+		});
+ 
+	}
+
+	
+};
+
+new Dropdown({id:'moreSite', contentClass:'siteList',handlerClass:'selected'})
+
+
+var hotSearch=new Marquee("hotSearch");
+hotSearch.Direction="left";
+hotSearch.Step=1;
+hotSearch.Width=295;
+hotSearch.Height=14;
+hotSearch.Timer=20;
+hotSearch.ScrollStep=-1;//此句禁止鼠标控制
+hotSearch.Start();
+hotSearch.Step=0;
+var hl = document.getElementById('searchLeft')
+
+var hr = document.getElementById('searchRight')
+hl.onmouseover=function(){hotSearch.Direction=2;hotSearch.Step=1;}
+hl.onmouseout=hl.onmouseup=function(){hotSearch.Step=hotSearch.BakStep;hotSearch.Step=0;}
+hl.onmousedown=hr.onmousedown=function(){hotSearch.Step=hotSearch.BakStep+2}
+hr.onmouseover=function(){hotSearch.Direction=3;hotSearch.Step=1;}
+
+hr.onmouseout=hr.onmouseup=function(){hotSearch.Step=hotSearch.BakStep;hotSearch.Step=0;}
+
+Package("mm.module.search.searchStrip");
+mm.module.search.searchStrip = {
+	IllegalString: "\`~!#$%^&*()+{}|\\:\"<>?-=/,\'",
+	defaultKeys:['愤怒的小鸟','网购','帝国','飞信','恶搞','GPS','口碑网','UC'],//默认关键字
+	settings: {
+		keyword: '',
+		xtype: "",
+		searchType: 10
+	},
+	searchStrip: jQuery("#searchStrip"),
+	init: function(){
+		this.jiyi();
+		this.setEvent();
+		if (mm.common.util.request.getParameter("keyword") == null) {
+			$("#searchsuggest").val(this.defaultKeys[random(0, this.defaultKeys.length - 1)]);
+		}
+		function random(min, max){
+			return parseInt((Math.random() * (max - min) + min));
+		}
+	},
+	jiyi: function(){
+		//记忆用户的选择
+		var _keyword = mm.common.util.request.getParameter("keyword");
+		var _xtype = mm.common.util.request.getParameter("xtype");
+		if(!_xtype&&!_keyword){
+			var str =top.location.href;
+			if(str.indexOf("/moneditor/cs/soft/")>0){
+				_xtype="s";
+			}else if(str.indexOf("/moneditor/cs/game/")>0){
+				_xtype="g";
+			}else if(str.indexOf("/moneditor/cs/mobiletheme/")>0){
+				_xtype="t";
+			}
+		}
+		if(!_xtype){
+			_xtype="";
+		}
+		jQuery("input[name='keyword']", this.searchStrip).val(_keyword == null ? '' : _keyword);
+		
+		if(_xtype != null && _xtype!=''){
+			$("li:[xtype]",this.searchStrip).removeClass();
+			$("li:[xtype="+_xtype+"]",this.searchStrip).addClass("selected");
+		}
+		mm.module.search.searchStrip.settings.xtype =_xtype;
+
+		var li = jQuery('#channelLayout>ul>li');
+		for(var i=0;i<li.size();i++){
+			if(li.eq(i).attr('xtype') == _xtype){
+				jQuery("input[name='go']", this.searchStrip).val(li.eq(i).text());
+				li.eq(i).addClass("selected"); 
+			}
+		}
+		//jQuery("select[name='xtype']", this.searchStrip).val(_xtype == null ? "" : _xtype);
+	},
+	setEvent: function(){
+		//jQuery("select[name='xtype']", this.searchStrip).bind("keydown.check",function(event){
+			//if (event.keyCode == 13) {
+				//mm.module.search.searchStrip.check();
+				//return false;
+			//}
+		//});
+		jQuery("input[name='go']", this.searchStrip).unbind().click(this.check);
+		
+		jQuery("li:[xtype]",this.searchStrip).unbind().click(function(){ 
+			jQuery("li:[xtype]",this.searchStrip).removeClass();
+			jQuery(this).addClass("selected"); 
+			
+			mm.module.search.searchStrip.settings.xtype = jQuery(this).attr("xtype");
+			jQuery("input[name='go']", this.searchStrip).val(jQuery(this).text());
+			jQuery('#channelLayout', this.searchStrip).hide();
+			return false;
+		});
+		jQuery('#searchsuggest').click(function(){
+			jQuery(this).val('');
+		});
+
+		jQuery('#searchLink', this.searchStrip).unbind().click(this.check);
+		
+		jQuery('#chooseOption', this.searchStrip).unbind().mouseover(function(){
+				jQuery('#channelLayout', this.searchStrip).show();
+		});
+		
+		jQuery('#channelLayout').bind("mouseleave", function(){
+              jQuery(this).hide();
+	    });
+		
+		
+	},
+	check: function(event){ 
+		var searchStrip = mm.module.search.searchStrip;
+		var keyword = jQuery("input[name='keyword']", searchStrip.searchStrip).val();
+		keyword = keyword.replace(/^\s*|\s*$/g, "");
+
+		if(keyword.length>50){
+			alert("关键字不能超过50个字");
+			return false;
+		}
+		searchStrip.settings.keyword = encodeURIComponent(keyword);
+		var url = "/moneditor/cs/search/";
+		if(mm.module.search.searchStrip.settings.xtype=="s"){
+			url+="searchsoftgame.html";
+		}else if(mm.module.search.searchStrip.settings.xtype=="t"){
+			url+="searchtheme.html";
+		}else if(mm.module.search.searchStrip.settings.xtype=="g"){
+			url+="searchsoftgame.html";
+		}else{
+			url+="search.html";
+		};
+		if(mm.module.search.searchStrip.settings.xtype == 'sp'){
+			searchStrip.settings.searchfield = 'spname';
+
+			searchStrip.settings.xtype == '';
+		};
+		url+="?" + jQuery.param(searchStrip.settings);	
+		
+        try {
+			var enenTagename =$(this).attr("name");
+			if (enenTagename == "go") {
+				url += "&act=0";
+			}
+		}catch (e) {
+
+		}
+		top.location.href = url+ "&fw=400130";
+		
+		return false;
+	}
+};
+mm.module.search.searchStrip.init();
+jQuery("#searchsuggest").focus().autocomplete(mm.common.business.url.search.searchSuggest, {
+	extraParams: {
+		keyword: function(){
+			return jQuery("#searchsuggest").val();
+		},
+		num:jQuery("#searchsuggest").attr("num")||10
+	},
+	max:jQuery("#searchsuggest").attr("keysize")||0,
+	type: "POST",
+	scroll: true,
+	scrollHeight: 220,
+	formatItem: function(data, i, n, value){
+		if(value.blength()>this.max*2){
+			return value.bsubstring(this.max*2-2)+"..";						
+		}else{
+			return value;
+		}
+	},
+	formatResult: function(data, value){
+		return value;
+	},
+	dataType: "json",
+	parse: function(json){
+		var rows = json.data||[];
+		var parsed = [];
+		for (var i = 0; i < rows.length; i++) {
+			var row = jQuery.trim(rows[i]);
+			if (row) {
+				parsed[parsed.length] = {
+					data: row,
+					value: row,
+					result: row
+				};
+
+			}
+		}
+		return parsed;
+	},
+	selectRetrun:mm.module.search.searchStrip.check
+});
+
+
+function addFavorite(){
+    var aUrls=document.URL.split("/");
+    var vDomainName="http://"+aUrls[2]+"/?fw=400120";
+    var description=document.title;
+	if(document.all){
+    try{//IE
+        window.external.AddFavorite(vDomainName,description);
+    }catch(e){//FF
+        window.sidebar.addPanel(description,vDomainName,"");
+    }
+	}else{
+		alert("对不起，目前只有IE支持这个功能");
+	}
+};
+ 
+function setHomePage(obj){
+    var aUrls=document.URL.split("/");
+    var vDomainName="http://"+aUrls[2]+"/?fw=400110";
+	if(document.all){
+	obj.style.behavior="url(#default#homepage)";
+	obj.setHomePage(vDomainName);
+	}else{
+		alert("对不起，目前只有IE支持这个功能");
+	}
+
+};
+var navTimerObj = null;
+(function(){
+	var menu = jQuery('#menu_v5');
+	var channelMenu = jQuery('#channelMenu>li');
+	var subMenu = jQuery('#subMenu');
+	var subMenuLi = subMenu.find('li');
+	var channelMenuA = channelMenu.find('a');
+	channelMenu.mouseover(function(e){
+		//channelMenu.removeClass('selected');
+		//jQuery(this).addClass('selected');
+		clearTimeout(navTimerObj);
+		for(var i=0; i<channelMenu.size(); i++){
+			if(this == channelMenu.get(i)){
+				subMenuLi.hide();
+				subMenuLi.eq(i).show();
+				channelMenuA.removeClass('hover');
+				channelMenuA.eq(i).addClass('hover');
+				e.stopPropagation();
+				return false;
+			}
+		}
+	});
+	menu.bind("mouseleave", function(e){
+		navDefault();
+	});
+	function navDefault(){
+navTimerObj = setTimeout(function(){
+		subMenuLi.hide();
+		channelMenuA.removeClass('hover');
+		switch (jQuery('body').attr('class')){
+			case 'index_channel':
+				channelMenuA.eq(0).addClass('hover');
+				subMenuLi.eq(0).show();
+				break;
+			case 'soft_channel':
+				channelMenuA.eq(1).addClass('hover');
+				subMenuLi.eq(1).show();
+				break;
+			case 'game_channel':
+				channelMenuA.eq(2).addClass('hover');
+				subMenuLi.eq(2).show();
+				break;
+			case 'theme_channel':
+				channelMenuA.eq(3).addClass('hover');
+				subMenuLi.eq(3).show();
+				break;
+			default :
+				channelMenuA.eq(0).addClass('hover');
+				subMenuLi.eq(0).show();
+				break;
+		};
+},1000);
+	};
+	navDefault();
+})();
+
+jQuery(document).ready(function(){ 
+
+    if($("#navBarContent").size()>0 || $('#navBarContentAppcate').size()>0){ 
+		if (mm.common.util.request.getParameter("appcateid")) {
+			if ($("#channelNavstatic").length > 0) {
+				$("#navBarContentAppcate [key='appcatename']").text($("#channelNavstatic [appcateid ='" + mm.common.util.request.getParameter
+
+("appcateid") + "'] a").text());
+			}else{
+				$("#navBarContentAppcate [key='appcatename']").text($("#channelNav [appcateid ='" + mm.common.util.request.getParameter("appcateid") + 
+
+"'] a").text());
+			}
+			$('#navPosTxt').html($('#navBarContentAppcate').html());
+		} else {
+			$("#navPosTxt").html($("#navBarContent").html());
+		}
+		$("#navPos").show();
+		$("#navPos1").show();
+   }else{
+   		$("#navPos").hide();
+		$("#navPos1").hide();
+   }
+});
+</script>
+<script type="text/javascript" src="http://i1.mm-img.com/moneditor/cs/include/js/module/third/buluo/showdevicename.js" charset="gb2312"></script>
+
+<script type="text/javascript">
+new Dropdown({id:'mymm', contentClass:'mymmDropdown'})
+</script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/home/homeMsgUtil.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/logon/logonStrip.js"></script>
+<script type="text/javascript" src="/moneditor/cs/js/ui/common/thickbox.js"></script>
+		<!--header end-->
+		<div class="channelBody" id="allgame" channelId="1009" num="32" page="true" order="true" needSeries="true">
+				<div class="channel_nav">
+					<div class="channel_nav01">
+						<div class="channel_nav02 channel_nav03">
+							<p appcateid=" "  >
+								<a title="全部" href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid= &appcatename=%E5%85%A8%E9%83%A8%20">全部</a>
+							</p>
+							<ul id="channelNavstatic">
+                                                           								<li appcateid="14"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=14&appcatename=%E4%BC%91%E9%97%B2"title="休闲">休闲</a></li>
+                                                           								<li appcateid="15"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=15&appcatename=%E6%A3%8B%E7%89%8C"title="棋牌">棋牌</a></li>
+                                                           								<li appcateid="16"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=16&appcatename=%E5%8A%A8%E4%BD%9C"title="动作">动作</a></li>
+                                                           								<li appcateid="17"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=17&appcatename=%E4%BD%93%E8%82%B2"title="体育">体育</a></li>
+                                                           								<li appcateid="18"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=18&appcatename=%E5%B0%84%E5%87%BB"title="射击">射击</a></li>
+                                                           								<li appcateid="19"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=19&appcatename=%E5%86%92%E9%99%A9"title="冒险">冒险</a></li>
+                                                           								<li appcateid="20"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=20&appcatename=%E7%AD%96%E7%95%A5"title="策略">策略</a></li>
+                                                           								<li appcateid="21"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=21&appcatename=%E8%B5%9B%E8%BD%A6"title="赛车">赛车</a></li>
+                                                           								<li appcateid="22"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=22&appcatename=%E9%A3%9E%E8%A1%8C"title="飞行">飞行</a></li>
+                                                           								<li appcateid="23"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=23&appcatename=%E6%A0%BC%E6%96%97"title="格斗">格斗</a></li>
+                                                           								<li appcateid="24"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=24&appcatename=%E8%A7%92%E8%89%B2"title="角色">角色</a></li>
+                                                           								<li appcateid="25"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=25&appcatename=%E7%9B%8A%E6%99%BA"title="益智">益智</a></li>
+                                                           								<li appcateid="26"><a href="/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=26&appcatename=%E5%85%B6%E4%BB%96"title="其他">其他</a></li>
+                                                           							</ul>
+						</div>
+					</div>
+				</div>
+			<div class="channel_list">
+				<div class="channel_list01">
+					<div class="channel_list02">
+						<div class="topBox">
+							<h2><span key="categoryname">全部游戏</span><span key="appcatename"></span></h2>
+							<span class="check_all" style="display:none"><a href="#" target="_blank">查看全部&gt;</a></span>
+							<span class="num" key="page">
+									<span key="oTotalRecord"></span>的第<span key="oStartRecord"></span>-<span key="oEndRecord"></span>个
+							</span>	
+							<div class="paixu" key="searchSort">
+									<span key="item"  value="pv:desc" title="人气">人气</span>
+									<span key="item"  value="time:desc" title="时间">时间</span>
+									<span key="item"  value="grade:desc" title="评分">评分</span>
+									<em><span key="item"  value="price:asc" title="价格">价格</span></em>
+									<select name="selectSort" class="select02">
+										<option value="">默认</option>
+										<option value="pv:asc">人气从低到高</option>
+										<option value="pv:desc">人气从高到低</option>
+										<option value="time:asc">上架时间从旧到新</option>
+										<option value="time:desc">上架时间从新到旧</option>
+										<option value="grade:asc">评分从低到高</option>
+										<option value="grade:desc">评分从高到低</option>
+										<option value="price:asc">价格从低到高</option>
+										<option value="price:desc">价格从高到低</option>
+									</select>
+								</div>
+						</div>
+						<div class="pro_box">
+							
+							<div  key="content"></div>
+								<div   key="waitDiv" style="padding:100px 0; text-align:center;"><img height="66" width="66"  src="http://i1.mm-img.com/moneditor/cs/image/tab/loading4.gif"/></div>
+								<!--数据模板 开始 -->
+								<div  style="display:none">
+									<dl class="goodItem"  key="template">
+										<dt>
+											<a href="{infoUrl}&fw=430034" target="_blank" title="{name}" class="goodsIcon"><img src="{imageName2}" width="70" height="70" alt="{name}" />{get,setflashImage}</a>
+										</dt>
+										<dd class="tit">
+											<a href="{infoUrl}&fw=430034" target="_blank" title="{name}">{name,8}</a>
+										</dd>
+										<dd class="cite">
+											<a href="http://www.mmarket.com/moneditor/cs/search/search.html?keyword={spName}&xtype=&searchType=10" target="_blank" title="{spName}">{spName,10}</a>
+										</dd>
+										<dd key="seriescountTip" style="display:none;">含{seriescount}款应用</dd>
+										<dd>
+											<!--{function,setAverage}-->
+											<span  key="averageMark">
+
+												<img key="star_on"  style="display:none" src="/moneditor/cs/style/skin/v4/images/star_on.gif" />
+												<img key="star_off"  style="display:none"  src="/moneditor/cs/style/skin/v4/images/star_off.gif" />
+											</span>
+											<!--{function,setRecommend}-->
+											<span class="point">
+											 <a  class="jian timeinterval" key="timeinterval" style="display:none;" title="最新上架应用"></a>
+											 <!--<a  class="jian recommendTip" key="recommendTip" style="display:none;" title="荣获小编推荐"></a>-->
+											 <a class="jian handBookPicture" key="handBookPicture" style="display:none;" title="配有视频展示"></a>
+											</span>
+											
+										</dd>
+										<dd class="select" key="orderarea">
+											<a class="download" key="order" title="下载到手机">
+												<em key="mPrice"><!--{function,setPrice}--></em> <span>购买</span>
+											</a>
+											<a class="listHandler" key="showSelectBox"></a>
+										</dd>
+										<!--{function,setOrder3}-->
+										<dd class="select_box" style="display:none;" key="selectBox">
+                                                                                                                    <span key="order2" style="display:none"><a href="#" key="order2">下载到电脑</a></span>
+
+											<span key="order3" style="display:none"><a href="#" key="order3">赠送此应用</a></span>
+											<span key="save"><a href="#" key="save">加入收藏</a></span>
+											<span><a href="javascript:copyUrl('{infoUrl}')">复制链接</a></span>
+											<span class="line"></span>
+											<span><a href="javascript:shareTo('kaixin001','{infoUrl}','{name}')">分享到开心网</a></span>
+											<span><a href="javascript:shareTo('renren','{infoUrl}','{name}')">分享到人人网</a></span>
+											<span><a href="javascript:shareTo('weibo','{infoUrl}','{name}')">分享到新浪微博</a></span>
+											<span><a href="javascript:shareTo('douban','{infoUrl}','{name}')">分享到豆瓣</a></span>
+											<span><a href="javascript:shareTo('139','{infoUrl}','{name}')">分享到139社区</a></span>
+											<span><a href="javascript:shareTo('feixin','{infoUrl}','{name}')">分享到飞信</a></span>
+										</dd>
+									</dl>
+								</div>
+							<!--数据模板 结束-->
+							
+						</div>
+						<div class="pageBox" key="page">
+								<div class="pagePanel">
+									<div key="btnPrev">&lt;&lt; 上一页</div>
+									<div key="btnList"></div>
+									<div key="btnNext">下一页 &gt;&gt;</div>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--footer start-->
+<div class="v4_layout v4_footer">
+<dl>
+<dd class="link">
+<a href="/moneditor/cs/services/contract.html?fw=500290" target="_blank">版权声明</a> | 
+<a href="http://www.10086.cn/service/advise/index.htm?fw=500291" target="_blank">客服受理</a> | 
+<a href="http://www.10086.cn/aboutus/index_4450.htm?fw=500292" target="_blank">关于移动</a> 
+</dd>
+<dd><img src="http://www.mmarket.com/moneditor/cs/image/V2/icp.gif" width="19" height="21" align="top" /> 粤ICP备<a href="http://www.miibeian.gov.cn/" target="_blank">08034647</a>号 | 中国移动通信集团广东有限公司版权所有</dd>
+</dl>
+</div>
+
+<div class="popu" id="popuWindow" style="height:0; display:none;">
+<h2><span style="color:#f00;">公告：玩家社区“MM部落”上线</span><a class="close">关闭</a></h2>
+<p>MM门户网站全新推出“MM部落”栏目。开设OPhone部落、Symbian部落、Android部落、WindowsMobile部落、Java部落等五个讨论组。欢迎广大MM用户入驻“MM部落”，分享彼此的玩机体验！…<a href="http://dev.10086.cn/news/MMnews/4561.html" target="_blank">详情>></a></p>
+</div>
+<style type="text/css">
+#ui_sideBar {position:absolute; width:133px; left:-105px; top:0; font:12px simsun; color:#828282; z-index:100;}
+#ui_sideBar .wrapper_sideBar {background:url(http://mm.10086.cn/moneditor/cs/style/skin/v5/images/bg_sideBar.png); _background:url(http://mm.10086.cn/moneditor/cs/style/skin/v5/images/bg_sideBar.gif);}
+#sideBar_switch {position:absolute; left:105px; top:81px; width:20px; text-align:center; background:url(http://mm.10086.cn/moneditor/cs/style/skin/v5/images/switch_sideBar.gif) no-repeat center top; line-height:14px; color:#5b5b5b;}
+#ui_sideBar a#sideBar_switch:hover {text-decoration:none;}
+#sideBar_switch em {font:bold 10px/14px simsun; cursor:pointer; font-style:normal; color:#fff; display:block; margin:0 0 5px;}
+#ui_sideBar a {color:#828282; text-decoration:none;}
+#ui_sideBar a:hover {text-decoration:underline;}
+#ui_sideBar dl, #ui_sideBar dt, #ui_sideBar dd, #ui_sideBar p {margin:0; padding:0;}
+#ui_sideBar dl {width:80px; padding:4px 0 8px 18px;}
+#ui_sideBar dt {font:bold 12px/22px simsun;}
+#ui_sideBar dd a, #ui_sideBar dd p, #ui_sideBar dd strong {line-height:18px; white-space:nowrap;}
+#ui_sideBar .sideBarHr {display:block; height:1px; background:#d5d5d5; overflow:hidden; width:90px; margin:0 0 0 7px;}
+#ui_sideBar .footer_sideBar {background:url(http://mm.10086.cn/moneditor/cs/style/skin/v5/images/bg_sideBar.png) 0 bottom; _background:url(http://mm.10086.cn/moneditor/cs/style/skin/v5/images/bg_sideBar.gif) 0 bottom; height:11px; overflow:hidden;}
+</style>
+<div id="ui_sideBar">
+    <div class="wrapper_sideBar">
+        <a id="sideBar_switch"><em>&gt;</em>常<br />用<br />导<br />航</a>
+        <dl>
+            <dt>热门精品</dt>
+            <dd>
+                <a href="http://mm.10086.cn/moneditor/cs/search/search.html?keyword=%25E6%2584%25A4%25E6%2580%2592%25E7%259A%2584%25E5%25B0%258F%25E9%25B8%259F&xtype=&searchType=10&act=0&fw=501001" target="_blank" style="color:#ff0303;">愤怒的小鸟</a>
+                <a href="http://mm.10086.cn/topic/y2011/m04/EA/index.html?fw=501002" target="_blank">EA赛车嘉年华</a>
+                <a href="http://mm.10086.cn/1009/300001326814.html?fw=501003" target="_blank">大家来找茬</a>
+                <a href="http://mm.10086.cn/1009/300001341792.html?fw=501004" target="_blank" style="color:#ff0303;">变形金刚3</a>
+                <a href="http://mm.10086.cn/1009/300001114535.html?fw=501005" target="_blank">地产大亨</a>
+                <a href="http://mm.10086.cn/1009/300001326734.html?fw=501006" target="_blank">牧场物语</a>
+                <a href="http://mm.10086.cn/1009/300001116149.html?fw=501007" target="_blank">模拟人生3</a>
+                <a href="http://mm.10086.cn/1009/300000734435.html?fw=501008" target="_blank">台湾麻将</a>
+                <a href="http://mm.10086.cn/1009/300000013233.html?fw=501009" target="_blank">魔法气泡</a>
+                <a href="http://mm.10086.cn/1009/300001185092.html?fw=501010" target="_blank">吉他英雄5</a>
+            </dd>
+        </dl>
+        <div class="sideBarHr"></div>
+        <dl>
+            <dt>精彩栏目</dt>
+            <dd>
+                <a href="/package/index.html?fw=5010011" target="_blank">品牌套餐</a>
+                <a href="/bibei/v2.html?fw=501012" target="_blank">手机必备</a>
+                <a href="/ac2010/yule/?fw=5010013" target="_blank">休闲精品</a>
+                <a href="/mmnewpage/mymm2/member_area.html?fw=501014" target="_blank">会员专区</a>
+            </dd>
+        </dl>
+    </div>
+    <div class="footer_sideBar"></div>
+</div>
+<script type="text/javascript">
+var ui_sideBar = $('#ui_sideBar');
+var sideBar_switch = $('#sideBar_switch>em');
+ui_sideBar.mouseenter(function(){
+	ui_sideBar.stop();
+	ui_sideBar.animate({left:0},300);
+	sideBar_switch.text('<');
+});
+ui_sideBar.mouseleave(function(){
+	ui_sideBar.stop();
+	ui_sideBar.animate({left:-105},300);
+	sideBar_switch.text('>');
+});
+sideBar_switch.click(function(){
+	ui_sideBar.stop();
+	ui_sideBar.animate({left:-105},300);
+	sideBar_switch.text('>');
+});
+$(window).scroll(function(){
+	setSideBarPosition();
+});
+$(window).resize(function(){
+	initSideBarPosition();
+});
+function setSideBarPosition(){
+	ui_sideBar.stop();
+	ui_sideBar.animate({top:$(this).scrollTop()+($(window).height()-ui_sideBar.height())/2},300);
+};
+function initSideBarPosition(){
+	ui_sideBar.css('top',$(this).scrollTop()+($(window).height()-ui_sideBar.height())/2);
+	ui_sideBar.stop();
+	if($(window).width() >= 1250){
+		ui_sideBar.animate({left:0},300);
+		sideBar_switch.text('<');
+	}else{
+		ui_sideBar.animate({left:-105},300);
+		sideBar_switch.text('>');
+	};
+};
+initSideBarPosition();
+</script>
+<script>
+/*
+$(window).scroll(function(){
+var top= document.documentElement.clientHeight + $(window).scrollTop() - 140;
+$('#popuWindow').css({'_top':top+'px'});
+});
+
+$(document).ready(function(){
+
+var isShow = getCookies("isShow");
+if(isShow == null){
+$('#popuWindow').show();
+$('#popuWindow').animate({
+height: 130
+}, { duration: 500 });
+};
+$('#popuWindow').find('a.close').click(function(){
+$('#popuWindow').hide();
+setCookies("isShow", true, 1);
+});
+
+
+});
+*/
+</script>
+<script src="http://www.10086.cn/images/js/portal/sdc_MM.js" type="text/javascript"></script>
+<!--banruo begin-->
+<script src="http://i1.mm-img.com/js/banruo/ba.js" type="text/javascript"></script>
+<script type="text/javascript">ba_user="1001";</script>
+<iframe id="ba" src="" height="0" width="0"></iframe>
+<script type="text/javascript">run();</script>
+<!--banruo end-->
+
+
+
+
+
+
+		<!--footer end-->
+
+           </body>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/common/business/url.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/common/plug/thickbox/thickbox.js"></script> 
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/common/plug/jquery/jbrace.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/common/util/ajax.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/common/util/request.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/ui/pagination/Pagination.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/ua/selectedPhone.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/ua/changeMobile.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/search/goods.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/freshv4/gameall.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/collection/addCollection.js"></script>
+
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/include/js/module/logon/logonStrip.js"></script>
+<script type="text/javascript" charset="gb2312" src="/moneditor/cs/js/v4/share.js"></script>
+</html>  
+        
