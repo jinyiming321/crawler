@@ -71,7 +71,7 @@ my $url_base    = 'www.liqucn.com';
 my $login_url   = '';
 my $cookie_file = '';
 
-my $tree = new HTML::TreeBuilder;
+my $tree ;
 
 my $usage =<<EOF;
 ==================================================
@@ -211,7 +211,10 @@ our @app_info_list = qw(
         status                  
 );
 
-our $AUTHOR     = '??';
+our $AUTHOR     = '历趣网';
+if( $ARGV[-1] eq 'debug' ){
+    &run;
+}
 # check args 
 unless( $task_type && $task_id && $conf_file ){
     die $usage;
@@ -422,7 +425,7 @@ sub get_description{
 
     $desc =~ s/\r//g;
     $desc =~ s/\n//g;
-    $desc =~ s/\?//sg;
+    $desc =~ s/\s/ /g;
     return  $desc;
 }
 
@@ -633,6 +636,7 @@ sub extract_app_info
 
     # create a html tree and parse
     print "extract_app_info  run \n";
+    $tree = new HTML::TreeBuilder;
     $tree->parse($html) or die "html is empty";
     $tree->eof;
 
@@ -662,13 +666,12 @@ sub extract_app_info
             }
         }
     };
-    use Data::Dumper;
-    print Dumper $app_info;
 
     $app_info->{status} = 'success';
     if($@){
         $app_info->{status} = 'fail';
     }
+    $tree->delete;
 
     return scalar %{$app_info};
 }
@@ -718,7 +721,7 @@ sub run{
     #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
     # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
 #    my $content = get('http://www.liqucn.com/os/android/yx/c/332/');
-    my $content = get('http://www.liqucn.com/os/android/rj/10737.shtml');
+    my $content = get('http://www.liqucn.com/yx/10607.shtml');
     
     goto APP_INFO;
     my @pages = ();

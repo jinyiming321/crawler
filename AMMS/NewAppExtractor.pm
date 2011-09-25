@@ -785,8 +785,6 @@ sub download_app_apk
     my $hook_name  = shift;
     my $apk_info= shift;
 
-    return 1; # modify by debug
-
     my $apk_file;
     my $md5 =   $apk_info->{'app_url_md5'};
     my $apk_dir= $self->{'TOP_DIR'}.'/'. get_app_dir( $self->getAttribute('MARKET'),$md5).'/apk';
@@ -813,14 +811,12 @@ sub download_app_apk
     }
 
     $downloader->timeout($self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime'));
-=pod    
-#    $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
+    $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
     if (!$downloader->is_success)
     {
         $apk_info->{'status'}='fail';
         return 0;
     }
-=cut
 
  
     my $unique_name=md5_hex("$apk_dir/$apk_file")."__".$apk_file;
@@ -840,7 +836,6 @@ sub download_app_apk
 sub clean_app_data
 {
     my $self    = shift;
-
     foreach ( keys %{ $self->{'APP_RESULT'} } )
     {
         my $app_dir= $self->{'TOP_DIR'}.'/'.get_app_dir($self->getAttribute('MARKET'),$_);

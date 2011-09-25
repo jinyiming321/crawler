@@ -10,6 +10,7 @@ use DBI;
 use Getopt::Long;
 
 my $temp_html_dir = '/root/crawler/html/';
+my $task_num;
 
 =pod
   use Getopt::Long;
@@ -25,6 +26,7 @@ my ( $task_type,$config );
 my $ret = GetOptions( 
     'task_type=s' => \$task_type,
     'config=s'    => \$config,
+    'task_num'    => \$task_num,
 ) ;
 #my$dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
 #my $dsn  = 'DBI:mysql:database=amms;host=192.168.154.1;port=3306';
@@ -92,7 +94,7 @@ EOF
 
 sub run_new_app{
     my @task_id_list = keys %{ $task_info->{new_app} };
-    for( my $i = 0;$i<=30;$i++){
+    for( my $i = 0;$i<=$task_num;$i++){
         my $cmd = <<CMD;
         perl /root/crawler/liqu.pl new_app $task_id_list[$i] /root/crawler/default.cfg
 CMD

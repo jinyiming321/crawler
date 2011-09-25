@@ -1,6 +1,6 @@
 #!/usr/bin/perl 
 #===============================================================================
-#         FILE: ?? 
+#         FILE: android168.pl
 #        USAGE: task_type task_id configure
 # for example => $0 find_app 144 ./default.cfg
 #  DESCRIPTION: 
@@ -18,7 +18,7 @@
 #      CREATED: 2011/9/24 13:35
 #     REVISION: 1.0
 #===============================================================================
-
+                    
 use strict;
 use warnings;
 
@@ -46,11 +46,17 @@ use LWP::UserAgent;
 use LWP::Simple;
 
 # use AMMS Module
-use AMMS::Util;
-use AMMS::AppFinder;
-use AMMS::Downloader;
-use AMMS::NewAppExtractor;
-use AMMS::UpdatedAppExtractor;
+BEGIN{
+    unless( $^O =~ m/win/ ){
+        use AMMS::Util;
+        use AMMS::AppFinder;
+        use AMMS::Downloader;
+        use AMMS::NewAppExtractor;
+        use AMMS::UpdatedAppExtractor;
+    }       
+}
+
+
 
 # Export function for test
 require Exporter;
@@ -133,9 +139,9 @@ our %app_map_func = (
         current_version         => \&get_current_version,
         icon                    => \&get_icon,
         price                   => \&get_price,
-        system_requirement      => \&get_system_requirement,
-        min_os_version          => \&get_min_os_version,
-        max_os_version          => \&get_max_os_version,
+        system_requirement      => '',
+        min_os_version          => '',
+        max_os_version          => '',
         resolution              => '',
         last_update             => \&get_last_update,
         size                    => \&get_size,
@@ -207,12 +213,28 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
 
 sub get_page_list{
     my $html        = shift;
-    my $page_mark   = shift;
+    my $params      = shift;
     my $pages       = shift;
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
+
+    my @nodes = $tree->look_down( class => 'page_info');
+    return unless @nodes;
+
+    my $page_num = ( $nodes[0]->find_by_tag_name('strong') )[0]->as_text;
+    return unless $page_num;
+
+    my @list = $nodes[0]->look_down( class => 'pagelist');
+    my $link = ( $list[0]->find_by_tag_name('a') )[0]->attr('href');
+
     $tree->delete;
+    $link =~ s/(\d+)_\.html/'$num'."_.html"/e;
+
+    map{
+        $link =~ s/\$num/$_/;
+        push @{ $pages },trim_url($params->{base_url}).$link
+    } (1..$page_num);
 }
 
 
@@ -233,7 +255,7 @@ sub extract_page_list{
     # create a html tree and parse
     my $web = $params->{web_page};
     eval{
-        get_page_list( $web,undef,$pages );
+        get_page_list( $web,$params,$pages );
     };
     if($@){
 #        print Dumper $pages;
@@ -244,19 +266,28 @@ sub extract_page_list{
 
 sub get_app_list{
     my $html      = shift;
-    my $app_mark  = shift||'t';
+    my $params    = shift;
     my $apps_href = shift;
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
 
-    my @nodes = $tree->look_down( class => $app_mark );
+    my @nodes = $tree->look_down( class => 'title');
     Carp::croak('not find apps nodes by this mark name')
         unless ( scalar(@nodes) );
 
-
+    for(@nodes){
+        next unless ref($_);
+        my $href = $_->attr('href');
+#<a class="title"
+#href="/apk/system-admin-201011081046.html">电脑端Android软件安装器-HiAPK
+#Installer</a>
+        if($href =~ m/-(\d+)\.html/){
+            $apps_href->{$1} = trim_url($params->{base_url}).$href;
+        }
+    }
     $tree->delete;
-    return
+    return 
 }
 
 sub extract_app_from_feeder{
@@ -273,7 +304,7 @@ sub extract_app_from_feeder{
     print "run extract_app_from_feeder_list ............\n";
     eval{
         my $html = $params->{web_page};
-        get_app_list( $html,undef,$apps );
+        get_app_list( $html,$params,$apps );
     };
     if($@){
         $apps = {};
@@ -307,23 +338,23 @@ sub get_app_url{
 }
 
 sub get_icon{
-    my $html = shift;
-    
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-#    return unless @nodes;
 
-    #look down brief label;
-    my @nodes = $tree->look_down( class => 'apptitle');
-    return unless @nodes;
 }
 
 sub get_app_name{
     my $html = shift;
-    my $mark = shift||'apptitle';
+    my $app_info = shift;
     
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
+    my $app_name;
+    my @nodes = $tree->look_down( class =>'title');
+    return unless @nodes;
+    $app_map_func{get_icon} = sub {
+        my $icon = [ $nodes[0]->find_by_tag_name('img') ]->[0]->attr('src');
+        return $icon;
+    };
+    $app_name = [ $nodes[0]->find_by_tag_name('h2') ]->[0]->as_text;
+    
+    return $app_name;
 }
 
 sub get_price{ 
@@ -332,8 +363,15 @@ sub get_price{
 
 sub get_description{
     my $html = shift;
+    my $app_info = shift;
 
-    return 
+    my @nodes = $tree->look_down( class => 'content');
+    return unless @nodes;
+
+    my @tags = $nodes[0]->find_by_tag_name('p');
+    my $content = $tags[0]->as_text;
+
+    return $content;
 }
 
 sub get_size{
@@ -348,13 +386,30 @@ sub get_total_install_times{
 
 sub get_last_update{
     my $html = shift;
-
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'changelog' );
-    return unless @nodes;
-    
-    return ;
+    my $date;
+    if( $html =~ m/软件大小.*?<span>(.+?)</){
+        my $size = $1;
+        $app_map_func{get_size} = sub{
+            return kb_m($size);
+        }
+    }
+    # ★★★☆☆
+    if( $html =~ m/软件等级.*?<span>(.+?)</){
+        my $star = $1;
+        $app_map_func{get_official_rating_stars} = sub{
+            return $star;
+        }
+    }
+    if( $html =~ m/发布时间.*?<span>(.+?)</ ){
+        $date = $1;
+    }
+    if( $html =~ m/下载次数.*?<span>(.+?)</ ){
+        my $download_times = $1;
+        $app_map_func{get_total_install_times} = sub{
+            return $download_times
+        }
+    }
+    return $date;
 }
 
 sub get_cookie{
@@ -409,58 +464,14 @@ sub get_cookie{
 }
 
 sub get_apk_url{
-    my $html = shift;
-    my $sid;
-    # save sid for get_permission's sid
-    {
-        no strict 'refs';
-        ${ __PACKAGE__."::"."SID" } = $sid;
-    }
+    my $html     = shift;
+    my $app_info = shift;
 
-    unless( -e $cookie_file ){
-        Carp::croak("can't get cookie from coolapk")
-            unless get_cookie($cookie_file);
-    }
+    my @nodes = $tree->look_down( class => 'downurllist');
+    return unless @nodes;
 
-    my $ua = LWP::UserAgent->new;
-    my $cookie_jar = HTTP::Cookies->new(
-         file => $cookie_file,
-    );
-    $cookie_jar->load($cookie_file);
-    $ua->cookie_jar($cookie_jar);
-    $ua->agent("Mozilla/4.0");
-    my $retry = 0;
-
-    DOWN_LOAD_APK:
-    my $apk_download_url = "http://www.coolapk.com/dl";
-    # http://www.coolapk.com/dl?sid=MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==&inajax=1&op=download&d=1316691530671
-    # header
-    #   d	1316691530671
-    #   inajax	1
-    #   op	download
-    #   sid	MjU0NiwxOCwxNiwxLCw4M2RlMmExNg==
-    # 
-    my $res = $ua->post( 
-        $apk_download_url,[
-            sid     => $sid,
-            inajax  => 1,
-            op      => 'download',
-            d       => 1316691530671,# a ad id,task easy
-        ]
-    );
-    if( $res->status_line =~ m/200/ ){
-		# window.location.href='\/dl?dl=1&sid=&authimg=&hash=4ef3b755'
-        if( $res->content =~ m/href='(.+?)'/s ){
-            my $download = $1;
-            $download =~ s/\\//g;
-			$download =~ s/sid=/'sid='.$sid/e;
-            return $url_base.$download;
-        }
-    }else{
-        get_cookie($cookie_file) && goto DOWN_LOAD_APK unless $retry;
-        ++$retry;
-        return;
-    }
+    my $download_url = ( $nodes[0]->find_by_tag_name('a') )[0]->attr('href');
+    return $download_url;
 }
 
 sub get_official_rating_stars{
@@ -487,12 +498,9 @@ sub get_official_category{
 
 sub get_current_version{
     my $html = shift;
-    #print $version_s;
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'appdetails');
-    return unless @nodes;
-}
+
+    return '未知';
+}   
 
 sub get_app_qr{
     my $html = shift;
@@ -508,8 +516,14 @@ sub get_app_qr{
 }
 sub get_screenshot{
     my $html = shift;
-    return ;
-
+    my $app_info = shift;
+    
+    my $screenshot = [];
+    my @nodes = $tree->look_down( class => 'softpic');
+    return unless @nodes;
+    my @imgs = $nodes[0]->find_by_tag_name('img');
+    push @{$screenshot},$_->attr('src') for @imgs;
+    return  $screenshot;
 }
 
 #-------------------------------------------------------------
@@ -523,12 +537,16 @@ sub get_permission{
 
 sub get_related_app{
     my $html = shift;
-    
-    # a related apps 
+    my $app_info = shift;
+
     my $related_apps = [];
-    # create a empty html tree
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
+    my @nodes = $tree->look_down( class => 'list3 listimg' );
+    return unless @nodes;
+
+    my @tags = $nodes[0]->find_by_tag_name('a');
+    for(@tags){
+        push @$related_apps,trim_url($url_base).$_->attr('href') ;
+    }
 
     return  $related_apps;
 }
@@ -634,15 +652,9 @@ sub get_official_rating_times{
 
 sub run{
     use LWP::Simple;
-    #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
-    my $content = get('http://www.coolapk.com/game/shoot/');
+    my $content = get('http://www.android168.com/apk/');
     my @pages = ();
     extract_page_list(undef,undef,{web_page=>$content},\@pages);
-    use Data::Dumper;
-    print Dumper \@pages;
-    exit 0;
-
     use Data::Dumper;
     print Dumper \@pages;
     
@@ -654,7 +666,6 @@ sub run{
     my $app_num = scalar (keys %{$apps});
     print Dumper $apps;
     print "app_num is $app_num\n";
-    exit 0;
     my $html = 'coolapk-htc.html';
     use FileHandle;
     my $fh = new FileHandle(">>$html")||die $@;
@@ -662,6 +673,8 @@ sub run{
     $fh->close;
     my $app_info = {};
     $app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
+    $content =
+        get('http://www.android168.com/apk/system-admin-201011081046.html');
     extract_app_info( undef,undef,$content,$app_info );
     use Data::Dumper;
     print Dumper $app_info;

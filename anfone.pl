@@ -64,8 +64,9 @@ my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
-my $market      = 'www.anfone.com';
-my $url_base    = 'http://anfone.com';
+my $market          = 'www.anfone.com';
+my $url_base        = 'http://anfone.com';
+my $game_base_url   = 'http://www.android168.com/game';
 #my $downloader  = new AMMS::Downloader;
 
 my $usage =<<EOF;
@@ -200,26 +201,24 @@ sub get_page_list{
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-    my @nodes = $tree->look_down( class => $page_mark );
-    Carp::croak('not find page_make :'.$page_mark ) unless scalar(@nodes);
-    # ul of class = 'pagebar'
-    # get the last page
-    my @list = $nodes[0]->content_list();
-    my $last_page = ( $list[$#list-1]->find_by_tag_name('a') )[FIRST_NODE]
-                    ->attr( $LINK_HREF ); 
-    # a needed to subs url
-    # last_page 
-    #	-<a class="img" onclick="return fn_turnPage(this);" href="/sort/1_15.html">末页</a>
+    $tree->eof;
+    # $app->{base_url} join with page num game and apk
+# <span class="pageinfo">
+# 共
+# <strong>17</strong>
+# 页
+# <strong>165</strong>
+# 条
+    my @nodes = $tree->look_down( class => 'pageinfo');
+    return unless @nodes;
 
-    ( my $needed_s_url = $last_page )
-        =~ s#/(sort/\d+)_(\d+)\.html#&trim_url($url_base).'/'.$1."_".'$num'.".html"#eg;
-    my $total = $2;
+    my $page_num = ( $nodes[0]->find_by_tag_name('strong') )[0]->as_text;
+    return unless $page_num;
 
-    # save pages to pages arrayref
-    @{ $pages } = map {
-        ( my $temp = $needed_s_url ) =~ s/\$num/$_/; 
-        $temp
-    } (1..$total);
+    map{
+        push @{ $pages },$app_
+    }
+
     $tree->delete;
 }
 
