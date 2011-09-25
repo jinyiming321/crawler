@@ -24,6 +24,7 @@ use LWP::UserAgent;
 use HTML::TreeBuilder;
 use IO::Handle;
 use Carp;
+use LWP::Simple;
 
 my $ua = LWP::UserAgent->new;
 $ua->timeout(60);
@@ -35,12 +36,14 @@ FEED->autoflush(1);
 #'http://www.liqucn.com/os/android/rj/';
 # http://www.liqucn.com/os/android/rj/
 my @portals = (
-        "http://android.xda.cn/html/list_index/1.html",
+    "http://android.xda.cn/html/list_index/1.html",
        );
+
 
 
 foreach my $portal ( @portals ){
     my $response = $ua->get($portal);
+    getstore($portal,'xda.html');
     while( not $response->is_success){
          $response=$ua->get($portal);
     }
@@ -53,14 +56,20 @@ foreach my $portal ( @portals ){
                     
             $tree->parse($webpage);
                          
-            my @nodes = $tree->look_down( class => 'lanse bubai');
-            Carp::croak("not find node\n");
+            my @nodes = $tree->look_down( id => 'content_left_left_one');
+            Carp::croak("not find node\n") unless @nodes;
             for(@nodes){
                 my @tags = $_->find_by_tag_name('a');
                 foreach my $tag(@tags){
                         next unless ref($tag);
                         my $href = $tag->attr('href');
-                        print FEED $href."\n";
+                        map{
+                            my $temp = $href ;
+                            my $num = $_;
+                            $temp =~ s/(\d+)(?=\.html$)/$1."_$num"/e;
+                            print FEED $temp."\n";
+
+                        } (1..3);
                 }
             }
         };

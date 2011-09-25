@@ -1,0 +1,1359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="description" content="xda 智能手机, android 软件  游戏 软件" />
+<meta name="keywords" content="xda android 游戏 软件" />
+<meta http-equiv="expires" content="Wednesday 28 September 2011 16:35" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<link rel="home" href="http://www.xda.cn/index.html" />
+<link rel="author" href="http://www.xda.cn/aboutme.html" />
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://www.xda.cn/index.rss" />
+
+<title>软件</title>
+
+<!-- 解决ie png 图片透明问题 -->
+<!--[if lt IE 7]>
+<script src="http://img.xda-china.com/android/static/js/DD_belatedPNG_0.0.8a-min.js"></script>
+<script src="http://img.xda-china.com/android/static/js/ie6Js.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="http://img.xda-china.com/android/PPL/js/up_h.js"></script>
+<script type="text/javascript" src="http://img.xda-china.com/android/static/js/jquery.js"></script>
+<script type="text/javascript">
+//  解决IE9 乱码问题
+/*<![CDATA[*/
+try {
+    if ((document.characterSet || document.charset) .toLowerCase() != 'utf-8') window.location = window.location;
+} catch (exp) {}
+/*]]>*/
+</script><link href="http://img.xda-china.com/android/static/css/conn.css" rel="stylesheet" type="text/css" />
+<link href="http://img.xda-china.com/android/static/css/xiazai.css" rel="stylesheet" type="text/css" />
+
+<script language="javascript" src="http://img.xda-china.com/android/static/js/jquery.js"></script>
+<script language="javascript" src="http://img.xda-china.com/android/static/js/sousuo.js"></script>
+<script language="javascript" src="http://img.xda-china.com/android/static/js/basic.js"></script>
+</head>
+<style>
+.logo_bg
+{
+	cursor:pointer;
+}
+</style>
+<body>
+
+
+    <!----headerbegin---->
+<div id="header"  >
+   <link href="http://img.xda-china.com/android/static/css/xda-login.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://img.xda-china.com/android/PPL/js/pcookie.js"></script>
+<!-- 登陆条 start -->
+<div id="top_t" >
+           <!-- 	 
+            <div class="top_tl"><a href="http://android.xda.cn//index.php">XDA首页</a></div>
+              <div class="top_tc">         
+               &nbsp;&nbsp;<input name="userid" id="userid" class="gray text1" type="text" value="用户名" onfocus="if(this.value=='用户名')this.value=''" onblur = "if(this.value=='') this.value ='用户名'" /> 
+               <input name="password" id="password" class="gary text2" type="password" value="123456" onfocus="if(this.value=='123456')this.value=''" onblur = "if(this.value=='') this.value ='123456'" />
+              <select name="questionidnew" id="questionidnew"  class="gray text1">
+                  <option value="0">无安全提问</option>
+                  <option value="1">母亲的名字</option>
+                  <option value="2">爷爷的名字</option>
+                  <option value="3">父亲出生的城市</option>
+                  <option value="4">您其中一位老师的名字</option>
+                  <option value="5">您个人计算机的型号</option>
+                  <option value="6">您最喜欢的餐馆名称</option>
+                  <option value="7">驾驶执照的最后四位数字</option>
+          </select>
+       回答：<input name="answernew" type="text" id="answernew" class="gray text1" style="width:70px;"/>
+              <input name="submit" type="image" src="http://img.xda-china.com/android/static/images/login/login.gif" class="button1" /> | <a href="member.php?mod=register" target="_blank">注册</a>
+                             
+              </div>
+             -->
+	</div>
+<!-- 登陆条 end -->
+
+<!-- 
+   <div id="header_top">     
+          <div class="head_top_child fonts">xda首页</div>
+          <div class="head_top_child"><img src="http://img.xda-china.com/android/static/images/zixun_index/baishi.jpg"/></div>
+          <div class="head_top_child theFont"><span id="uname"></span></div>
+          <div class="head_top_child theFont">提醒<span class="huangse"></span> | </div>
+          <div class="head_top_child theFont">短消息<span class="huangse"></span> | </div>
+          <div class="head_top_child theFont">设置    | </div>
+          <div class="head_top_child theFont">管理中心   | </div>
+          <div class="head_top_child theFont"><a href="PPL/dz_loginx15/member.php?mod=logging&action=logout">退出</a></div>
+          <a href="http://bbs.xda.cn"><div class="head_top_child theFont luntan_daohang">XDA论坛</div></a>
+   </div>
+ -->
+    
+    
+ <script>
+ 
+$(function(){
+	var msg_url = "http://android.xda.cn/download.php";
+	var member_url = "http://android.xda.cn/PPL/dz_loginx15/member.php";
+	var cookie = GetCookie("xdacn");
+	var uid = GetCookie("xdacnn");
+
+	$('#useriddd').val(uid);
+	if(cookie){
+		$('#top_t').html("<div id='header_top'>"+     
+		          "<a href='http://www.xda.cn'><div class='head_top_child fonts'>xda首页</div></a>"+
+		          "<div class='head_top_child'></div>"+
+		          "<div class='head_top_child theFont'>用户名：<span id='uname'></span></div>"+
+		          "<a href='http://bbs.xda.cn/home-space-do-notice.html'><div class='head_top_child theFont'>提醒<span class='huangse'></span> | </div></a>"+
+		          "<a href='http://bbs.xda.cn/home-space-do-pm.html'><div class='head_top_child theFont'>短消息<span class='huangse'></span> | </div></a>"+
+		          "<a href='http://bbs.xda.cn/home-spacecp.html'><div class='head_top_child theFont'>设置    | </div></a>"+
+		          "<div class='head_top_child theFont'>管理中心   | </div>"+
+		          "<div class='head_top_child theFont'><span id='logout'>退出</span></div>"+
+		          "<a href='http://bbs.xda.cn'><div class='head_top_child theFont luntan_daohang'>XDA论坛</div></a></div>"
+		   );
+		$('#uname').html(cookie);
+		$('#textt').val(cookie);
+		$('#pwdd').hide();
+		$('.new_cus').hide();
+		$('#login').hide();
+	}else{
+		$('#top_t').html("<div class='top_tl'><a href='http://www.xda.cn'>XDA首页</a></div>"+
+              "<div class='top_tc'>"+         
+               "&nbsp;&nbsp;<input name='userid' id='userid' class='gray text1' type='text' value='用户名' onfocus='if(this.value=='用户名')this.value=''' onblur = 'if(this.value=='') this.value ='用户名'' />&nbsp;&nbsp;"+
+               "<input name='password' id='password' class='gary text2' type='password' value='123456' onfocus='if(this.value=='123456')this.value=''' onblur = 'if(this.value=='') this.value ='123456'' />&nbsp;&nbsp;"+
+              "<select name='questionidnew' id='questionidnew'  class='gray text1'>"+
+                  "<option value='0'>无安全提问</option>"+
+                  "<option value='1'>母亲的名字</option>"+
+                  "<option value='2'>爷爷的名字</option>"+
+                  "<option value='3'>父亲出生的城市</option>"+
+                  "<option value='4'>您其中一位老师的名字</option>"+
+                  "<option value='5'>您个人计算机的型号</option>"+
+                  "<option value='6'>您最喜欢的餐馆名称</option>"+
+                  "<option value='7'>驾驶执照的最后四位数字</option>"+
+          "</select>&nbsp;&nbsp;"+
+      			    "回答：<input name='answernew' type='text' id='answernew' class='gray text1' style='width:70px;'/>&nbsp;&nbsp;"+
+              	  "<input name='submit' type='image' src='http://img.xda-china.com/android/static/images/login/login.gif' class='button1' /> | <a href='member.php?mod=register' target='_blank'>注册</a>"+
+                             
+              "</div>")
+              $('#textt').val("游客");
+	}
+
+	
+	$('.button1').click(function(){
+
+	    if($('#userid').val()=='' || $('#userid').val()=='')
+	    {
+	        alert("请输入用户名。");
+	        return false; 
+	    }
+	    if($('#password').val()=='')
+	    {
+	        alert("请输入密码。");
+	        return false;   
+	    }
+	    var username = $('#userid').val();	   
+	    var password = $('#password').val();
+
+	   $.post(member_url, { mod: "logging", action: "login", loginsubmit:"yes",infloat:"yes",lssubmit:"yes", username:username,password:password,questionidnew:'',answernew:''},
+			   		function(data){
+		   				if(data==0){ 
+		   					alert("你输入的账号密码有误！");
+		   					$('#password').focus();
+		   					return false;
+		   				}	
+						$('#top_t').html("<div id='header_top'>"+     
+				          "<a href='http://www.xda.cn'><div class='head_top_child fonts'>xda首页</div></a>"+
+				          "<div class='head_top_child'></div>"+
+				          "<div class='head_top_child theFont'><span id='uname'></span></div>"+
+				          "<div class='head_top_child theFont'>提醒<span class='huangse'></span> | </div>"+
+				          "<div class='head_top_child theFont'>短消息<span class='huangse'></span> | </div>"+
+				          "<a href='http://bbs.xda.cn/home-spacecp.html'><div class='head_top_child theFont'>设置    | </div></a>"+
+				          "<div class='head_top_child theFont'>管理中心   | </div>"+
+				          "<div class='head_top_child theFont'><span id='logout'>退出</span></div>"+
+				          "<a href='http://bbs.xda.cn'><div class='head_top_child theFont luntan_daohang'>XDA论坛</div></a></div>"
+				   );
+						var cusername= data["username"];
+						
+						var cuserid = data["uid"];
+						$('#uname').html(cusername);
+						$('#useriddd').val(cuserid);
+						$('#textt').val(cusername);
+						$('#pwdd').hide();
+						$('.new_cus').hide();
+						$('#login').hide();
+	       				},"json");
+
+	}) 
+		$('#login').click(function(){
+
+	    if($('#textt').val()=='' || $('#textt').val()=='')
+	    {
+	        alert("请输入用户名。");
+	        return false; 
+	    }
+	    if($('#pwd').val()=='')
+	    {
+	        alert("请输入密码。");
+	        return false;   
+	    }
+	    var username = $('#textt').val();	   
+	    var password = $('#pwd').val();
+
+	   $.post(member_url, { mod: "logging", action: "login", loginsubmit:"yes",infloat:"yes",lssubmit:"yes", username:username,password:password,questionidnew:'',answernew:''},
+			   		function(data){
+		   				if(data==0){ 
+		   					alert("你输入的账号密码有误！");
+		   					$('#pwd').focus();
+		   					return false;
+		   				}	
+						$('#top_t').html("<div id='header_top'>"+     
+				          "<a href='http://www.xda.cn'><div class='head_top_child fonts'>xda首页</div></a>"+
+				          "<div class='head_top_child'></div>"+
+				          "<div class='head_top_child theFont'><span id='uname'></span></div>"+
+				          "<div class='head_top_child theFont'>提醒<span class='huangse'></span> | </div>"+
+				          "<div class='head_top_child theFont'>短消息<span class='huangse'></span> | </div>"+
+				          "<a href='http://bbs.xda.cn/home-spacecp.html'><div class='head_top_child theFont'>设置    | </div></a>"+
+				          "<div class='head_top_child theFont'>管理中心   | </div>"+
+				          "<div class='head_top_child theFont'><span id='logout'>退出</span></div>"+
+				          "<a href='http://bbs.xda.cn'><div class='head_top_child theFont luntan_daohang'>XDA论坛</div></a></div>"
+				   );
+						var cusername= data["username"];
+						
+						var cuserid = data["uid"];
+						$('#uname').html(cusername);
+						$('#useriddd').val(cuserid);
+						$('#textt').val(cusername);
+						$('#pwdd').hide();
+						$('.new_cus').hide();
+						$('#login').hide();
+	       				},"json");
+
+	})
+	
+	$('#logout').click(function(){
+		$('#top_t').html("<div class='top_tl'><a href='http://android.xda.cn//index.php'>XDA首页</a></div>"+
+	              "<div class='top_tc'>"+         
+	               "&nbsp;&nbsp;<input name='userid' id='userid' class='gray text1' type='text' value='用户名' onfocus='if(this.value=='用户名')this.value=''' onblur = 'if(this.value=='') this.value ='用户名'' />"+
+	               "<input name='password' id='password' class='gary text2' type='password' value='123456' onfocus='if(this.value=='123456')this.value=''' onblur = 'if(this.value=='') this.value ='123456'' />"+
+	              "<select name='questionidnew' id='questionidnew'  class='gray text1'>"+
+	                  "<option value='0'>无安全提问</option>"+
+	                  "<option value='1'>母亲的名字</option>"+
+	                  "<option value='2'>爷爷的名字</option>"+
+	                  "<option value='3'>父亲出生的城市</option>"+
+	                  "<option value='4'>您其中一位老师的名字</option>"+
+	                  "<option value='5'>您个人计算机的型号</option>"+
+	                  "<option value='6'>您最喜欢的餐馆名称</option>"+
+	                  "<option value='7'>驾驶执照的最后四位数字</option>"+
+	          "</select>"+
+	      			    "回答：<input name='answernew' type='text' id='answernew' class='gray text1' style='width:70px;'/>"+
+	              	  "<input name='submit' type='image' src='http://img.xda-china.com/android/static/images/login/login.gif' class='button1' /> | <a href='member.php?mod=register' target='_blank'>注册</a>"+
+	                             
+	              "</div>")
+	              $('#textt').val("游客");
+				  $('#pwdd').show();
+				  $('.new_cus').show();
+				  $('#login').show();
+		$.post(member_url, { mod: "logging", action: "logout"},function(){
+		});
+		$.post(msg_url,{cookie:"delete"},function(){});
+	})
+
+ })
+</script>       
+    <!----banner begin---->
+    <div id="header_banner_se" >
+         <div class="header_child header_child_one">
+            <a href="http://android.xda.cn"><img src="http://img.xda-china.com/android/static/images/introimage/logo2.png" />
+         	</a>
+         </div>
+         
+         <!----资讯 begin---->
+         <div class="header_child header_child_two header_child_two_nav">
+             <div class="pngfix"><img  src="http://img.xda-china.com/android/static/images/introimage/zixun.png"/></div>
+             <div class="fontess">资讯</div>
+         </div>
+
+         <div class="header_child header_child_three">             
+             <div class="texts">
+               <a title="手机资讯" target="_blank" href="http://www.xda.cn/news.php?bcid=1">手机资讯</a>
+             </div>
+             <div class="texts">
+               <a title="手机评测" target="_blank" href="http://www.xda.cn/article_more.php?action=art">手机评测</a>
+             </div>  
+         </div>
+
+         <div class="header_child header_child_three">
+             <div class="texts">
+               <a title="拆机专题" target="_blank" href="http://www.xda.cn/news.php?action=newupdate&bcid=4">拆机专题</a>
+             </div>
+             <div class="texts">
+               <a title="手机导购" target="_blank" href="http://www.xda.cn/news.php?bcid=2">手机导购</a>
+             </div>
+         
+         </div>
+         
+         <div class="header_child header_child_five">
+            <img class="pngfix" src="http://img.xda-china.com/android/static/images/introimage/nav.gif" />
+         </div>
+         <!----资讯 end---->
+         
+         <!----资源 begin---->
+         <div class="header_child header_child_two header_child_two_nav">
+             <div class="pngfix">
+               <img src="http://img.xda-china.com/android/static/images/introimage/ziyuan.png" />
+             </div>
+             <div class="fontess">资源</div>
+         </div>
+
+         <div class="header_child header_child_three">             
+             <div class="texts">
+               <a title="XDA制作" target="_blank" href="http://www.xda.cn/news.php?bcid=10">XDA制作</a>
+             </div>
+             <div class="texts">
+               <a title="手机软件" target="_blank" href="http://www.xda.cn/news.php?bcid=3">手机软件</a>
+             </div>  
+         </div>
+
+         <div class="header_child header_child_three">
+             <div class="texts">
+               <a title="游戏评测" target="_blank" href="http://www.xda.cn/news.php?bcid=8">游戏评测</a>
+             </div>
+             <div class="texts">
+               <a title="下载市场" target="_blank" href="http://android.xda.cn/">下载市场</a>
+             </div>
+         
+         </div>
+         
+         <div class="header_child header_child_five">
+            <img class="pngfix" src="http://img.xda-china.com/android/static/images/introimage/nav.gif" />
+         </div>
+         <!----资源 end---->
+         
+         <!----产品 begin---->
+         <div class="header_child header_child_two header_child_two_nav">
+             <div class="pngfix">
+               <img src="http://img.xda-china.com/android/static/images/introimage/chanpin.png"/>
+             </div>
+             <div class="fontess">产品</div>
+         </div>
+
+         <div class="header_child header_child_three">             
+             <div class="texts">
+               <a title="手机大全" target="_blank" href="http://www.xda.cn/mobclass.php?bcid=1">手机大全</a>
+             </div>
+             <div class="texts">
+               <a title="手机视频" target="_blank" href="http://www.xda.cn/news.php?bcid=7">手机视频</a>
+             </div>  
+         </div>
+
+         <div class="header_child header_child_three">
+             <div class="texts">
+               <a title="开箱图赏" target="_blank" href="http://www.xda.cn/news.php?bcid=5">开箱图赏</a>
+             </div>
+             <div class="texts"></div>
+         
+         </div>
+         
+         <div class="header_child header_child_five">
+            <img class="pngfix" src="http://img.xda-china.com/android/static/images/introimage/nav.gif" />
+         </div>
+         <!----产品 end---->
+         
+         <!----互动 begin---->
+         <div class="header_child header_child_two header_child_two_nav">
+             <div class="pngfix">
+               <img  src="http://img.xda-china.com/android/static/images/introimage/hudong.png"/>
+             </div>
+             <div class="fontess">互动</div>
+         </div>
+
+         <div class="header_child header_child_three">             
+             <div class="texts"><a title="XDA论坛" target="_blank" href="http://bbs.xda.cn">XDA论坛</a></div>
+             <div class="texts">
+               <a title="官方微博" target="_blank" href="http://t.sina.com.cn/1957593462">官方微博</a>
+             </div>  
+         </div>
+
+         <div class="header_child header_child_three">
+             <div class="texts"></div>
+             <div class="texts"></div>
+         
+         </div>
+         
+         <!----互动 end---->
+         
+    </div>
+    <!--------banner end-------->
+    
+</div>
+<!------------------------headerend------------------------>
+<div id="main">
+
+         <!------------search begin------------>
+          <div class="search">
+                  <div style="width:18px; height:39px; background: url(http://img.xda-china.com/android/static/images/introimage/nav_bgone_03.gif); float:left"></div>
+                  <div style="width:976px; height:39px; background:url(http://img.xda-china.com/android/static/images/introimage/navbg_two_04.gif) repeat-x; float: left;">
+                    <div class="search_con">
+	                    <form action="http://android.xda.cn/search.php" method="POST">
+	                      <input type="text" name="word" id="se_text" value="请输入关键字..."  size="25" class="shuru" />
+	                      <input name="search_but" type="image" id="search_but" src="http://img.xda-china.com/android/static/images/zixun_index/search_but_05.gif"; />
+	                  </form>
+                    </div>
+                    <br />
+                    <div class="search_con_nav" >
+                    <!--  
+                      <ul >
+                        <li><a href="#">热搜:</a></li>
+                        <li><a href="#">XDA软件市场</a></li>
+                        <li> <a href="#">XDA助手</a></li>
+                        <li> <a href="#">Opera浏览器</a></li>
+                        <li><a href="#">手机QQ</a></li>
+                      </ul>
+                      -->
+                    </div>
+                  </div>
+                  <div style="width:17px; height:39px; background: url(http://img.xda-china.com/android/static/images/introimage/nav_bgthree_05.gif); float:left;"></div>
+                </div>
+         <!----------search end---------->
+    <div class="clear"></div>
+         <!----------menu begin---------->
+         <div id="menu">
+              <div class="menu_child">
+              <a href="http://android.xda.cn/html/index.html" class="menu_left">下载首页</a>
+              </div>
+              <div class="menu_child">
+             	 <a href="http://android.xda.cn/html/list_index/1.html" class="menu_left">手机软件</a>
+              </div>
+           
+              <div class="menu_child">
+              <a href="http://android.xda.cn/html/list_index/4.html" class="menu_left">手机游戏</a>
+              </div>
+          
+              <div class="menu_child"><a href="#" class="menu_left">手机专题</a></div>
+   
+              <div class="menu_child"><a href="#" class="menu_left">手机壁纸</a></div>
+
+             
+               
+              <div class="menu_child menu_right" style="line-height:30px;">
+              	 <a href="http://t.sina.com.cn/1957593462">XDA新浪微博</a>
+              </div>
+              
+              <div class="menu_child menu_right">
+             	 <img style="position:relative; top:-2px;left:170px;style="line-height:30px;" src="http://img.xda-china.com/android/static/images/introimage/menu_right1.gif" />
+              </div>
+             
+              
+         </div>
+         <!----------menuend---------->
+         
+         <!----------software begin---------->
+         <div id="software_di">
+               <div id="software">
+              
+              <div  class="software_zuo" ><img src="http://img.xda-china.com/android/static/images/sousuo/zuo_j_t.gif"   id="right_scroll" onmouseover="mouseOver2()" onMouseOut="mouseOut2()"/></div>
+			  <div id="carousel_inner">
+         	  <ul id="carousel_ul">
+                  <li><a href='http://android.xda.cn/html/download/15.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_714006151314184524.png' /> <span>打字僵尸 Ty</span></a></li><li><a href='http://android.xda.cn/html/download/19.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_286821821314184498.png' /> <span>XDA 电池管</span></a></li><li><a href='http://android.xda.cn/html/download/26.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_605829991314184978.png' /> <span>照片说话 Ph</span></a></li><li><a href='http://android.xda.cn/html/download/33.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_909406571314184437.png' /> <span>虚拟来电 fa</span></a></li><li><a href='http://android.xda.cn/html/download/37.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_372920761314184466.png' /> <span>Ansta</span></a></li><li><a href='http://android.xda.cn/html/download/47.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_944561291314184371.png' /> <span>阳光背单词 </span></a></li><li><a href='http://android.xda.cn/html/download/48.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_745032701314184499.png' /> <span>五倍深度睡眠</span></a></li><li><a href='http://android.xda.cn/html/download/49.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_559611351314184479.png' /> <span>GPS 测速器</span></a></li><li class='last_padding'><a href='http://android.xda.cn/html/download/50.html'><img class='pngfix' height='50px' weight='50px'  src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_745817071314184651.png' /> <span>录音提醒  V</span></a></li><li><a href='http://android.xda.cn/html/download/51.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_474956021314184480.png' /> <span>购物单  Tr</span></a></li><li><a href='http://android.xda.cn/html/download/52.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_254411821314184479.png' /> <span>可爱贴  He</span></a></li><li><a href='http://android.xda.cn/html/download/54.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_111810841314184962.png' /> <span>我的爱车</span></a></li><li><a href='http://android.xda.cn/html/download/55.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_686853791314184483.png' /> <span>定时提醒工具</span></a></li><li><a href='http://android.xda.cn/html/download/57.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_995219251314184458.png' /> <span>高级秒表  u</span></a></li><li><a href='http://android.xda.cn/html/download/60.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_309979721314185053.png' /> <span>冬眠 Beta</span></a></li><li><a href='http://android.xda.cn/html/download/61.html'><img class='pngfix' height='50px' weight='50px' src='http://img.xda-china.com/android//upload/img/logo/20110824/logo_952755151314184481.png' /> <span>魔术记事本  </span></a></li>             </ul>
+			 </div>
+         <div class="position_right software_you"><img src="http://img.xda-china.com/android/static/images/sousuo/you_j_t.gif"  id="left_scroll" onmouseover="mouseOver1()" onMouseOut="mouseOut1()" /></div>
+             </div>
+         </div>
+         <!----------software end---------->
+         
+         <!----------list begin---------->
+         <div id="list">
+        	  <span class="list_child" style="margin-left:20px;">
+        	  <img src="http://img.xda-china.com/android/static/images/sousuo/list_house.gif" />
+        	  </span>
+              <span class="list_child list_font">
+              <a href="/"  title="XDA智能手机网">XDA智能手机网</a>
+              </span>
+              <img src="http://img.xda-china.com/android/static/images/sousuo/list_nav.gif" />
+              
+              <span class="list_child list_font"><a href="http://android.xda.cn/html/list_index/1.html">android软件</a></span>
+              <span ><img src="http://img.xda-china.com/android/static/images/introimage/list_nav.gif" /></span>
+                        
+         
+         </div>
+         <!----------list end---------->
+         
+         
+         
+          <!----------content begin---------->
+         <div id="content">
+         	  <!----------content_right begin---------->
+        	  <div id="content_right" class="content_child">
+              
+                    <div style="width:232px; height:101px; border:#ddd 1px solid;">
+                    	<a href="http://android.xda.cn/html/download/157.html">
+							<img src="http://img.xda-china.com/android/static/images/common/mark.jpg">
+						</a>
+                    </div>
+                    <div style="width:232px; height:101px; border:#ddd 1px solid; margin-top:5px;">
+                    	<a href="http://android.xda.cn/html/download/2017.html">
+							<img src="http://img.xda-china.com/android/static/images/common/love.jpg">
+						</a>
+                    </div>
+                
+                    <div class="content_right_child_three">Android最热下载排行</div>
+
+    <!--   <div class="content_right_child_four">
+                    <span class="jiacu beijing">全部</span>
+                    <span >软件</span>
+                    <span >游戏</span>
+                    </div>-->
+                    <!-----------content_right_child_five begin----------->
+                    <div class="content_right_child_five">
+                    	
+                      <!-------------下载列开始------------->  
+                      <!---------------第一列开始--------------->
+                      <div class="frist">
+           		        <div class="a_left"><span class="jiacu lanse font_14">01</span></div>
+                          			 <div class="center">
+                          			 <img src="http://img.xda-china.com/android/upload/img/logo/20110920/logo_1316483431.png" width="60" height="60"></div>
+           		             <div class="a_right"> 
+           		             <a href="http://android.xda.cn/html/download/157.html" >
+                             <span class="hong2 jiacu font_14">
+                             XDA市场                             </span></a><br />
+                                <div class="bu_top">
+                                               <span class="huise"> 下载：</span>
+                                <span class="hong2 jiacu">81509</span>
+                              </div>
+                             </div> 
+                      </div>
+                        <!---------------第一列结束--------------->
+                     
+                        
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">02</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110824/logo_745032701314184499.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/48.html" >
+                              <div class="XZ_you">五倍深度睡眠</a></div><span class="onetwo">49428</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">03</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110906/logo_1315296192.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/2017.html" >
+                              <div class="XZ_you">XDA助手</a></div><span class="onetwo">32306</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">04</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110824/logo_276788011314184501.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/2357.html" >
+                              <div class="XZ_you">安卓特工</a></div><span class="onetwo">21269</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">05</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110926/logo_1317005272.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/1473.html" >
+                              <div class="XZ_you">360手机卫士</a></div><span class="onetwo">15733</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">06</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110927/logo_1317106599.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/553.html" >
+                              <div class="XZ_you">搜狗输入法</a></div><span class="onetwo">14826</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">07</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110824/logo_279776551314184676.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/3825.html" >
+                              <div class="XZ_you">投资堂手机炒股</a></div><span class="onetwo">13147</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">08</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110906/logo_1315295030.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/1439.html" >
+                              <div class="XZ_you">新浪微博</a></div><span class="onetwo">12212</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">09</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110824/logo_729752321314184676.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/1617.html" >
+                              <div class="XZ_you">91熊猫看书</a></div><span class="onetwo">11436</span>
+							  </li>
+                           </div>
+                           <div class="XZ_paihang ">
+							  <li>
+                              <div class="XZ_zuo">  <span class="lanse jiacu">10</span> </div>
+                              <div class="XZ_zhong">  <img width="20px" src="http://img.xda-china.com/android/upload/img/logo/20110824/logo_787048071314184495.png" /> </div>
+                              <a href="http://android.xda.cn/html/download/1743.html" >
+                              <div class="XZ_you">安卓机器人壁纸</a></div><span class="onetwo">10988</span>
+							  </li>
+                           </div>                        
+                    <!---------------下载列结束--------------->
+                    </div>
+                  <!--  <div><img src="http://img.xda-china.com/android/static/images/sousuo/XZ_you_d1.jpg" width="236"/></div> -->
+                    <!---------------content_right_child_five  end--------------->
+                    
+             <div class="clear"></div>
+         
+            
+            <!---------------content_right_child_six   content_right_child_seven  begin--------------->
+            
+            <div class="bj_renmen">
+                            <div class="content_right_child_six" >
+                                         <div  class="title">热门评测</div> 
+                                         <span><a href="http://www.xda.cn/news.php?bcid=1">更多>></a></span>
+                            </div>
+                <div class="content_right_child_seven">
+                                                    
+                 <ul>
+                        <li class=""> <span class="lansejiacu">01</span>
+		<span class="huise bu_left">
+			<a href="http://www.xda.cn/newshow.php?snid="></a>
+		</span></li>          
+                  </ul>
+              </div>
+           </div>
+           <div class="clear"></div>
+     
+
+           <!-- 
+          <div class="content_right_child_eight">
+            <div  class="title">网友评论</div>   
+                  </div>
+                    
+                     
+                    <div class="content_right_child_nine">
+                    	<div class="content_right_child_nine_one">开资讯中心，必死！我是g14</div>
+                        <div class="content_right_child_nine_two" > 
+                        <span class="huise">--</span>
+                        <span class="hong">二郎山牛场娃</span>  
+                        <span class="huise">评</span>
+                        <span class="hong">XDA市场</span></div>
+                    </div>
+                    <div class="content_right_child_nine">
+                    	<div class="content_right_child_nine_one">开资讯中心，必死！我是g14</div>
+                        <div class="content_right_child_nine_two" > 
+                        <span class="huise">--</span>
+                        <span class="hong">二郎山牛场娃</span>  
+                        <span class="huise">评</span>
+                        <span class="hong">XDA市场</span></div>
+                    </div>
+                    <div class="content_right_child_nine">
+                    	<div class="content_right_child_nine_one">开资讯中心，必死！我是g14</div>
+                        <div class="content_right_child_nine_two" > 
+                        <span class="huise">--</span>
+                        <span class="hong">二郎山牛场娃</span>  
+                        <span class="huise">评</span>
+                        <span class="hong">XDA市场</span></div>
+                    </div>
+                    <div class="content_right_child_nine">
+                    	<div class="content_right_child_nine_one">开资讯中心，必死！我是g14</div>
+                        <div class="content_right_child_nine_two" > 
+                        <span class="huise">--</span>
+                        <span class="hong">二郎山牛场娃</span>  
+                        <span class="huise">评</span>
+                        <span class="hong">XDA市场</span></div>
+                    </div>
+                    <div class="content_right_child_nine">
+                    	<div class="content_right_child_nine_one">必死</div>
+                        <div class="content_right_child_nine_two" > 
+                        <span class="huise">--</span>
+                        <span class="hong">二郎山牛场娃</span>  
+                        <span class="huise">评</span>
+                        <span class="hong">XDA市场</span></div>
+                    </div>                    
+                -->           
+           </div>
+         
+              <div id="content_left" >
+
+              		<div id="content_left_one"><span class="center">  
+                                   <ul>
+                                   
+                                    <li  class="xuandi">
+                                    
+                                       <a href="http://android.xda.cn/html/list_index/1_1_1.html">最新更新</a>
+                                    </li>
+                                    <li   class="">
+                                       <a href="http://android.xda.cn/html/list_index/1_1_2.html">评分最高</a>
+                                    </li>
+                                    <li   class="">
+                                       <a href="http://android.xda.cn/html/list_index/1_1_3.html">最热下载</a>
+                                    </li>
+                                   
+                                   
+                                    </ul>
+                                    </span></div>
+                    <!---------------content_left_one end--------------->
+                    
+                    <!---------------content_left_two begin--------------->
+                    <div class="clear"></div>
+                 
+                    <div id="content_left_two" >
+                        
+                          <!---------------content_left_right begin--------------->
+                          <div id="content_left_right" >
+                              
+                               <div  id="Zuixin_s">
+                              
+                              			 <div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/3737.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317198745.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/3737.html" >Google Reader</a> </div>
+									<div class="huangse">0.9.3 </div>
+									<div class="huise"> 大小:1.04MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>gReader是Android系统上的一款非官方的Goo...<a href="http://android.xda.cn/html/download/3737.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：Google  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/3737.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">72 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/157.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110920/logo_1316483431.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/157.html" >XDA市场</a> </div>
+									<div class="huangse">v2.1.0 </div>
+									<div class="huise"> 大小:744KB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>为方便国内用户更好地安装Android软件，提供更多更好...<a href="http://android.xda.cn/html/download/157.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：XDA智能手机网  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/157.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">81509 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/12004.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317197806.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/12004.html" >墨迹天气</a> </div>
+									<div class="huangse">1.21.04 </div>
+									<div class="huise"> 大小:3.65MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>墨迹天气简介：墨迹天气Android1.21正式发布啦...<a href="http://android.xda.cn/html/download/12004.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：墨迹工作室  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/12004.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">9 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/11999.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317197493.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/11999.html" >谷歌地图</a> </div>
+									<div class="huangse">5.10.1 </div>
+									<div class="huise"> 大小:6.44MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>谷歌地图简介：安装不成功的办法：用Root Expl...<a href="http://android.xda.cn/html/download/11999.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：Google Inc.   </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/11999.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">278 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/12519.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317197061.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/12519.html" >友朋</a> </div>
+									<div class="huangse">1.0.1 </div>
+									<div class="huise"> 大小:1.92MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>友朋软件介绍：熟悉新朋友，关心老朋友！专注于近关...<a href="http://android.xda.cn/html/download/12519.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：杭州爱锋乐网络技术有限公司  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/12519.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">4 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/12502.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317196803.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/12502.html" >微博Call</a> </div>
+									<div class="huangse">1.15 </div>
+									<div class="huise"> 大小:2.87MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>微博Call 软件介绍：微博Call是一款基于iPh...<a href="http://android.xda.cn/html/download/12502.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：杭州青芝网络有限公司  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/12502.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">6 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/11303.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317196552.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/11303.html" >七彩来显</a> </div>
+									<div class="huangse">1.14.0.0 </div>
+									<div class="huise"> 大小:1.55MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>七彩来显简介：七彩来显是一款基于在来、去电过程中向对方...<a href="http://android.xda.cn/html/download/11303.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：浙江省通信产业服务有限公司  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/11303.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">6 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/12925.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317196126.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/12925.html" >云备忘录</a> </div>
+									<div class="huangse">1.1.4 </div>
+									<div class="huise"> 大小:1.49MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>云备忘录介绍：	Wunderlist是一款支持多平台的...<a href="http://android.xda.cn/html/download/12925.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：Wunderkinder  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/12925.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">0 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/12924.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317195398.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/12924.html" >应用卸载器</a> </div>
+									<div class="huangse">1.0 </div>
+									<div class="huise"> 大小:1.22MB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>应用卸载器介绍：  一个简洁方便的卸载应用的工具，特点...<a href="http://android.xda.cn/html/download/12924.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：李子霖  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/12924.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">3 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/8872.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317195096.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/8872.html" >宝宝音乐</a> </div>
+									<div class="huangse">3.6 </div>
+									<div class="huise"> 大小:431KB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>想让宝宝多才多艺？宝宝音乐能帮助你，欢快的曲调，优美的词...<a href="http://android.xda.cn/html/download/8872.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：bage  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/8872.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">105 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/12923.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317194779.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/12923.html" >球迷</a> </div>
+									<div class="huangse">1.2 </div>
+									<div class="huise"> 大小:449KB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>球迷介绍：查看最新足球赛事预告， 定制比赛提醒任务， ...<a href="http://android.xda.cn/html/download/12923.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：allin.dev  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/12923.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">1 </span></div>                               
+				  </div>
+			 </div><div class="content_left_right_child">
+						
+
+				   <div class="content_left_right_child_left">
+						 <a href="http://android.xda.cn/html/download/12922.html" >
+						 <div class="logo_bg">
+							 <img class="pngfix" src="http://img.xda-china.com/android/upload/img/logo/20110928/logo_1317194353.png"  width="54" height="54" />
+						 </div>
+						 </a>
+				   </div>
+
+				  <div class="content_left_right_child_center">
+							   <div class="top">
+									<div class="lanse jiacu">
+									<a href="http://android.xda.cn/html/download/12922.html" >终极震动按摩器</a> </div>
+									<div class="huangse">2.0 </div>
+									<div class="huise"> 大小:541KB </div>
+									<div class="pinfen">
+									<img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-on.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" /><img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/star-off.png" />
+									</div>
+							  </div>
+							  <div class="center">
+								   <p>终极震动按摩器介绍：根据古法“九浅一深”方法研制，按摩...<a href="http://android.xda.cn/html/download/12922.html" > <span class="huangse">[详细]</span></a>
+								   </p>
+							  </div>
+							  <div class="down">
+								   <span class="huise">作者：宅男世界  </span>
+								   <span class="huise">更新：2011-09-28  </span>
+							 </div>     
+				   </div>
+
+				  <div class="content_left_right_child_right" style=" float:right;"> 
+						   <div class="child_right_top">
+						       <a href="http://android.xda.cn/html/download/12922.html" >
+						       <img class="pngfix" src="http://img.xda-china.com/android//static/images/introimage/down.png" /></a>
+						  </div>  
+						   <div class="cishu"><span class=" huangse jiacu">1 </span></div>                               
+				  </div>
+			 </div> 
+                              			
+                 			 </div>
+                            
+                          </div>
+                         <!---------------content_left_right end--------------->
+                         
+                    <!---------------content_left_left begin--------------->
+                             <div id="content_left_left" style=" width:176px;">  
+                      
+                       <div id="content_left_left_one" style=" width:176px; ">
+                           <div style="width:98px; height:42px;  margin-top:10px; background:url(http://img.xda-china.com/android/static/images/zixun_index/software_bg_13.gif);margin-left:29px; ">
+                                   <span  style="font-family:'Adobe 黑体 Std R'; font-weight:bold; color:#058ed4; font-size:16px; display:block; padding-top:6px; padding-left:26px;">
+                                   		安卓软件                                   </span>
+                              </div>
+                                        <div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_69.html'>系统管理</a> [507]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_75.html'>实用工具</a> [847]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_64.html'>通讯辅助</a> [430]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_63.html'>社交聊天</a> [252]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_71.html'>安全防护</a> [170]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_73.html'>美化插件</a> [613]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_76.html'>交通导航</a> [166]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_72.html'>文字输入</a> [32]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_66.html'>浏览辅助</a> [79]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_67.html'>网络资讯</a> [377]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_180.html'>学习阅读</a> [680]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_86.html'>影音漫画</a> [467]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_88.html'>摄影图像</a> [277]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_78.html'>金融理财</a> [207]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_81.html'>时间日程</a> [198]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_77.html'>生活应用</a> [707]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_182.html'>其它工具</a> [268]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/1_181.html'>创意娱乐</a> [249]</div>                                        
+                                 </div>
+                            
+                                  <div id="content_left_left_one" style=" width:176px; ">
+                                  <div style="width:98px; height:42px; margin-top:10px;  background: url(http://img.xda-china.com/android/static/images/zixun_index/game_bg_29.gif);margin-left:29px; margin-top:10px;">
+                                   <span  style="font-family:'Adobe 黑体 Std R'; font-weight:bold; color:#058ed4; font-size:16px; display:block; padding-top:6px; padding-left:26px;">
+                                   		安卓游戏                                   </span>        
+                            		</div>
+                                       
+                                        <div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_22.html'>角色扮演</a> [244]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_21.html'>动作冒险</a> [458]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_184.html'>休闲娱乐</a> [1348]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_185.html'>益智棋牌</a> [1280]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_124.html'>体育竞速</a> [279]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_179.html'>格斗射击</a> [357]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_183.html'>策略经营</a> [260]</div><div class='lanse bubai '><a href='http://android.xda.cn/html/list_index/4_186.html'>网络游戏</a> [51]</div>                                      
+                                 </div>
+                                 
+                           
+                         <div style=" clear:both;"></div>
+                         
+                        <!-- 
+                           <div style="background:url(http://img.xda-china.com/android/static/images/sousuo/XG_pince.jpg); height:30px; width:100%; margin-top:10px;">
+                                 <div  class="title">特色专题</div> 
+                           </div> 
+
+                                    <div class="content_left_left_two_list">
+                                          <div class="content_left_left_two_list_left">
+                                                <img src="http://img.xda-china.com/android/static/images/sousuo/tuzzz.gif"  width="50" height="56"/>
+                                                <span class="jiacu">手机必备</span>          
+                                          </div>
+                                          <div class="content_left_left_two_list_right huise">
+                                                <ul>
+                                                <li class="first">XDA软件市场</li>
+                                                <li>手机QQ</li>
+                                                <li>UC浏览器</li>
+                                                <li>搜狗输入法</li>
+                                                </ul>
+                                                <span class="huangse float_you">more</span>
+                                          </div>
+                                    </div>
+
+                                    <div class="content_left_left_two_list">
+                                          <div class="content_left_left_two_list_left">
+                                                <img src="http://img.xda-china.com/android/static/images/sousuo/tuz1.gif" width="50"/>
+                                                <span class="jiacu">新手宝典</span>          
+                                          </div>
+                                          <div class="content_left_left_two_list_right huise" >
+                                                <ul>
+                                              <li class="first">XDA软件市场</li>
+                                                <li>手机QQ</li>
+                                                <li>UC浏览器</li>
+                                                <li>搜狗输入法</li>
+                                                </ul>
+                                                <span class="huangse float_you">more</span>
+                                          </div>
+                                    </div>
+
+                                    <div class="content_left_left_two_list">
+                                          <div class="content_left_left_two_list_left">
+                                                <img  src="http://img.xda-china.com/android/static/images/sousuo/gaos.gif"  width="50" height="60"/>
+                                                <span class="jiacu">高手进阶</span>          
+                                          </div>
+                                          <div class="content_left_left_two_list_right huise">
+                                                <ul>
+                                             <li class="first">XDA软件市场</li>
+                                                <li>手机QQ</li>
+                                                <li>UC浏览器</li>
+                                                <li>搜狗输入法</li>
+                                                </ul>
+                                                <span class="huangse float_you">more</span>
+                                          </div>
+                                    </div>
+    
+                                    <div class="content_left_left_two_list">
+                                          <div class="content_left_left_two_list_left">
+                                                <img src="http://img.xda-china.com/android/static/images/sousuo/qscx.jpg"  width="50"/>
+                                                <span class="jiacu">轻松出行</span>          
+                                          </div>
+                                          <div class="content_left_left_two_list_right huise">
+                                                <ul>
+                                               <li class="first">XDA软件市场</li>
+                                                <li>手机QQ</li>
+                                                <li>UC浏览器</li>
+                                                <li>搜狗输入法</li>
+                                                </ul>
+                                                <span class="huangse float_you">more</span>
+                                          </div>
+                                    </div>
+                                     -->
+                             </div>
+                             
+                   <div id="fenye">
+              			  <font color='red'>[1]</font>&nbsp;<a href='http://android.xda.cn/html/list_index/1_1_1_2_6524.html'><font color='black'>[2]</font></a>&nbsp;<a href='http://android.xda.cn/html/list_index/1_1_1_3_6524.html'><font color='black'>[3]</font></a>&nbsp;<a href='http://android.xda.cn/html/list_index/1_1_1_4_6524.html'><font color='black'>[4]</font></a>&nbsp;<a href='http://android.xda.cn/html/list_index/1_1_1_5_6524.html'><font color='black'>[5]</font></a>&nbsp;<a href='http://android.xda.cn/html/list_index/1_1_1_2_6524.html'>[下一页]</a>            		</div>
+           <!---------------content_left_left end--------------->           
+                </div>
+                      <!---------------content_left_left_two 结束--------------->     
+              
+
+            <!---------------分页开始--------------->
+            
+            <!---------------分页结束--------------->
+          </div>
+      <!---------------ccontent_left end--------------->   
+              
+
+       </div>
+      <!---------------content end--------------->
+      
+      
+      
+         
+</div>
+<!---------------main end--------------->
+
+<!---------------footer begin--------------->
+<div id="footer">
+    <div class="footer_child footer_one"  id="footerChild">
+    	<img src="http://img.xda-china.com/android/static/images/zixun_index/footer_right.gif"  style="float:right; position:relative; left:4px;" />
+        <img src="http://img.xda-china.com/android/static/images/zixun_index/footer_left.gif" />
+    	
+    </div>
+    
+    
+	<div class="footer_child footer_two">
+    	<a href="http://www.xda.cn"><span>XDA智能手机网</span></a>
+        <span>|</span>
+        <a href="http://bbs.xda.cn"><span>XDA论坛</span></a>
+        <span>|</span>
+        <a href="#"><span>商务合作</span></a>
+        <span>|</span>
+        <a href="#"><span>隐私声明</span></a>
+        <span>|</span>
+        <a href="#"><span>使用条款</span></a>
+        <span>|</span>
+        <a href="http://www.xda.cn/info.php?sectionid=77"><span>招贤纳士</span></a>
+        <span>|</span>
+        <a href="http://www.xda.cn/info.php?sectionid=79"><span>联系我们</span></a>
+        <span>|</span>
+        <a href="http://www.xda.cn/tougao.php"><span>网友投稿</span></a>
+        <span>|</span>
+       <a href="#"><span>内容纠错</span></a>
+        <span>|</span>
+        <a href="#"><span>站点地图</span></a>
+    </div>
+    
+	<div class="footer_child footer_three">Copyright @ 2011 XDA.CN ALL Rights Reserved.XDA 智能手机网 ICP 粤备11019197号</div>
+</div>
+<!---------------footer end--------------->
+
+
+<script language="javascript" >
+	$(function(){
+		$('#userid').blur(function(){onDefault();});
+		$('#userid').focus(function(){onClearUser();});
+	});
+	
+	
+	function onCheckUser(){
+		if($('#userid').val()=='用户名' || $('#userid').val()==''){
+			alert("请输入用户名。");
+			return false; 
+		}
+		if($('#password').val()==''){
+			alert("请输入密码。");
+			return false;   
+		}
+	}
+	
+	function onClearUser(){
+		if($('#userid').val()=='用户名'){
+		  $('#userid').val('');
+		}
+	}
+	
+	function onDefault(){
+		if($('#userid').val()==''){
+		  $('#userid').val('用户名');
+		}
+	}
+
+</script>
+<script>
+var update_url = "http://android.xda.cn//list_index.php";
+var update_ajax = {"ctimes":"1317198755","gid":"1","cid":"0","type":"0","pag":"0","tol":"0"};
+checkUpdate(update_url, update_ajax);
+</script>
+<!--- --->
+</body>
+</html>
