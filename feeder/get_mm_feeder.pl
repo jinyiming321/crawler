@@ -13,7 +13,7 @@
 #       AUTHOR: JamesKing , jinyiming456@gmail.com
 #      COMPANY: China
 #      VERSION: 1.0
-#      CREATED: 2011å¹´09æœˆ24æ—¥ 05æ—¶28åˆ†43ç§’
+#      CREATED: 2011Äê09ÔÂ24ÈÕ 05Ê±28·Ö43Ãë
 #     REVISION: ---
 #===============================================================================
 
@@ -24,6 +24,7 @@ use LWP::UserAgent;
 use HTML::TreeBuilder;
 use IO::Handle;
 use Carp;
+use Encode;
     
 my $ua = LWP::UserAgent->new;
 $ua->timeout(60);
@@ -40,17 +41,20 @@ my $apps_portal
     
 my $app_base_url 
     =
-"http://mm.10086.cn/moneditor/cs/soft/softResult.html?categoryId=&orderby=&ordertype=&categoryname=å…¨éƒ¨è½¯ä»¶";
+"http://mm.10086.cn/moneditor/cs/soft/softResult.html?categoryId=&orderby=&ordertype=&categoryname=È«²¿Èí¼þ";
 
 my $game_base_url 
     =
-    "http://mm.10086.cn/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=å…¨éƒ¨æ¸¸æˆ";
+    "http://mm.10086.cn/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=È«²¿ÓÎÏ·";
 my $theme_base_url =
-"http://mm.10086.cn/moneditor/cs/mobiletheme/themeResult.html?categoryId=&orderby=&ordertype=&categoryname=å…¨éƒ¨ä¸»é¢˜";
+"http://mm.10086.cn/moneditor/cs/mobiletheme/themeResult.html?categoryId=&orderby=&ordertype=&categoryname=È«²¿Ö÷Ìâ";
 
-my $games_portal = $game_base_url."&appcateid=17&appcatename=ä½“è‚²";
-my $themes_portal = "&appcateid=29&appcatename=åŠ¨ç‰©";
-
+my $games_portal =
+"http://mm.10086.cn/moneditor/cs/game/gameResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E6%B8%B8%E6%88%8F&appcateid=15&appcatename=%E6%A3%8B%E7%89%8C";
+my $themes_portal = "http://mm.10086.cn/moneditor/cs/mobiletheme/themeResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E4%B8%BB%E9%A2%98&appcateid=30&appcatename=%E6%A4%8D%E7%89%A9";
+my $html = 'ooxx.html';
+use FileHandle;
+my $fh = new FileHandle(">$html")||die $@;
 
 
 foreach my $portal ( 
@@ -70,19 +74,25 @@ foreach my $portal (
         my @li_kids;
 
         my $webpage=$response->content;
+        print $fh $webpage;
         eval {
             $tree = HTML::TreeBuilder->new; # empty tree
+            $tree->parse($webpage);
             @node = $tree->look_down( id => 'channelNavstatic' );
             Carp::croak( "not find this mark leftbar" ) unless @node;   
 =pod
 <ul id="channelNavstatic" style="width:600px;">
 <li class="selected" appcateid="1">
-<a title="å·¥å…·"
-href="/moneditor/cs/soft/softResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E8%BD%AF%E4%BB%B6&appcateid=1&appcatename=%E5%B7%A5%E5%85%B7">å·¥å…·</a
+<a title="¹¤¾ß"
+href="/moneditor/cs/soft/softResult.html?categoryId=&orderby=&ordertype=&categoryname=%E5%85%A8%E9%83%A8%E8%BD%AF%E4%BB%B6&appcateid=1&appcatename=%E5%B7%A5%E5%85%B7">¹¤¾ß</a
 =cut 
             my @tags = $node[0]->find_by_tag_name('a');
             for(@tags){
-                print FEED "http://mm.10086.cn".$_->attr('href');
+                my $link = $_->attr('href');
+                print $link ."\n";
+                print FEED "http://mm.10086.cn".$_->attr('href')."\n";
+                print "http://mm.10086.cn".$_->attr('href')."\n";
+                
             }
 
         
