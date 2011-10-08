@@ -70,11 +70,10 @@ print Dumper \@page_list;
 
 die "get page list failed" if @page_list == 0;
 
-insert_app_source( $apps_hashref );
-
+insert_app_source();
 
 sub extract_app_list{
-    my ( $content,$apps_hashref ) = ( shift,pop );
+    my $content = shift;
     my $tree = new HTML::TreeBuilder;
     eval{
         $tree->parse( 
@@ -84,11 +83,13 @@ sub extract_app_list{
 
         my @nodes = $tree->look_down( class => 'free_app_name' );
         return unless @nodes;
-
-        my $href = $nodes[0]->attr('href');
-        my $app_url = $base_url.$href;
-        $app_url =~ m!mobile/(\d+)/!i;
-        $apps_hashref->{$1} = $app_url;
+        
+        foreach (@nodes){
+            my $href = $_->attr('href');
+            my $app_url = $base_url.$href;
+            $app_url =~ m!mobile/(\d+)/!i;
+            $apps_hashref->{$1} = $app_url;
+        }
     };
     if( $@ ){
         warn $@;
@@ -119,7 +120,7 @@ sub find_pages{
     push @{$page_arrayref},$next_page;
     
     while( my $content = $downloader->download($next_page) ){
-        extract_app_list( $content,$apps_hashref );
+        extract_app_list( $content );
         my $subtree = new HTML::TreeBuilder;
         $subtree->parse($content);
         $subtree->eof;
@@ -140,8 +141,6 @@ sub find_pages{
 }
 
 sub insert_app_source{
-    my $hashref = shift;
-    print Dumper $hashref;
     my 	$sql='insert into app_source set '.
             ' app_url_md5=?'.
             ',app_self_id=?'.
@@ -152,12 +151,13 @@ sub insert_app_source{
     print "sql is : $sql\n";
     my $sth = $dbh->prepare($sql);
 
-    foreach (keys %$hashref){
+    foreach (keys %$apps_hashref ){
         my $app_self_id=$_;
         chomp($app_self_id);
-        my $app_url = $hashref->{$_};
+        my $app_url = $apps_hashref->{$_};
         $sth->execute(md5_hex($app_url),$app_self_id,$app_url) or warn 
             $sth->errstr;
+        print "run sql finish\n";
     }
 }
 
