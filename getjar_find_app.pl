@@ -70,10 +70,6 @@ print Dumper \@page_list;
 
 die "get page list failed" if @page_list == 0;
 
-foreach my $page( @page_list ){
-    extract_app_list( $page,$apps_hashref );
-}
-
 insert_app_source( $apps_hashref );
 
 
@@ -96,8 +92,10 @@ sub extract_app_list{
     };
     if( $@ ){
         warn $@;
+        $tree->delete;
         return 0;
     }
+    $tree->delete;
     return 0 if scalar ( keys %$apps_hashref );
     return 1;
 }
@@ -121,6 +119,7 @@ sub find_pages{
     push @{$page_arrayref},$next_page;
     
     while( my $content = $downloader->download($next_page) ){
+        extract_app_list( $content,$apps_hashref );
         my $subtree = new HTML::TreeBuilder;
         $subtree->parse($content);
         $subtree->eof;
@@ -142,6 +141,7 @@ sub find_pages{
 
 sub insert_app_source{
     my $hashref = shift;
+    print Dumper $hashref;
     my 	$sql='insert into app_source set '.
             ' app_url_md5=?'.
             ',app_self_id=?'.
