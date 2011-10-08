@@ -60,10 +60,8 @@ $downloader->timeout(120);
 foreach my $feeder_url( @feeder_url ){
     my $content ;
     $content = $downloader->download($feeder_url);   
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse( decode_utf8($content) );
-    $tree->eof;
     push @page_list,$feeder_url;
+    extract_app_list( $content,$apps_hashref );
     find_pages( $downloader,decode_utf8($content),\@page_list );
 
 }
@@ -80,12 +78,12 @@ insert_app_source( $apps_hashref );
 
 
 sub extract_app_list{
-    my ( $page_url,$apps_hashref ) = ( shift,pop );
+    my ( $content,$apps_hashref ) = ( shift,pop );
     my $tree = new HTML::TreeBuilder;
     eval{
         $tree->parse( 
-            decode_utf8( $downloader->download($page_url) ) 
-        ) or die "can't parse this $page_url";
+            decode_utf8( $content )
+        ) or die "can't parse ";
         $tree->eof;
 
         my @nodes = $tree->look_down( class => 'free_app_name' );
