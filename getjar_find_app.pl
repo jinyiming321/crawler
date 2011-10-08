@@ -1,6 +1,6 @@
 #download url
 BEGIN{unshift(@INC, $1) if ($0=~m/(.+)\//); $| = 1; }
-
+use JSON;
 use strict; 
 use utf8; 
 use Carp;
@@ -63,7 +63,6 @@ foreach my $feeder_url( @feeder_url ){
     push @page_list,$feeder_url;
     extract_app_list( $content,$apps_hashref );
     find_pages( $downloader,decode_utf8($content),\@page_list );
-
 }
 
 print Dumper \@page_list;
@@ -81,12 +80,16 @@ sub extract_app_list{
         ) or die "can't parse ";
         $tree->eof;
 
+        my $category =
+            ($tree->look_down( class => 'category_label'))[0]->as_text;
+
         my @nodes = $tree->look_down( class => 'free_app_name' );
         return unless @nodes;
         
         foreach (@nodes){
             my $href = $_->attr('href');
             my $app_url = $base_url.$href;
+            save_extra_info( md5_hex($app_url),$category );
             $app_url =~ m!mobile/(\d+)/!i;
             $apps_hashref->{$1} = $app_url;
         }
@@ -160,6 +163,15 @@ sub insert_app_source{
         print "run sql finish\n";
     }
 }
+
+sub save_extra_info{
+    my $app_url_md5 = shift;
+    my $data = shift;
+    my $sql = "replace into app_extra_info(app_url_md5,information) values(?,?)"; 
+    my $sth = $dbh->prepare($sql);
+    $sth->execute($app_url_md5,$data) or warn $sth->errstr;
+}
+
 
 exit 1;
 

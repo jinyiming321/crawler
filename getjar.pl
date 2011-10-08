@@ -57,6 +57,8 @@ BEGIN{
         AMMS::NewAppExtractor->import;
         require AMMS::UpdatedAppExtractor;
         AMMS::UpdatedAppExtractor->import;
+        require AMMS::DBHelper;
+        AMMS::DBHelper->import;
     }       
 }
 
@@ -74,8 +76,9 @@ my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
+
 my $market      = 'www.getjar.com';
-my $url_base    = 'www.getjar.com';
+my $url_base    = 'http://www.getjar.com';
 #my $downloader  = new AMMS::Downloader;
 my $login_url   = '';
 my $cookie_file = '';
@@ -109,6 +112,8 @@ unless( $task_type && $task_id && $conf_file ){
 # check configure
 die "\nplease check config parameter\n" 
     unless init_gloabl_variable( $conf_file );
+
+my $dbh = new AMMS::DBHelper;
 
 our %category_mapping=(
     ""    =>,
@@ -170,27 +175,17 @@ our @app_info_list = qw(
         current_version
         icon                    
         price                   
-        system_requirement      
-        min_os_version          
-        max_os_version          
-        resolution              
-        last_update             
-        size                    
-        official_rating_stars   
-        official_rating_times   
-        app_qr                  
-        apk_url                 
         total_install_times     
         description             
         official_category       
-        trustgo_category_id     
-        related_app             
         screenshot               
-        permission              
         status                  
+        apk_url                 
+        size                    
+        trustgo_category_id     
 );
 
-our $AUTHOR     = '??';
+our $AUTHOR     = 'unknown';
 
 if( $task_type eq 'find_app' )##find new android app
 {
@@ -317,22 +312,20 @@ sub get_app_url{
 
 sub get_icon{
     my $html = shift;
-    
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-#    return unless @nodes;
+    my $app_info = shift;
 
-    #look down brief label;
-    my @nodes = $tree->look_down( class => 'apptitle');
+    my @nodes = $tree->look_down( id => 'product_image_holder' );
     return unless @nodes;
+
+    return ( $nodes[0]->find_by_tag_name('img') )[0]->attr('src');
 }
 
 sub get_app_name{
     my $html = shift;
-    my $mark = shift||'apptitle';
     
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
+    my @nodes = $tree->look_down( class => 'txt_white' );
+    return unless @nodes;
+    return $nodes[0]->attr('href');
 }
 
 sub get_price{ 
@@ -341,29 +334,36 @@ sub get_price{
 
 sub get_description{
     my $html = shift;
+    my $app_info = shift;
 
-    return 
+    my @nodes = $tree->look_down( class => 'product_desciption');
+    return unless @nodes;
+
+    my $desc = $nodes[0]->as_text;
+    $desc = ~ s/\r//sg;
+    $desc =~ s/\n//sg;
+    
+    return  $desc;
 }
 
 sub get_size{
-    my $html = shift;
-    return 
+    return  0;
 }
 
 sub get_total_install_times{
     my $html = shift;
-    return undef;
+    my $app_info = shift;
+    
+    my @nodes = $tree->look_down( id => 'product_dl_count' );
+    return unless @nodes;
+
+    my $install_times = $nodes[0]->as_text;
+    $install_times =~ s/,//g;
+    return $install_times;
 }
 
 sub get_last_update{
-    my $html = shift;
-
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'changelog' );
-    return unless @nodes;
-    
-    return ;
+    return "0000-00-00";
 }
 
 sub get_cookie{
@@ -478,18 +478,19 @@ sub kb_m{
 
 sub get_official_category{
     my $html = shift;
-
+    my $app_info = shift;
+    
+    my $official_category = 
+        $dbh->selectrow_array("select information from app_extra_info
+        where app_url_md5 = md5_hex($app_info->{app_url})"
+        );
+    return $official_category;
 }
 
 #-------------------------------------------------------------
 
 sub get_current_version{
-    my $html = shift;
-    #print $version_s;
-    my $tree = new HTML::TreeBuilder;
-    $tree->parse($html);
-    my @nodes = $tree->look_down( class => 'appdetails');
-    return unless @nodes;
+    return 'unknown'
 }
 
 sub get_app_qr{
@@ -506,8 +507,13 @@ sub get_app_qr{
 }
 sub get_screenshot{
     my $html = shift;
-    return ;
+    my $app_info = shift;
 
+    my @nodes = $tree->look_down( class => 'thumbs' );
+    return unless @nodes;
+
+    my @tags = $nodes[0]->find_by_tag_name('img');
+    return [ map{ $_->attr('src') } @tags ];
 }
 
 #-------------------------------------------------------------
