@@ -4,7 +4,7 @@ BEGIN{unshift(@INC, $1) if ($0=~m/(.+)\//); $| = 1; }
 use strict; 
 use utf8; 
 use Carp;
-use HTML::Entities;
+use HTML::TreeBuilder;
 use DBI;
 use Encode;
 use Data::Dumper;
@@ -22,40 +22,44 @@ my $market="getjar.com";
 #my $word_list="./wordlist/5000words.txt";
 #$word_list=$ARGV[0] if defined $ARGV[0];
 
-die "\nplease check config parameter\n" unless init_gloabl_variable;#( $conf_file );
-my $dsn = '';
-my $user = '';
-my $pass = '';
+my $conf_file = $ARGV[0];
+
+my %dbh_info = do{
+    use FileHandle;
+    my %hash;
+    my $fh = new FileHandle($conf_file) or die $@;
+    while(<$fh>){
+        if(/^(mysql\S+)\t*\s*=\s*\t*(.+)/i){
+            $hash{$1} = $2;
+            next;
+        }
+    }
+    close( $fh);
+    %hash;
+};
+
+my $dsn =
+    "dbi:mysql:database=$dbh_info{MySQLDb};host=$dbh_info{MySQLHost};port=3306";
+my $user = $dbh_info{MySQLUser};
+my $pass = $dbh_info{MySQLPasswd};
 
 my @feeder_url = (
-    'http://www.getjar.com/mobile-music-applications-for-android-os/',
+    'http://www.getjar.com/mobile-music-applications-for-android-os',
 );
 
 my $dbh = DBI->connect( $dsn,$user,$pass ) or die $@;
 $dbh->do( "set names 'utf8'");
 
 my $downloader;
-my $base_url = "www.getjar.com";
+my $base_url = "http://www.getjar.com";
 my @page_list;
 my $apps_hashref = {};
-eval{
-    $downloader = new AMMS::Downloader;
-    $downloader->timeout(120);
-};
-my $error = $@;
-if( $error ){
-    $downloader = \&get;
-}
-
+$downloader = new AMMS::Downloader;
+$downloader->timeout(120);
 
 foreach my $feeder_url( @feeder_url ){
     my $content ;
-    if( ref($downloader) eq SUB_TYPE ){
-        $content = $downloader->($feeder_url);   
-    }
-    else{
-        $content = $downloader->download($feeder_url);
-    }
+    $content = $downloader->download($feeder_url);   
     my $tree = new HTML::TreeBuilder;
     $tree->parse( decode_utf8($content) );
     $tree->eof;
@@ -112,23 +116,23 @@ sub find_pages{
     my $next_page =
         $base_url.[$nodes[0]->find_by_tag_name('a')]->[0]->attr('href');
     # ref=0&lvt=1318045707&sid=84dg0023wqkqbjr4
-    $next_page =~ s/ref=\w+&//;
-    $next_page =~ s/lvt=\w+&//;
-    $next_page =~ s/sid=\w+&//;
     $tree->delete;
+
+    push @{$page_arrayref},$next_page;
     
     while( my $content = $downloader->download($next_page) ){
         my $subtree = new HTML::TreeBuilder;
         $subtree->parse($content);
         $subtree->eof;
         eval{
-            my @nodes = $subtree->look_down( id => 'right_arrow' );
+            my @nodes = $subtree->look_down( id => 'row_right_arrow');
             my @tags = $nodes[0]->find_by_tag_name('a');
-            my $next_page = $tags[0]->attr('href');
-            push @{$page_arrayref},$next_page;
+            $next_page = $tags[0]->attr('href');
+            push @{$page_arrayref},$base_url.$next_page;
             $subtree->delete;
         };
-        if( $@ ){
+        my $error = $@;
+        if( $error ){
             $subtree->delete;
             last;
         }
