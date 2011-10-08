@@ -1,0 +1,161 @@
+#download url
+BEGIN{unshift(@INC, $1) if ($0=~m/(.+)\//); $| = 1; }
+
+use strict; 
+use utf8; 
+use Carp;
+use HTML::Entities;
+use DBI;
+use Encode;
+use Data::Dumper;
+use Getopt::Std;
+use Digest::MD5 qw(md5_hex);
+use Encode;
+
+use constant SUB_TYPE => ref sub {};
+use AMMS::Util;
+use AMMS::Downloader;
+
+binmode STDOUT, ":utf8";
+
+my $market="getjar.com";
+#my $word_list="./wordlist/5000words.txt";
+#$word_list=$ARGV[0] if defined $ARGV[0];
+
+die "\nplease check config parameter\n" unless init_gloabl_variable;#( $conf_file );
+my $dsn = '';
+my $user = '';
+my $pass = '';
+
+my @feeder_url = (
+    'http://www.getjar.com/mobile-music-applications-for-android-os/',
+);
+
+my $dbh = DBI->connect( $dsn,$user,$pass ) or die $@;
+$dbh->do( "set names 'utf8'");
+
+my $downloader;
+my $base_url = "www.getjar.com";
+my @page_list;
+my $apps_hashref = {};
+eval{
+    $downloader = new AMMS::Downloader;
+    $downloader->timeout(120);
+};
+my $error = $@;
+if( $error ){
+    $downloader = \&get;
+}
+
+
+foreach my $feeder_url( @feeder_url ){
+    my $content ;
+    if( ref($downloader) eq SUB_TYPE ){
+        $content = $downloader->($feeder_url);   
+    }
+    else{
+        $content = $downloader->download($feeder_url);
+    }
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse( decode_utf8($content) );
+    $tree->eof;
+    push @page_list,$feeder_url;
+    find_pages( $downloader,decode_utf8($content),\@page_list );
+
+}
+
+die "get page list failed" if @page_list == 0;
+
+foreach my $page( @page_list ){
+    extract_app_list( $page,$apps_hashref );
+}
+
+insert_app_source( $apps_hashref );
+
+
+sub extract_app_list{
+    my ( $page_url,$apps_hashref ) = ( shift,pop );
+    my $tree = new HTML::TreeBuilder;
+    eval{
+        $tree->parse( 
+            decode_utf8( $downloader->download($page_url) ) 
+        ) or die "can't parse this $page_url";
+        $tree->eof;
+
+        my @nodes = $tree->look_down( class => 'free_app_name' );
+        return unless @nodes;
+
+        my $href = $nodes[0]->attr('href');
+        my $app_url = $base_url.$href;
+        $app_url =~ m!mobile/(\d+)/!i;
+        $apps_hashref->{$1} = $app_url;
+    };
+    if( $@ ){
+        warn $@;
+        return 0;
+    }
+    return 0 if scalar ( keys %$apps_hashref );
+    return 1;
+}
+
+sub find_pages{
+    my ( $downloader,$page_arrayref,$content ) = ( shift,pop,shift );
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($content);
+    $tree->eof;
+
+    # find more tag;
+    # div id="appsmore" class="more_bar"
+    my @nodes = $tree->look_down( id => 'appsmore' );
+
+    return unless @nodes;
+    my $next_page =
+        $base_url.[$nodes[0]->find_by_tag_name('a')]->[0]->attr('href');
+    # ref=0&lvt=1318045707&sid=84dg0023wqkqbjr4
+    $next_page =~ s/ref=\w+&//;
+    $next_page =~ s/lvt=\w+&//;
+    $next_page =~ s/sid=\w+&//;
+    $tree->delete;
+    
+    while( my $content = $downloader->download($next_page) ){
+        my $subtree = new HTML::TreeBuilder;
+        $subtree->parse($content);
+        $subtree->eof;
+        eval{
+            my @nodes = $subtree->look_down( id => 'right_arrow' );
+            my @tags = $nodes[0]->find_by_tag_name('a');
+            my $next_page = $tags[0]->attr('href');
+            push @{$page_arrayref},$next_page;
+            $subtree->delete;
+        };
+        if( $@ ){
+            $subtree->delete;
+            last;
+        }
+    }
+    return 1;
+}
+
+sub insert_app_source{
+    my $hashref = shift;
+    my 	$sql='insert into app_source set '.
+            ' app_url_md5=?'.
+            ',app_self_id=?'.
+            ',market_id=1'.
+            ',feeder_id=0'.
+            ',app_url=?'.
+            ',status="undo"';
+
+    my $sth = $dbh->prepare($sql);
+
+    foreach (keys %$hashref){
+        my $app_self_id=$_;
+        chomp($app_self_id);
+        my $app_url = $hashref->{$_};
+        $sth->execute(md5_hex($app_url),$app_self_id,$app_url) or warn 
+            $sth->errstr;
+    }
+}
+
+exit 1;
+
