@@ -68,6 +68,8 @@ foreach my $feeder_url( @feeder_url ){
 
 }
 
+print Dumper \@page_list;
+
 die "get page list failed" if @page_list == 0;
 
 foreach my $page( @page_list ){
@@ -127,8 +129,8 @@ sub find_pages{
         eval{
             my @nodes = $subtree->look_down( id => 'row_right_arrow');
             my @tags = $nodes[0]->find_by_tag_name('a');
-            $next_page = $tags[0]->attr('href');
-            push @{$page_arrayref},$base_url.$next_page;
+            $next_page = $base_url.$tags[0]->attr('href');
+            push @{$page_arrayref},$next_page;
             $subtree->delete;
         };
         my $error = $@;
