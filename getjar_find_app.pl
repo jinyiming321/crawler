@@ -1,6 +1,5 @@
 #download url
 BEGIN{unshift(@INC, $1) if ($0=~m/(.+)\//); $| = 1; }
-use JSON;
 use strict; 
 use utf8; 
 use Carp;
@@ -61,7 +60,7 @@ foreach my $feeder_url( @feeder_url ){
     my $content ;
     $content = $downloader->download($feeder_url);   
     push @page_list,$feeder_url;
-    extract_app_list( $content,$apps_hashref );
+    extract_app_list( $content );
     find_pages( $downloader,decode_utf8($content),\@page_list );
 }
 
@@ -89,9 +88,10 @@ sub extract_app_list{
         foreach (@nodes){
             my $href = $_->attr('href');
             my $app_url = $base_url.$href;
-            save_extra_info( md5_hex($app_url),$category );
-            $app_url =~ m!mobile/(\d+)/!i;
-            $apps_hashref->{$1} = $app_url;
+            $app_url =~ m!(.+?mobile/(\d+)/.+?)\?!i;
+            my $self_id = $1;
+            $apps_hashref->{$2} = $1;
+            save_extra_info( md5_hex($1),$category );
         }
     };
     if( $@ ){

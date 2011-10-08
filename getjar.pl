@@ -98,44 +98,11 @@ explain:
     conf_file   - the configure file of crawler,default is /root/crawler/default.cfg
 ==================================================
 EOF
-
-if( $ARGV[-1] eq 'debug' ){
-    &run;
-    exit 0;
-}
-
-# check args 
-unless( $task_type && $task_id && $conf_file ){
-    die $usage;
-}
-
-# check configure
-die "\nplease check config parameter\n" 
-    unless init_gloabl_variable( $conf_file );
-
 my $dbh = new AMMS::DBHelper;
+my $dbi = $dbh->connect_db;
 
 our %category_mapping=(
-    ""    =>,
-    ""    =>,
-    ""    =>,
-    ""    =>,
-    ""    =>,
-    ""    =>,
-    ""    =>,
-    ""    =>,
-    ""    =>, 
-    ""    =>, 
-    ""    =>, 
-
-    ""    =>, 
-
-    #
-    ""    =>, 
-    ""    =>,
-    ""    =>, 
-    ""    =>, 
-    ""    =>, 
+        'Music' => 800,
 );
 
 # define a app_info mapping
@@ -168,7 +135,7 @@ our %app_map_func = (
         status                  => '',
         category_id             => '',
 );
-
+# TODO get apk_url
 our @app_info_list = qw(
         author                  
         app_name
@@ -177,24 +144,31 @@ our @app_info_list = qw(
         price                   
         total_install_times     
         description             
-        official_category       
         screenshot               
+        official_category       
         status                  
-        apk_url                 
         size                    
         trustgo_category_id     
 );
 
 our $AUTHOR     = 'unknown';
 
-if( $task_type eq 'find_app' )##find new android app
-{
-    my $AppFinder   = new AMMS::AppFinder('MARKET'=>$market,'TASK_TYPE'=>$task_type);
-    $AppFinder->addHook('extract_page_list', \&extract_page_list);
-    $AppFinder->addHook('extract_app_from_feeder', \&extract_app_from_feeder);
-    $AppFinder->run($task_id);
+
+if( $ARGV[-1] eq 'debug' ){
+    &run;
+    exit 0;
 }
-elsif( $task_type eq 'new_app' )##download new app info and apk
+
+# check args 
+unless( $task_type && $task_id && $conf_file ){
+    die $usage;
+}
+
+# check configure
+die "\nplease check config parameter\n" 
+    unless init_gloabl_variable( $conf_file );
+
+if( $task_type eq 'new_app' )##download new app info and apk
 {
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
@@ -218,7 +192,6 @@ sub get_page_list{
     $tree->parse($html);
     $tree->delete;
 }
-
 
 sub trim_url{
     my $url = shift;
@@ -322,10 +295,12 @@ sub get_icon{
 
 sub get_app_name{
     my $html = shift;
+    my $app_info = shift;
     
-    my @nodes = $tree->look_down( class => 'txt_white' );
+    my @nodes = $tree->look_down( id => 'product_title');
     return unless @nodes;
-    return $nodes[0]->attr('href');
+    my $app_name = [$nodes[0]->find_by_tag_name('a')]->[0]->as_text;
+    return $app_name;
 }
 
 sub get_price{ 
@@ -340,7 +315,7 @@ sub get_description{
     return unless @nodes;
 
     my $desc = $nodes[0]->as_text;
-    $desc = ~ s/\r//sg;
+    $desc =~ s/\r//sg;
     $desc =~ s/\n//sg;
     
     return  $desc;
@@ -358,6 +333,8 @@ sub get_total_install_times{
     return unless @nodes;
 
     my $install_times = $nodes[0]->as_text;
+    $install_times =~ m/([\d,]+)/;
+    $install_times = $1;
     $install_times =~ s/,//g;
     return $install_times;
 }
@@ -480,11 +457,13 @@ sub get_official_category{
     my $html = shift;
     my $app_info = shift;
     
-    my $official_category = 
-        $dbh->selectrow_array("select information from app_extra_info
-        where app_url_md5 = md5_hex($app_info->{app_url})"
-        );
-    return $official_category;
+    my $app_url_md5 = md5_hex($app_info->{app_url});
+    my $sql = <<EOF;
+    select information from app_extra_info 
+    where app_url_md5 = '$app_url_md5'
+EOF
+    my $hashref = $dbi->selectrow_hashref( $sql);
+    return $hashref->{information};
 }
 
 #-------------------------------------------------------------
@@ -638,34 +617,11 @@ sub get_official_rating_times{
 
 sub run{
     use LWP::Simple;
-    #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
-    my $content = get('http://www.coolapk.com/game/shoot/');
-    my @pages = ();
-    extract_page_list(undef,undef,{web_page=>$content},\@pages);
-    use Data::Dumper;
-    print Dumper \@pages;
-    exit 0;
-
-    use Data::Dumper;
-    print Dumper \@pages;
-    
-    my $apps = {};
-    foreach my $page( @pages ){
-        $content = get($page);
-        &extract_app_from_feeder(undef,undef,{web_page=>$content},$apps);
-    }
-    my $app_num = scalar (keys %{$apps});
-    print Dumper $apps;
-    print "app_num is $app_num\n";
-    exit 0;
-    my $html = 'coolapk-htc.html';
-    use FileHandle;
-    my $fh = new FileHandle(">>$html")||die $@;
-    $fh->print($content);
-    $fh->close;
+    my $url
+        ='http://www.getjar.com/mobile/82185/pandora%C2%AE-internet-radio-for-google-nexus-one/';
+    my $content = get( $url );
     my $app_info = {};
-    $app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
+    $app_info->{app_url} = $url;
     extract_app_info( undef,undef,$content,$app_info );
     use Data::Dumper;
     print Dumper $app_info;
