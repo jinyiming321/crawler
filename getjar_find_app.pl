@@ -145,11 +145,11 @@ sub insert_app_source{
     my 	$sql='insert into app_source set '.
             ' app_url_md5=?'.
             ',app_self_id=?'.
-            ',market_id=1'.
+            ',market_id=18'.
             ',feeder_id=0'.
             ',app_url=?'.
             ',status="undo"';
-
+    print "sql is : $sql\n";
     my $sth = $dbh->prepare($sql);
 
     foreach (keys %$hashref){
