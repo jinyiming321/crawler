@@ -55,7 +55,8 @@ my %ATTRIBUTE_DEFAULT = (
 my %SUPPORTED_HOOKS = (
     'extract_app_info'          => 'extract all app info from app webpage',
     'download_app_apk'          => 'download app apk',
-    'language_suffix'          => 'support language',
+    'language_suffix'           => 'support language',
+    'extra_processing'          => 'extra processing, for example multi-lang',
 #    'continue-test'             => 'return true if should continue iterating',
 #    'modified-since'            => 'returns modified-since time for URL passed',
 );
@@ -107,7 +108,6 @@ sub run
     $self->finish_task( 'fail' ) and return 0
         if  not $self->get_app_result( \%apps )  or##get app info and apk info 
 #            not $self->package_and_send()        or#package and send to center server
-#           not $self->package_and_send()        or#package and send to center server
             not $self->save_app_result();     ##insert app info and apk into DB 
 
     ##end a task
@@ -136,7 +136,7 @@ sub get_app_result
 
     my $app_result  = $self->{ 'APP_RESULT' };
     my $logger      = $self->{ 'CONFIG_HANDLE' }->getAttribute('LOGGER');
-    my $downloader  = new AMMS::Downloader;
+    my $downloader  = $self->{ 'DOWNLOADER' };
     my $web_lang;
 
     $self->invoke_hook_functions('language_suffix',\$web_lang);
@@ -193,6 +193,8 @@ sub get_app_result
         $apk_info{'app_url'} = $app_info{'app_url'};
         $apk_info{'apk_url'} = $app_info{'apk_url'};
         $apk_info{'price'} = $app_info{'price'};
+        $apk_info{'size'} = $app_info{'size'};
+        $apk_info{'app_package_name'} = $app_info{'app_package_name'};
         $self->invoke_hook_functions('download_app_apk', \%apk_info);
 
         $app_info{ 'status'  } = 'success';
@@ -531,7 +533,7 @@ sub initialise
 
     ($self->{ 'CONFIG_HANDLE' } = new AMMS::Config)  || return undef;
     ($self->{ 'DB_HELPER' }     = new AMMS::DBHelper)    || return undef;
-
+    ($self->{ 'DOWNLOADER' }    = new AMMS::Downloader) || return undef;
 
     $self->{'TOP_DIR'} = $self->{'CONFIG_HANDLE'}->getAttribute( 'TempFolder' );
     return $self;
@@ -635,7 +637,7 @@ sub deal_with_app_info
     my $status;
     my $errstr;
     my $md5         = $app_info->{'app_url_md5'};
-    my $downloader  = new AMMS::Downloader;
+    my $downloader  = $self->{DOWNLOADER};
     my $logger      = $self->{ 'CONFIG_HANDLE' }->getAttribute('LOGGER');
 
     #create resouce directory
@@ -750,7 +752,7 @@ sub package_and_send
         next if $self->{'APP_RESULT'}->{$md5}->{'app_info'}->{'status'} ne 'success';
         $app_dir = get_app_dir($market,$md5);
         #generate meta
-        next if not $self->generate_meta_file($app_dir,$self->{'APP_RESULT'}->{$md5}->{'app_info'});
+        next if not $self->generate_meta_file($app_dir,$self->{'APP_RESULT'}->{$md5});
         $app_param .= " $app_dir"; 
         ++$app_count;
     }
@@ -789,7 +791,7 @@ sub download_app_apk
     my $md5 =   $apk_info->{'app_url_md5'};
     my $apk_dir= $self->{'TOP_DIR'}.'/'. get_app_dir( $self->getAttribute('MARKET'),$md5).'/apk';
 
-    my $downloader  = new AMMS::Downloader;
+    my $downloader  = $self->{'DOWNLOADER'};
 
     $downloader->header({Referer=>$apk_info->{'app_url'}});
 
@@ -810,7 +812,9 @@ sub download_app_apk
         return 0;
     }
 
-    $downloader->timeout($self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime'));
+    my $timeout = $self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime');
+    $timeout += int($apk_info->{size}/1024) if defined $apk_info->{size};
+    $downloader->timeout($timeout);
     $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
     if (!$downloader->is_success)
     {
@@ -818,8 +822,8 @@ sub download_app_apk
         return 0;
     }
 
- 
-    my $unique_name=md5_hex("$apk_dir/$apk_file")."__".$apk_file;
+    $apk_info->{apk_md5}=file_md5("$apk_dir/$apk_file");
+    my $unique_name=$apk_info->{apk_md5}."__".$apk_file;
 
     rename("$apk_dir/$apk_file","$apk_dir/$unique_name");
 
@@ -836,6 +840,7 @@ sub download_app_apk
 sub clean_app_data
 {
     my $self    = shift;
+
     foreach ( keys %{ $self->{'APP_RESULT'} } )
     {
         my $app_dir= $self->{'TOP_DIR'}.'/'.get_app_dir($self->getAttribute('MARKET'),$_);
@@ -870,7 +875,7 @@ sub check_app_info{
 
     return 0 if( $app_info->{'status'} eq 'fail' );
 
-    return 0 if (not defined $app_info->{'app_name'} 
+    if (not defined $app_info->{'app_name'} 
             or not defined $app_info->{'official_category'}
             or not defined $app_info->{'trustgo_category_id'}
             or not defined $app_info->{'last_update'}
@@ -880,32 +885,37 @@ sub check_app_info{
             or not defined $app_info->{'current_version'} 
             or not defined $app_info->{'app_url'} 
             or not defined $app_info->{'description'} 
-            );
+            )
+            {
+                return 0;
+            }
 
     return 1;
 }
 
 sub generate_meta_file
 {
-    my $self        = shift;
-    my $app_dir     = shift;
-    my $app_info    = shift;
+    my $self    = shift;
+    my $app_dir = shift;
+    my $app     = shift;
 
     my $meta_file =$self->{'TOP_DIR'}."/$app_dir/meta";
 
     open( META, ">:utf8","$meta_file") or ($logger->error("fail to open $meta_file") and return 0);
     select META;
 
+    my $app_info=$app->{app_info};
+    my $apk_info=$app->{apk_info};
     print "app_unique_name=".$app_info->{'app_url_md5'}; 
     print "\napp_name=".$app_info->{'app_name'} if exists $app_info->{'app_name'}; 
-    print "\napp_unique_package_name=".$app_info->{'app_unique_package_name'}; 
+    print "\napp_unique_package_name=".$apk_info->{'app_package_name'}; 
     print "\nofficial_category=".$app_info->{'official_category'}; 
     print "\nsub_official_category=".$app_info->{'sub_official_category'}; 
     print "\ntrustgo_category=".$app_info->{'trustgo_category_id'}; 
 #print "\nauthor=".$app_info->{'author'}; 
     print "\nmarket=".$self->{'MARKET_INFO'}->{'name'}; 
-    print "\nsupport_os='android'";
-    print "\napp_capacity='tablet,phone'";
+    print "\nsupport_os=android";
+    print "\napp_capacity=tablet,phone";
     print "\nos_version=".$app_info->{'min_os_version'}.",".$app_info->{'max_os_version'};
     print "\nofficial_rating=".$app_info->{'official_rating_stars'}; 
     print "\nofficial_rating_times=".$app_info->{'official_rating_times'}; 
@@ -917,6 +927,7 @@ sub generate_meta_file
     print "\ncurrent_version=".$app_info->{'current_version'}; 
     print "\ntotal_install_times=".$app_info->{'total_install_times'}; 
     print "\nbuy_link=".$app_info->{'app_url'}; 
+    print "\ndownload_link=".$app_info->{'apk_url'} if $app_info->{'apk_url'}=~/^http/i; 
     print "\nwebsite=".$app_info->{'website'}; 
     print "\nsupport_website=".$app_info->{'support_website'}; 
     print "\nlanguage=".$self->{'MARKET_INFO'}->{'language'}; 

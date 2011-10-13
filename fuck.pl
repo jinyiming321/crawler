@@ -28,6 +28,7 @@ use strict;
 use utf8;
 use warnings;
 use HTML::TreeBuilder;
+use AnyEvent::HTTP::LWP::UserAgent;
 use Carp ;
 use File::Path;
 use URI::URL;
@@ -167,11 +168,13 @@ my $ua = new LWP::UserAgent;
 $ua->max_redirect(0);
 $ua->timeout(60);
 my $header ;
+my $id ;
 my $res = $ua->get("http://mobilestore.opera.com/SelectDevice.jsp");
 if( $res->is_success ){
     my $cookie = $res->header('set-cookie');
     # JSESSIONID=F3FC72207A474D2D96540518EEDAB26D.jvm1; 
-    if( $cookie =~ m/(JSESSIONID=[^;]+);/ ){
+    if( $cookie =~ m/(JSESSIONID=([^;]+));/ ){
+        $id = $2;
         $header = $1.";"."handango_device_id=$device_id;";
     }
 }else{
@@ -180,6 +183,8 @@ if( $res->is_success ){
 print $header."\n";
 $ua->default_header(cookie => $header);
 
+my $cookie_jar = HTTP::Cookies->new;
+$cookie_jar->set_cookie(undef,"JSESSIONID","$id","handango_device_id","2459","/",'mobilestore.opera.com',undef); 
 my $tree;
 my $usage =<<EOF;
 
@@ -376,10 +381,7 @@ our %app_map_func = (
             my ( $html,$app_info ) = ( shift,pop );
             my @nodes = $tree->look_down( alt => 'Rating' );
             return unless @nodes;
-            # official_rating_stars
-            # http://cdn.appia.com/pictures/mwf/cfg/27/img/rated-0-half-5.gif
             if ( my $src = $nodes[0]->attr('src') ){
-                $src =~ s/half-//g;
                 $src =~ m/rated-(.+?)\.gif/;
                 my $temp = $1;
                 $temp =~ s/-/./;
@@ -395,20 +397,10 @@ our %app_map_func = (
             my ( $html,$app_info ) = ( shift,pop );
             my @nodes = $tree->look_down( class => 'selected_app_highlight');
             return unless @nodes;
-            my @p = $nodes[0]->find_by_tag_name('p');
-            my $down_link = $url_base."/".($p[0]->find_by_tag_name('a')
+            my $down_link = $url_base."/".($nodes[0]->find_by_tag_name('a')
                     )[0]->attr('href');
-            my $times = 3;
-            my $apk_url;
-            while( $times ){
-                my $res = $ua->get( $down_link );
-                if( $res->header('location') ){
-                    $apk_url = $res->header('location');
-                    last;
-                }
-                $times--;
-            }
-            return $apk_url || $down_link;
+            my $res = $ua->get($down_link);
+            return $res->header('location');
         },
         total_install_times     => sub {0},
         description             => sub{
@@ -466,6 +458,7 @@ if( $task_type eq 'find_app' )##find new android app
 {
     my $AppFinder =
       new MyAppFind( 'MARKET' => $market, 'TASK_TYPE' => $task_type );
+    $AppFinder->{DOWNLOADER}->{USERAGENT} = new AnyEvent::HTTP::LWP::UserAgent;
     $AppFinder->{DOWNLOADER}->{USERAGENT}->default_header( cookie => $header );
     $AppFinder->addHook('extract_page_list', \&extract_page_list);
     $AppFinder->addHook('extract_app_from_feeder', \&extract_app_from_feeder);
@@ -474,17 +467,17 @@ if( $task_type eq 'find_app' )##find new android app
 elsif( $task_type eq 'new_app' )##download new app info and apk
 {
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
-    $NewAppExtractor->{DOWNLOADER}->{USERAGENT}->default_header( cookie => $header );
+    $NewAppExtractor->{DOWNLOADER}->{USERAGENT} = new AnyEvent::HTTP::LWP::UserAgent;
+    $NewAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar($cookie_jar);
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
-#    $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $NewAppExtractor->run($task_id);
 }
 elsif( $task_type eq 'update_app' )##download updated app info and apk
 {
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->default_header( cookie => $header );
+    $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->default_header( cookie => $header );
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
-#    $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $UpdatedAppExtractor->run($task_id);
 }
 sub extract_page_list {
@@ -595,7 +588,6 @@ sub extract_app_from_feeder{
 }
 sub run{
     use LWP::Simple;
-    goto INFO;
     #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
     my $res=
         $ua->get('http://mobilestore.opera.com/AllCategories.jsp?sectionId=8565');
@@ -626,11 +618,11 @@ sub run{
     my $file = "opera.html";
     my $app_info = { 
         app_url =>
-        'http://mobilestore.opera.com/ProductDetail.jsp?productId=272710'
+        'http://mobilestore.opera.com/ProductDetail.jsp?productId=303006'
     };
     
     my $r =
-        $ua->get("http://mobilestore.opera.com/ProductDetail.jsp?productId=272710");
+        $ua->get("http://mobilestore.opera.com/ProductDetail.jsp?productId=303006");
     #print $file_w $web->content;
     extract_app_info( undef,undef,$r->content,$app_info );
     use Data::Dumper;

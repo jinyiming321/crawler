@@ -15,7 +15,7 @@ BEGIN
     # Set up the exports.
     our @EXPORT = qw(
             $conf $db_helper $logger 
-            trim ltrim rtrim
+            trim ltrim rtrim file_md5
             get_app_dir
             execute_cmd
             send_file_to_server
@@ -219,16 +219,19 @@ sub check_host_status
 
 	   if($resp=~/(\d+\.*\d*)/)
     {
-        $conf->getAttribute('LOGGER')->error("the disk space is less than 5G,please check!!") and return 0 if($1<5);
+        $conf->getAttribute('LOGGER')->error("the disk space is less than 5G,please check!!") and return 0 if($1<1);
     }
 
 #network status
+=pod
     require Net::Ping;
-    my $p = new Net::Ping("icmp", 8, 32);
+    my $p = new Net::Ping("icmp", 30, 32);
     my $r = $p->ping($conf->getAttribute("Local_Gateway"));
     $p->close;
 
     return $r;
+=cut
+	return 1;
 }
 
 
@@ -259,6 +262,14 @@ sub rtrim($)
     $string =~ s/\s+$//;
     return $string;
 }
+
+sub file_md5{
+    my $file=shift;
+    open (FILE,"$file");
+    binmode(FILE);
+    return Digest::MD5->new->addfile(*FILE)->hexdigest;
+}
+
 1;
 
 __END__

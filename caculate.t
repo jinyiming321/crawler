@@ -23,10 +23,12 @@ my $task_num;
 =cut
 
 my ( $task_type,$config );
+my $pl;
 my $ret = GetOptions( 
     'task_type=s' => \$task_type,
     'config=s'    => \$config,
-    'task_num'    => \$task_num,
+    'task_num=s'    => \$task_num,
+    'pl=s'          => \$pl
 ) ;
 #my$dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
 #my $dsn  = 'DBI:mysql:database=amms;host=192.168.154.1;port=3306';
@@ -40,7 +42,20 @@ my $dbh = DBI->connect( $dsn,$user,$pass ) or die $DBI::errstr;
 
 my $task_info = {};
 
-get_task_info();
+if( $task_type eq 'fix_app' ){
+    my $sql =<<EOF;
+    select distinct b.task_id from app_source a ,task_detail b where
+        a.app_url=b.detail_info and a.status in ('fail','doing')
+EOF
+    my $sth = $dbh->prepare($sql);
+    $sth->execute;
+    while(my $row = $sth->fetchrow_hashref ){
+        $task_info->{'new_app'}->{$row->{task_id}} = 1;
+    }
+    run_new_app();
+}else{
+    get_task_info();
+}
 if( $task_type eq 'find_app' ){
     run_find_app();
 }
@@ -57,25 +72,22 @@ sub get_task_info{
     task a,
     task_detail b
     WHERE
-    b.detail_info LIKE '%liqu%' 
-    AND a.task_type='$task_type';
+    b.detail_info LIKE '%opera%' 
+    AND a.task_type='$task_type'
+    and a.status not like '%done%';
 EOF
     my $sth = $dbh->prepare($sql);
     $sth->execute;
     while( my $ret = $sth->fetchrow_hashref ){
-#        if( $ret->{detail_info} =~ m{anfone.com/sort/\d+\.html} ){
-        if( $ret->{task_id} =~ m{\d+} ){
             $task_info->{$task_type}{ $ret->{task_id} } = 1;
-        }
     }
-
 }
 
 sub run_find_app{
     my @task_id_list = keys %{ $task_info->{find_app} };
     for(@task_id_list){
         my $cmd = <<CMD;
-        perl /root/crawler/liqu.pl find_app $_ /root/crawler/default.cfg
+        perl /root/crawler/$pl find_app $_ /root/crawler/default.cfg
 CMD
 #        my $ret = system($cmd);
         `$cmd`;
@@ -85,7 +97,7 @@ CMD
     }
 
     my $sql =<<EOF;
-    select count(*) from app_source where market_id = 15
+    select count(*) from app_source where market_id = 20
 EOF
     my $count = $dbh->selectrow_array($sql);
     print "-------------------------------------\n";
@@ -94,13 +106,12 @@ EOF
 
 sub run_new_app{
     my @task_id_list = keys %{ $task_info->{new_app} };
-    for( my $i = 0;$i<=$task_num;$i++){
-        my $cmd = <<CMD;
-        perl /root/crawler/liqu.pl new_app $task_id_list[$i] /root/crawler/default.cfg
+    map{
+        my $cmd =<<CMD;
+        perl /root/crawler/$pl new_app $_ /root/crawler/default.cfg
 CMD
-        print $cmd."\n";
-        #sleep 5;
-        `$cmd`;
-        is($?,0,"run '$cmd' test");
-    }
+    print "run cmd :$cmd\n";
+    `$cmd`;
+    is($?,0,"run '$cmd' test");
+    } @task_id_list;
 }

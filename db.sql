@@ -350,6 +350,7 @@ SET character_set_client = utf8;
 CREATE TABLE `app_extra_info` (
   `app_url_md5` char(32) NOT NULL,
   `last_update` datetime default NULL,
+  `information` varchar(500) NOT NULL,
   PRIMARY KEY (`app_url_md5`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
@@ -363,18 +364,4 @@ INSERT INTO `google_account` VALUES
 GRANT SELECT,INSERT,UPDATE, DELETE,ALTER,LOCK TABLES ON AMMS.* TO trustgo@"%" IDENTIFIED BY "123456";
 GRANT SELECT,LOCK TABLES ON AMMS.* TO onlyread@"%" IDENTIFIED BY "123456";
 
-replace INTO `market` set id=1,name='market.android.com',language='en_us',feeder_entity_of_task=2, status='good';
-replace INTO `market` set id=2,name='www.mumayi.com',language='zh_cn',feeder_entity_of_task=3,status='good';
-replace INTO `market` set id=3,name='www.amazon.com',language='en_us',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=4,name='www.aimi8.com',language='zh_cn',feeder_entity_of_task=3,status='good';
-replace INTO `market` set id=5,name='www.hiapk.com',language='zh_cn',feeder_entity_of_task=3,status='good';
-replace INTO `market` set id=6,name='www.gfan.com',language='zh_cn',feeder_entity_of_task=3,status='good';
-replace INTO `market` set id=7,name='www.appchina.com',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=8,name='www.nduoa.com',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=9,name='www.eoemarket.com',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=10,name='www.goapk.com',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=11,name='android.d.cn',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=12,name='m.163.com',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=13,name='www.anfone.com',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=14,name='www.coolapk.com',language='zh_cn',feeder_entity_of_task=2,status='good';
-replace INTO `market` set id=15,name='www.liqucn.com',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=30,name='handster.com',language='zh_cn',feeder_entity_of_task=2,status='good';
