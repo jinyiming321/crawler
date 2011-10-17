@@ -187,7 +187,7 @@ our %app_map_func = (
             unless( @nodes ){
                 $log->(
                     'error',
-                    "can't find version"
+                    "can't find icon"
                 );
                 return
             }
@@ -199,7 +199,7 @@ our %app_map_func = (
             unless( @nodes ){
                 $log->(
                     'error',
-                    "can't find version"
+                    "can't find screen"
                 );
                 return
             }
@@ -267,12 +267,23 @@ our %app_map_func = (
         },
         description             => sub{
             my ( $html,$app_info ) = ( shift,pop );
+=pod
             my @nodes = $tree->look_down( id => 'product-description' );
             return unless @nodes;
             my $desc = $nodes[0]->as_text;
+=cut    
+            my $node = $tree->look_down( 
+                    class => 'description',
+                    sub {
+                        $_[0]->as_text =~ m/Summary/is
+                    }
+            );
+            my $desc = $node->as_text;
             $desc =~ s/\r//g;
             $desc =~ s/\n//g;
+            $desc =~ s/Summary\s*://si;
             return $desc;
+
         },
         official_category       => sub {
             my $html = shift;
@@ -294,8 +305,8 @@ EOF
             my @nodes = $tree->look_down( id => 'product-upsell' );
             return unless @nodes;
             return [ 
-                map{ $_->attr('src') } 
-                $nodes[0]->find_by_attribute( class => 'product-thumb')
+                map{ $_->attr('href') } 
+                $nodes[0]->find_by_attribute( class => 'product-details-link')
             ]
         },
         price                   => sub {
@@ -345,15 +356,19 @@ if( $task_type eq 'find_app' )##find new android app
 elsif( $task_type eq 'new_app' )##download new app info and apk
 {
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
+    # max_redirect
+    #$AppFinder->{DOWNLOADER}->{USERAGENT}->default_header( cookie => $header );
+    $NewAppExtractor->{DOWNLOADER}{USERAGENT}->max_redirect(0);
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
-    #$NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
+    $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $NewAppExtractor->run($task_id);
 }
 elsif( $task_type eq 'update_app' )##download updated app info and apk
 {
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
+    $UpdatedAppExtractor->{DOWNLOADER}{USERAGENT}->max_redirect(0);
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
-#    $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
+    $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $UpdatedAppExtractor->run($task_id);
 }
 
@@ -391,7 +406,7 @@ sub extract_page_list{
             $tree->eof;
             my $pager= $tree->look_down( class => 'p_pager');
             my $last_page_num = ( $pager->find_by_tag_name('a') )[-2]->as_text;
-            push @list, $type."?=".$_ foreach ( 2..$last_page_num );
+            push @list, $type."?p=".$_ foreach ( 2..$last_page_num );
         }
         push @$pages,@list if @list;
     };
@@ -494,6 +509,8 @@ sub extract_app_from_feeder{
                }
         );
     };
+    use Data::Dumper ;
+    print Dumper $apps;
     if($@){
         $apps = {};
         return 0
@@ -509,6 +526,63 @@ sub save_extra_info{
     my $sth = $dbh->prepare($sql);
     $sth->execute($app_url_md5,$data) or $log->('error',"save category fail and
             app_url_md5 is $app_url_md5");
+}
+
+sub download_app_apk 
+{
+    my $self    = shift;
+    my $hook_name  = shift;
+    my $apk_info= shift;
+
+    my $apk_file;
+    my $md5 =   $apk_info->{'app_url_md5'};
+    my $apk_dir= $self->{'TOP_DIR'}.'/'. get_app_dir( $self->getAttribute('MARKET'),$md5).'/apk';
+
+    my $downloader  = $self->{'DOWNLOADER'};
+    $downloader->{USERAGENT}->max_redirect(7);
+
+    $downloader->header({Referer=>$apk_info->{'app_url'}});
+
+    if( $apk_info->{price} ne '0' ){
+        $apk_info->{'status'}='paid';
+        return 1;
+    }
+    eval { 
+        rmtree($apk_dir) if -e $apk_dir;
+        mkpath($apk_dir);
+    };
+    if ( $@ )
+    {
+        $self->{ 'LOGGER'}->error( sprintf("fail to create directory,App ID:%d,Error: %s",
+                                    $md5,$EVAL_ERROR)
+                                 );
+        $apk_info->{'status'}='fail';
+        $downloader->{USERAGENT}->max_redirect(0);
+        return 0;
+    }
+
+    my $timeout = $self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime');
+    $timeout += int($apk_info->{size}/1024) if defined $apk_info->{size};
+    $downloader->timeout($timeout);
+    $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
+    if (!$downloader->is_success)
+    {
+        $apk_info->{'status'}='fail';
+        $downloader->{USERAGENT}->max_redirect(0);
+        return 0;
+    }
+
+    $apk_info->{apk_md5}=file_md5("$apk_dir/$apk_file");
+    my $unique_name=$apk_info->{apk_md5}."__".$apk_file;
+
+    rename("$apk_dir/$apk_file","$apk_dir/$unique_name");
+
+
+    $apk_info->{'status'}='success';
+    $apk_info->{'app_unique_name'} = $unique_name;
+
+    $downloader->{USERAGENT}->max_redirect(0);
+    return 1;
 }
 
 
