@@ -391,6 +391,15 @@ our %app_map_func = (
         official_rating_times   => undef,
         app_qr                  => undef,
         note                    => undef,
+        official_comment_times  => sub {
+            my ( $html,$app_info ) = ( shift,pop );
+
+            # Read Reviews(1)
+            if( $html =~ m/Read.+?Reviews\((\d+)\)/s ){
+                return $1
+            }
+            return 0
+        },
         apk_url                 => sub {
             my ( $html,$app_info ) = ( shift,pop );
             my @nodes = $tree->look_down( class => 'selected_app_highlight');
@@ -598,7 +607,7 @@ sub run{
     goto INFO;
     #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
     my $res=
-        $ua->get('http://mobilestore.opera.com/AllCategories.jsp?sectionId=8565');
+        $ua->get('http://mobilestore.opera.com/ProductDetail.jsp?productId=284825');
     my @pages = ();
 =pod    
     extract_page_list(
@@ -626,11 +635,11 @@ sub run{
     my $file = "opera.html";
     my $app_info = { 
         app_url =>
-        'http://mobilestore.opera.com/ProductDetail.jsp?productId=272710'
+        'http://mobilestore.opera.com/ProductDetail.jsp?productId=284825'
     };
     
     my $r =
-        $ua->get("http://mobilestore.opera.com/ProductDetail.jsp?productId=272710");
+        $ua->get("http://mobilestore.opera.com/ProductDetail.jsp?productId=284825");
     #print $file_w $web->content;
     extract_app_info( undef,undef,$r->content,$app_info );
     use Data::Dumper;

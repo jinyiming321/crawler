@@ -64,9 +64,8 @@ my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
-my $market          = 'www.anfone.com';
-my $url_base        = 'http://anfone.com';
-my $game_base_url   = 'http://www.android168.com/game';
+my $market      = 'www.anfone.com';
+my $url_base    = 'http://anfone.com';
 #my $downloader  = new AMMS::Downloader;
 
 my $usage =<<EOF;
@@ -83,21 +82,6 @@ explain:
     conf_file   - the configure file of crawler,default is /root/crawler/default.cfg
 ==================================================
 EOF
-
-# check args 
-unless( $task_type && $task_id && $conf_file ){
-    die $usage;
-}
-
-# check configure
-die "\nplease check config parameter\n" 
-    unless init_gloabl_variable( $conf_file );
-
-# define a app_info mapping
-# because trustgo_category_id is related with official_category
-# so i remove it from this mapping
-# modify record :
-# 	2011-09-19 add support for screenshot related_app official_rating_starts
 our @app_info_list = qw(
     author 
     app_name 
@@ -118,7 +102,7 @@ our @app_info_list = qw(
 );
 
 our %category_mapping=(
-    "系统管理"    => 2206,
+    "系统工具"    => 2206,
     "网络浏览"    => 2210,
     "影音媒体"    => 7,
     "文字输入"    => 2217,
@@ -131,7 +115,6 @@ our %category_mapping=(
     "生活常用"    => 19,
     "财务工具"    => 2, 
     "学习办公"    => "5,16",
-    # TODO sure class?
     "其他分类"    => 0,
     "主题图像"    => 1203,
     "棋牌游戏"    => 802,
@@ -162,6 +145,21 @@ our $AUTHOR     = '安丰网';
 our $ICON_MARK  = 'brief';
 our $DESC_MARK  = 'screen';
 our $SIZE_MARK  = 'info';
+
+# check args 
+unless( $task_type && $task_id && $conf_file ){
+    die $usage;
+}
+
+# check configure
+die "\nplease check config parameter\n" 
+    unless init_gloabl_variable( $conf_file );
+
+# define a app_info mapping
+# because trustgo_category_id is related with official_category
+# so i remove it from this mapping
+# modify record :
+# 	2011-09-19 add support for screenshot related_app official_rating_starts
 
 if( $task_type eq 'find_app' )##find new android app
 {
@@ -201,24 +199,25 @@ sub get_page_list{
 
     my $tree = new HTML::TreeBuilder;
     $tree->parse($html);
-    $tree->eof;
-    # $app->{base_url} join with page num game and apk
-# <span class="pageinfo">
-# 共
-# <strong>17</strong>
-# 页
-# <strong>165</strong>
-# 条
-    my @nodes = $tree->look_down( class => 'pageinfo');
-    return unless @nodes;
+    my @nodes = $tree->look_down( class => 'pagebar' );
+    Carp::croak('not find page_make : pagebar' ) unless scalar(@nodes);
+    # ul of class = 'pagebar'
+    # get the last page
+    my @list = $nodes[0]->find_by_tag_name('a');
+    my $last_page =  $list[-1]->attr('href');
+    # a needed to subs url
+    # last_page 
+    #	-<a class="img" onclick="return fn_turnPage(this);" href="/sort/1_15.html">末页</a>
 
-    my $page_num = ( $nodes[0]->find_by_tag_name('strong') )[0]->as_text;
-    return unless $page_num;
-
-    map{
-        push @{ $pages },$app_
-    }
-
+    ( my $needed_s_url = $last_page )
+        =~ s#/(sort/\d+)_(\d+)\.html#&trim_url($url_base).'/'.$1."_".'$num'.".html"#eg;
+    my $total = $2;
+    $needed_s_url =~ s/;.+$//g;
+    # save pages to pages arrayref
+    @{ $pages } = map {
+        ( my $temp = $needed_s_url ) =~ s/\$num/$_/; 
+        $temp
+    } (1..$total);
     $tree->delete;
 }
 
@@ -256,16 +255,23 @@ sub get_app_list{
     # <a href="/soft/7880.html">
     # <a href="/soft/8099.html">极限摩托车</a>
     #li class="name">
-    if(my @links = $html=~ m{li class="name">.+?"(/soft/\d+\.html)"}sg){
-       for(@links){
-           if($_ =~ m/(\d+)/){
-              $apps_href->{$1} = trim_url($url_base).$_;
-           }
-       }
-       return 1;
-    }
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse($html);
+    $tree->eof;
 
-    return 0
+    my @names = $tree->look_down( class => 'name' );
+    die "can't find app_url" unless @names;
+
+    foreach my $name_node(@names){
+        my $tag = $name_node->find_by_tag_name('a');
+        my $app_url = $url_base.$tag->attr('href');
+        $app_url =~ s/;.+$//g;
+        if( $app_url =~ m/(\d+)\.html/i ){
+            $apps_href->{$1} = $app_url;
+        }
+    }
+    $tree->delete;
+    return 1;
 }
 =pod 
     my $tree = new HTML::TreeBuilder;
@@ -482,7 +488,6 @@ sub get_apk_url{
     my $mark = shift||'down';
 
     # find apk_url by html_tree
-    # TODO define a global var for apk_url mark class => "down"
     # html content:
 =pod
 <div class="down">
@@ -502,6 +507,7 @@ sub get_apk_url{
     my @nodes = $tree->look_down( class => $mark );
     my @p = $nodes[0]->find_by_tag_name('p');
     my $url = $url_base.$p[0]->find_by_tag_name($LINK_TAG)->attr($LINK_HREF);
+    $url =~ s/;.+$//g;
 
     $tree->delete;
     return $url || undef;
@@ -730,8 +736,10 @@ sub get_related_app{
 		next unless @links;
 		foreach my $link(@links){
 			next unless ref($link);
+            my $href = $link->attr('href');
+            $href =~ s/;.+$//g;
 			push @{ $related_apps },
-	            trim_url($url_base).$link->attr('href');
+	            trim_url($url_base).$href;
 		}
 		
 	}
@@ -748,12 +756,8 @@ sub extract_app_info
     my $app_info = shift;
 
     # create a html tree and parse
-    print "extract_app_info  run \n";
-#    use Encode;
-#    $html = Encode::decode_utf8($html);
 
     eval{
-        # TODO get note 'not find'
         {
             no strict 'refs';
             foreach my $meta( @app_info_list ){
@@ -766,7 +770,6 @@ sub extract_app_info
                 }
                 next;
             }
-
             if (defined($category_mapping{$app_info->{official_category}})){
                 $app_info->{trustgo_category_id} 
                     =$category_mapping{$app_info->{official_category}};
@@ -779,10 +782,9 @@ sub extract_app_info
             }
         }
     };
-#    use Data::Dumper;
-#    print Dumper $app_info;
-
     $app_info->{status} = 'success';
+    use Data::Dumper;
+    print Dumper $app_info;
     if($@){
         $app_info->{status} = 'fail';
     }
@@ -799,22 +801,30 @@ sub get_content{
         my $fh = new FileHandle($html)||die $@;
         <$fh>
     };
-
+    use Encode;
+    $content = Encode::decode_utf8($content);
     return $content;
 }
 
 sub run{
     use LWP::Simple;
-    my $content = get('http://www.anfone.com/soft/19389.html');
-=pod
-    my $worker	 = shift;
-    my $hook	 = shift;
-    my $html     = shift;
-    my $app_info = shift;
-=cut
-    my $app_info = {};
-    extract_app_info( undef,undef,$content,$app_info );
+    my $content;
+    my $page;
+    my $feeder;
 
+    $content = get_content( 'anfone_content.html');
+    $page = get_content( 'anfone_page.html');
+    $feeder = get_content('anfone_feeder.html');
+    my $app_info = {};
+    my $app_list = {};
+    my $page_list = [];
+    extract_page_list( undef,undef,{ web_page => $feeder},$page_list );
+    use Data::Dumper;
+    print Dumper $page_list;
+    extract_app_from_feeder( undef,undef,{ web_page => $page} ,$app_list);
+    print Dumper $app_list;
+    extract_app_info( undef,undef,$content,$app_info );
+    print Dumper $app_info;
 }
 
 1;

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/perl
+#!/usr/bin/perl
 use strict;
 use LWP::UserAgent;
 use HTML::TreeBuilder;
@@ -8,7 +8,7 @@ my $ua = LWP::UserAgent->new;
 $ua->timeout(60);
 $ua->env_proxy;
 
-open(FEED,">coolapk.url");
+open(FEED,">anfone.url");
 FEED->autoflush(1);
 
 my $apps_portal='http://anfone.com/application.html';

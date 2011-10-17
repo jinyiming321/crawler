@@ -24,6 +24,7 @@ my %market_feed     = (
 #    'www.liqucn.com'=> 'liqu.url'
 #    'mobilestore.opera.com' => 'opera.url',
     'handster.com' => 'handster.url',
+    'anfone.com'   => 'anfone.url',
         );
 
 die "\nplease check config parameter\n" unless init_gloabl_variable( $conf_file );

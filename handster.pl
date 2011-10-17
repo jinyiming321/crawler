@@ -182,6 +182,7 @@ our %app_map_func = (
             }
         },   
         icon                    => sub {
+=pod
             my ( $html,$app_info ) = ( shift,pop );
             my @nodes = $tree->look_down( class => 'product-thumb' );
             unless( @nodes ){
@@ -192,6 +193,21 @@ our %app_map_func = (
                 return
             }
             return $nodes[-1]->attr('src');
+=cut
+            my $html = shift;
+            my $app_info = pop;
+            my $app_url_md5 = md5_hex($app_info->{app_url});
+            my $sql = <<EOF;
+            select information from app_extra_info 
+            where app_url_md5 = '$app_url_md5'
+EOF
+            my $hashref = $dbh->selectrow_hashref( $sql);
+            unless ( exists $hashref->{information} ){
+                $log->('error',"can't find app icon");
+                return
+            }
+            my $icon= ( split(";",$hashref->{information}) )[1];
+            return $icon;
         },
         screenshot              => sub {
             my ( $html,$app_info ) = ( shift,pop );
@@ -298,7 +314,8 @@ EOF
                 $log->('error',"can't find app category");
                 return
             }
-            return $hashref->{information};
+            my $category = ( split(";",$hashref->{information}) )[0];
+            return $category;
         },
         related_app             => sub {
             my ( $html,$app_info ) = ( shift,pop );
@@ -456,8 +473,6 @@ sub extract_app_info
             }
         }
     };
-#    use Data::Dumper;
-#    print Dumper $app_info;
     $tree->delete;
 
     $app_info->{status} = 'success';
@@ -501,16 +516,19 @@ sub extract_app_from_feeder{
                     && 
                     do{ 
                         $apps->{$1} =  $_[0]->attr('href') ;
+                        my $icon = $_[0]->find_by_attribute( 
+                            'class',
+                            'product-thumb'
+                            )->attr('src');
                         save_extra_info( 
                             md5_hex( $_[0]->attr('href') ),
-                            $category
+                            $category,
+                            $icon,
                         );
                     }
                }
         );
     };
-    use Data::Dumper ;
-    print Dumper $apps;
     if($@){
         $apps = {};
         return 0
@@ -521,7 +539,9 @@ sub extract_app_from_feeder{
 }
 sub save_extra_info{
     my $app_url_md5 = shift;
-    my $data = shift;
+    my $category= shift;
+    my $icon = shift;
+    my $data = $category.";".$icon;
     my $sql = "replace into app_extra_info(app_url_md5,information) values(?,?)"; 
     my $sth = $dbh->prepare($sql);
     $sth->execute($app_url_md5,$data) or $log->('error',"save category fail and
