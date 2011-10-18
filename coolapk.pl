@@ -1,24 +1,29 @@
-#!/usr/bin/perl 
-#===============================================================================
-#
-#         FILE: coolapk
-#        USAGE: task_type task_id configure
-# for example => $0 find_app 144 ./default.cfg
-#  DESCRIPTION: 
-#      This is a program,which is a adaptor for the crawler of amms system,
-# it can parse html meta data and support extract_page_list,extract_app_from_feeder,
-# extract_app_info.Somewhere used HTML::TreeBuilder to parse html tree, handle 
-# description,stars... with regular expression.
-#
-# REQUIREMENTS: HTML::TreeBuilder,AMMS::UpdatedAppExtractor,AMMS::Downloader,
-#               AMMS::NewAppExtractor,AMMS::AppFinder,AMMS::Util
-#         BUGS: send email to me, if there is any bugs.
-#        NOTES: 
-#       AUTHOR: James King, jinyiming456@gmail.com
-#      VERSION: 1.0
-#      CREATED: 2011/9/24 13:35
-#     REVISION: 1.0
-#===============================================================================
+#*****************************************************************************
+# *     Program Title: coolapk.pl
+# *    
+# *     Description: 
+# *         1) extract page list from feeder url
+# *         2) extract app from every page url
+# *         3) extract app information from app_url
+# *    
+# *     Author: Yiming Jin
+# *    
+# *     (C) Copyright 2011-2014 TrustGo Mobile, Inc.
+# *     All Rights Reserved.  
+# *                           
+# *     This program is an unpublished copyrighted work which is proprietary
+# *     to TrustGo Mobile, Inc. and contains confidential information that is
+# *     not to be reproduced or disclosed to any other person or entity without
+# *     prior written consent from TrustGo Mobile, Inc. in each and every
+# *     instance.
+# *    
+# *     WARNING:  Unauthorized reproduction of this program as well as                                                              
+# *     unauthorized preparation of derivative works based upon the
+# *     program or distribution of copies by sale, rental, lease or
+# *     secret laws, punishable by civil and criminal penalties.
+#*****************************************************************************
+
+
 
 use strict;
 use warnings;
@@ -38,7 +43,7 @@ use English;
 use Encode qw( encode );
 use File::Path;
 use Digest::MD5 qw(md5_hex);
-
+use HTML::Entities; 
 use HTTP::Status;
 use HTTP::Date;
 use HTTP::Request;
@@ -92,14 +97,11 @@ explain:
 ==================================================
 EOF
 
-# check args 
-unless( $task_type && $task_id && $conf_file ){
-    die $usage;
-}
-
 # check configure
-die "\nplease check config parameter\n" 
-    unless init_gloabl_variable( $conf_file );
+=pod
+warn "\nplease check config parameter\n" 
+    unless init_gloabl_variable( $conf_file );a
+=cut
 
 our %category_mapping=(
     "系统工具"    => 22,
@@ -123,6 +125,7 @@ our %category_mapping=(
     "体育运动"    => 814,
     "动作射击"    => 821,
 );
+
 
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
@@ -180,7 +183,6 @@ our @app_info_list = qw(
         permission              
         status                  
 );
-
 our $AUTHOR     = '酷安网';
 
 if( $task_type eq 'find_app' )##find new android app
@@ -404,20 +406,28 @@ sub get_price{
 
 sub get_description{
     my $html = shift;
-
-    if( $html =~ m{(应用详细介绍.*?)</div>}s ){
-        #( my $desc = $1 ) = ~ s/[\000-\037]//g;
+    if( $html =~ m{应用详细介绍.+?<div>(.*?)</div>.*?酷安网点评}s ){
         my $desc = $1;
-        $desc =~ s/[\000-\037]//g;
-        $desc =~ s/<.+?>//g;
-        #$desc =~ s#<a.+?</strong>##g;
-        $desc =~ s#&ldquo#"#g;
-        $desc =~ s#&rdquo#"#g;
-        return $desc;
-    }
 
-    return 
+        return AMMS::Util::del_inline_elements($desc);
+    }
 }
+
+sub trim_desc{
+    my $desc = shift;
+    $desc =~s/<p>/__p/g;
+    $desc =~s/<\/p>/___p/g;
+    $desc =~s/<br>/__br/g;
+    $desc =~s/<.*?>//ig;
+    $desc =~s/___p/<\/p>/g;
+    $desc =~s/__p/<p>/g;
+    $desc =~s/__br/<br>/g;
+    $desc =~s/__br/<br>/g;
+    $desc =~ s/[\000-\037]//g;
+    return decode_entities( $desc );
+}
+
+
 
 sub get_size{
     my $html = shift;
@@ -833,7 +843,6 @@ sub extract_app_info
                     $app_info->{$meta} = $ret;
                 }
             }
-
             if (defined($category_mapping{$app_info->{official_category}})){
                 $app_info->{trustgo_category_id} 
                     =$category_mapping{$app_info->{official_category}};
@@ -866,8 +875,8 @@ sub get_content{
         my $fh = new FileHandle($html)||die $@;
         <$fh>
     };
-
-    return $content;
+    use Encode;
+    return Encode::decode_utf8($content);
 }
 
 sub get_system_requirement{
@@ -925,39 +934,28 @@ sub get_official_rating_times{
 
 sub run{
     use LWP::Simple;
-    #my $content = get('http://www.coolapk.com/apk-3433-panso.remword/');
-    # my $content = get('http://www.coolapk.com/apk-2450-com.runningfox.humor/');
-    my $content = get('http://www.coolapk.com/game/shoot/');
-    my @pages = ();
-    extract_page_list(undef,undef,{web_page=>$content},\@pages);
-    use Data::Dumper;
-    print Dumper \@pages;
-    exit 0;
-
-    use Data::Dumper;
-    print Dumper \@pages;
+    my $content;
+    my $page;
+    my $feeder;
     
-    my $apps = {};
-    foreach my $page( @pages ){
-        $content = get($page);
-        &extract_app_from_feeder(undef,undef,{web_page=>$content},$apps);
-    }
-    my $app_num = scalar (keys %{$apps});
-    print Dumper $apps;
-    print "app_num is $app_num\n";
-    exit 0;
-    my $html = 'coolapk-htc.html';
-    use FileHandle;
-    my $fh = new FileHandle(">>$html")||die $@;
-    $fh->print($content);
-    $fh->close;
+    my $page_file = 'sliderme_page.html';
+    my $feeder_file = 'slideme_feeder.html';
+    my $app_info_file = 'cool_info.html';
+#    $content = get_content( 'anfone_content.html');
+    my $info = get_content( $app_info_file );
+#    $feeder = get_content('anfone_feeder.html');
     my $app_info = {};
-    $app_info->{app_url} = 'http://www.coolapk.com/apk-3433-panso.remword/';
-    extract_app_info( undef,undef,$content,$app_info );
+    my $app_list = {};
+    my $page_list = [];
     use Data::Dumper;
+    $app_info->{app_url} = 'http://slideme.org/application/heroes-fight';
+    extract_app_info( undef,undef,$info,$app_info );
     print Dumper $app_info;
-    #    print "key => ".decode_utf8($app_info->{$_}\n";
+    my $desc = $app_info->{description};
+    use Encode;
+    print Dumper Encode::encode_utf8($desc);
 }
+
 sub download_app_apk 
 {
     my $self    = shift;
@@ -992,8 +990,9 @@ sub download_app_apk
         $apk_info->{'status'}='fail';
         return 0;
     }
-
-    $downloader->timeout($self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime'));
+    my $timeout = $self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime'); 
+    $timeout += int($apk_info->{size}/1024) if defined $apk_info->{size}; 
+    $downloader->timeout($timeout);
     $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
     if (!$downloader->is_success)
     {
@@ -1001,8 +1000,12 @@ sub download_app_apk
         return 0;
     }
 
+    unless (check_apk_validity("$apk_dir/$apk_file") ){
+        $apk_info->{'status'}='fail';
+        return 0;
+    }
+    $apk_info->{apk_md5}=file_md5("$apk_dir/$apk_file");
     my $unique_name=md5_hex("$apk_dir/$apk_file")."__".$apk_file;
-
     rename("$apk_dir/$apk_file","$apk_dir/$unique_name");
 
 

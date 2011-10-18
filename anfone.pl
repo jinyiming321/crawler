@@ -1,22 +1,28 @@
-#!/usr/bin/perl 
-#===============================================================================
-#
-#         FILE: anfone.pl
-#        USAGE: ./anfone.pl  
-#  DESCRIPTION: 
-#      This is a program,which is a adaptor for the crawler of amms system,
-# it can parse html meta data and support extract_page_list,extract_app_from_feeder,
-# extract_app_info.Somewhere used HTML::TreeBuilder to parse html tree, handle 
-# description,stars... with regular expression.
-#
-# REQUIREMENTS: HTML::TreeBuilder,AMMS::UpdatedAppExtractor,AMMS::Downloader,
-#               AMMS::NewAppExtractor,AMMS::AppFinder,AMMS::Util
-#         BUGS: send email to me, if there is any bugs.
-#        NOTES: add support for related app,screenshot,
-#       AUTHOR: James King, jinyiming456@gmail.com
-#      VERSION: 1.0
-#      CREATED: 2011/9/19 0:10:31
-#===============================================================================
+#*****************************************************************************
+# *     Program Title: anfone.pl
+# *    
+# *     Description: 
+# *         1) extract page list from feeder url
+# *         2) extract app from every page url
+# *         3) extract app information from app_url
+# *    
+# *     Author: Yiming Jin
+# *    
+# *     (C) Copyright 2011-2014 TrustGo Mobile, Inc.
+# *     All Rights Reserved.  
+# *                           
+# *     This program is an unpublished copyrighted work which is proprietary
+# *     to TrustGo Mobile, Inc. and contains confidential information that is
+# *     not to be reproduced or disclosed to any other person or entity without
+# *     prior written consent from TrustGo Mobile, Inc. in each and every
+# *     instance.
+# *    
+# *     WARNING:  Unauthorized reproduction of this program as well as                                                              
+# *     unauthorized preparation of derivative works based upon the
+# *     program or distribution of copies by sale, rental, lease or
+# *     secret laws, punishable by civil and criminal penalties.
+#*****************************************************************************
+
 
 use strict;
 use warnings;
@@ -33,6 +39,7 @@ use AMMS::AppFinder;
 use AMMS::Downloader;
 use AMMS::NewAppExtractor;
 use AMMS::UpdatedAppExtractor;
+use HTML::Entities;
 require Exporter;
 our @ISA     = qw(Exporter);
 our @EXPORT  = qw(
@@ -145,7 +152,6 @@ our $AUTHOR     = '安丰网';
 our $ICON_MARK  = 'brief';
 our $DESC_MARK  = 'screen';
 our $SIZE_MARK  = 'info';
-
 # check args 
 unless( $task_type && $task_id && $conf_file ){
     die $usage;
@@ -427,14 +433,9 @@ sub get_description{
     if( $html =~ m/(应用介绍.*?)<div/s ){
         #( my $desc = $1 ) = ~ s/[\000-\037]//g;
         my $desc = $1;
-        $desc =~ s/<h\d+>//g;
-        $desc =~ s/<\/h\d+>//g;
-        $desc =~ s/<br>//g;
-        $desc =~ s/<\/br>//g;
-        $desc =~ s/<br\s+\/>/\n/g;
-        $desc =~ s/\r//g;
-        $desc =~ s/\n//g;
-        return $desc;
+        $desc =~ s/[\000-\037]//g;
+#        return HTML::Entities::decode($desc);
+        return AMMS::Util::del_inline_elements($desc);
     }
 
     return undef 
@@ -811,21 +812,26 @@ sub run{
     my $content;
     my $page;
     my $feeder;
-
-    $content = get_content( 'anfone_content.html');
-    $page = get_content( 'anfone_page.html');
-    $feeder = get_content('anfone_feeder.html');
+    
+    my $page_file = 'sliderme_page.html';
+    my $feeder_file = 'slideme_feeder.html';
+    my $app_info_file = 'anfone_info.html';
+    getstore( 'http://anfone.com/soft/19672.html',$app_info_file )
+        unless -e $app_info_file;
+#    $content = get_content( 'anfone_content.html');
+    my $info = get_content( $app_info_file );
+#    $feeder = get_content('anfone_feeder.html');
     my $app_info = {};
     my $app_list = {};
     my $page_list = [];
-    extract_page_list( undef,undef,{ web_page => $feeder},$page_list );
     use Data::Dumper;
-    print Dumper $page_list;
-    extract_app_from_feeder( undef,undef,{ web_page => $page} ,$app_list);
-    print Dumper $app_list;
-    extract_app_info( undef,undef,$content,$app_info );
-    print Dumper $app_info;
+    $app_info->{app_url} = 'http://slideme.org/application/heroes-fight';
+    extract_app_info( undef,undef,$info,$app_info );
+    my $desc = $app_info->{description};
+    use Encode;
+    print Dumper Encode::encode_utf8($desc);
 }
+
 
 1;
 __END__

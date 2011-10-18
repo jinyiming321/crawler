@@ -20,6 +20,7 @@ BEGIN
             execute_cmd
             send_file_to_server
             check_host_status
+            check_apk_validity
             init_gloabl_variable
         );
 }
@@ -219,19 +220,16 @@ sub check_host_status
 
 	   if($resp=~/(\d+\.*\d*)/)
     {
-        $conf->getAttribute('LOGGER')->error("the disk space is less than 5G,please check!!") and return 0 if($1<1);
+        $conf->getAttribute('LOGGER')->error("the disk space is less than 5G,please check!!") and return 0 if($1<5);
     }
 
 #network status
-=pod
     require Net::Ping;
-    my $p = new Net::Ping("icmp", 30, 32);
+    my $p = new Net::Ping("icmp", 8, 32);
     my $r = $p->ping($conf->getAttribute("Local_Gateway"));
     $p->close;
 
     return $r;
-=cut
-	return 1;
 }
 
 
@@ -270,6 +268,23 @@ sub file_md5{
     return Digest::MD5->new->addfile(*FILE)->hexdigest;
 }
 
+sub check_apk_validity{
+#return 0 on success 
+    my $apk_file=shift;
+    return 0==system("unzip -t $apk_file ");
+}
+sub del_inline_elements{
+    require HTML::Entities;
+    my $description = shift;
+    my @inline_elements = qw(a cite em font i img input label small span ins iframe style script);
+    my $RE = join "|", "<script[^>]+>.*?<\/script>",
+                       "<style[^>]+>.*?<\/style>",
+                       "<!--.*?-->",
+                       map{"<\/?".$_."[^>]*>"} @inline_elements;
+    $description =~ s/$RE//igs;
+    $description =~ s/[\00-\37]//g;
+    return HTML::Entities::decode($description);
+}
 1;
 
 __END__

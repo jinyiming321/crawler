@@ -2,9 +2,9 @@
 # *     Program Title: slideme.pl
 # *    
 # *     Description: 
-# *         1) 
-# *         2) 
-# *         3) 
+# *         1) extract page list from feeder url
+# *         2) extract app from every page url
+# *         3) extract app information from app_url
 # *    
 # *     Author: Yiming Jin
 # *    
@@ -42,11 +42,6 @@ use Encode qw( encode );
 use File::Path;
 use Digest::MD5 qw(md5_hex);
 
-use HTTP::Status;
-use HTTP::Date;
-use HTTP::Request;
-use HTTP::Cookies;
-use LWP::UserAgent;
 use LWP::Simple;
 
 BEGIN{
@@ -80,7 +75,6 @@ our @EXPORT_OK  = qw(
 my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
-
 
 my $market      = 'slideme.org';
 my $url_base    = 'http://slideme.org';
@@ -187,10 +181,8 @@ our %app_map_func = (
                 );
             }
             if( my $text = $nodes[0]->as_text ){
-                $text =~ s/\r//g;
-                $text =~ s/\n//g;
-                $text =~ s/\s+$//g;
-                return $text;
+                $text =~ m/([\d\.]+)/s;
+                return $1
             }else{
                 return 'unknown'
             }
@@ -205,38 +197,31 @@ our %app_map_func = (
                 );
                 return
             }
-            return $nodes[0]->attr('src');
+            return $nodes[0]->find_by_tag_name('img')->attr('src');
         },
         screenshot              => sub {
             my ( $html,$app_info ) = ( shift,pop );
-            my $screenshot = [];
             my @nodes = $tree->look_down( 
-                '_tag'  => 'div',
-                'class' => 'field-items',
-                sub{
-                    my $link = $_[0]->find_by_tag_name('a')->attr('href');
-                    $link =~ m/initThickbox-processed/  and push (
-                        @$screenshot,
-                        $link
-                    )
-                }
+                'class' => 'thickbox'
             );
-            unless( @$screenshot ){
+            unless( @nodes ){
                 $log->(
                     'error',
                     "can't find screen"
                 );
-                return
+                return []
             }
-            return $screenshot;
+            return [ 
+                map { $_->attr('href') }
+                @nodes
+            ]
         },
-        system_requirement      => sub{
-        },
+        system_requirement      =>  undef,
         min_os_version          => sub{
             my ( $html,$app_info ) = ( shift,pop );
             # match regex for system require
             if( $html 
-                    =~ m/Minimum Android version.+?Android.+((?:\d\.\d){1,})/is
+                    =~ m/Minimum Android version:.*?Android\s+((?:\d\.\d){1})/is
             ){
                 return $1;
             }
@@ -246,7 +231,7 @@ our %app_map_func = (
             my ( $html,$app_info ) = ( shift,pop );
             # match regex for system require
             if( $html 
-                    =~ m/Target Android version.+?Android.+((?:\d\.\d){1,})/is
+                    =~ m/Target Android version:.*?Android\s+((?:\d\.\d){1})/is
             ){
                 return $1;
             }
@@ -257,13 +242,14 @@ our %app_map_func = (
             # match resolution
             # TODO SURE DPX
             if( $html =~ m/Minimum screen width.+?(\d+).*?dpx/ ){
+                return $1;
             }
         },
         last_update             => sub {
             my ( $html,$app_info ) = ( shift,pop );
 
             # . Updated October 18, 2011
-            if( $html =~ m/Updated.+?(\w+)\s+(\d{2}),(\d{4})/s ){
+            if( $html =~ m/Updated\s+(\w+)\s+(\d{2}),\s+(\d{4})/s ){
                 # return time-format as '2010-10-02'
                 return $3.'-'.$month_map{$1}.'-'.$2;
             }
@@ -286,41 +272,33 @@ our %app_map_func = (
         apk_url                 => sub {
             my ( $html,$app_info ) = ( shift,pop );
             my $tag;
-            eval{
-                my @nodes = $tree->look_down( class => 'download-button');
-                unless ( @nodes ){
-                    $log->( 'error',"can't find download apk url button");
-                    return
-                }
-                # http://slideme.org/mobileapp/download/620320ee-e046-11e0-b731-00505690390e.apk
-                my $tag = ( $nodes[0]->find_by_tag_name('a') )[0];
-            };
-            if( $@ ){ 
-                $tag = 
-                    $tree->look_down( 
-                        class => 'webbuy-button'
-                    )->find_by_tag_name('a')
+            my @nodes = $tree->look_down( class => 'download-button');
+            unless ( @nodes ){
+                @nodes = $tree->look_down( class => 'webbuy-button' );
+                return $url_base.$nodes[0]->find_by_tag_name('a')->attr('href');
             }
-            
-            return $url_base.$tag->attr('href');
+            # http://slideme.org/mobileapp/download/620320ee-e046-11e0-b731-00505690390e.apk
+            return $url_base.$nodes[0]->find_by_tag_name('a')->attr('href');
         },
         total_install_times     => sub {
             my ( $html,$app_info ) = ( shift,pop );
-            if( $html =~ m/downloads.+?(\d+)</s ){
+            # <li class="downloads">84</li>
+            if( $html =~ m/"downloads">(\d+)</s ){
                 return $1;
             }
             return 0
         },
         description             => sub{
             my ( $html,$app_info ) = ( shift,pop );
-            my $node = $tree->look_down( class => 'content' );
+            my $node = $tree->look_down( class => qr/node node-mobileapp/ );
+            $log->(error => 'find desc failed') unless ref($node);
+            my $tag = $node->find_by_attribute( class => 'content');
             my $desc = join(
                 '',
-                map { $_->as_text }
-                $node->find_by_tag_name('p')  
+                map { $_->as_HTML }
+                $tag->find_by_tag_name('p')  
             );
-
-            return $desc;
+            return AMMS::Util::del_inline_elements($desc);
         },
         official_category       => sub {
             my ( $html,$app_info ) = ( shift,pop );
@@ -361,18 +339,11 @@ our %app_map_func = (
 
             # Requires permissions: 
             my $permission = $node->as_text;
-            if( my @arr = 
-                    $permission =~ m{Requires permissions.+?>(\w+?)</span>}sg 
-            ){
-                return [
-                    map { 
-                        s/^\s+//g; 
-                        s/\s+$//g;
-                        $_
-                    }  
-                    @arr
-                ]
-            }
+            my @list = 
+                grep {/\w/}
+                map{  (my $temp = $_ )=~ s/^\s+//g; $temp }
+                split (/\s+Requires permissions:/,$node->as_text);
+            return \@list;
 
         },
         category_id             => undef,
@@ -425,35 +396,33 @@ sub extract_page_list{
 
     my $total_page;
 
+    my $tree = new HTML::TreeBuilder;
     print "run extract_page_list ............\n";
-    # create a html tree and parse
-    my $web = $params->{web_page};
     eval{
-        my $tree = new HTML::TreeBuilder;
-        $tree->parse($web);
-        $tree->eof;
-        # free
-        my $tag = 
-            $tree->look_down( 
-                class => qr/pager-last/ 
-            )->find_by_tag_name('a');
-        $log->( 'error' => 'find last page failed') unless ref($tag);
+        $tree->parse( $params->{web_page} );
+        my $node = $tree->look_down(
+                _tag  => 'li',
+                class => qr/pager-last/,
+        );
+        $log->( 'error' => 'find last page failed') unless ref($node);
+        my $tag = $node->find_by_tag_name('a');
         my $last_page = $tag->attr('href');
         # http://slideme.org/applications/category/fun-games?page=343
         if( $last_page =~ m/page=(\d+)/ ){
             $total_page = $1;
         }
+        $tree->delete;
         return 0 unless $total_page;
-        return [
-            map { 
+        
+        @{$pages} =  map { 
                 $last_page =~ s/page=(\d+)/'page='.$_/eg;
-                $last_page
-            }
-            (1..$total_page)
-        ]
+                $url_base.$last_page
+        } ( 0..$total_page);
     };
     if($@){
 #        print Dumper $pages;
+        $log->(error => $@);
+        $tree->delete;
         return 0 unless scalar @$pages
     }
     return 1;
@@ -502,6 +471,7 @@ sub extract_app_info
 
     $app_info->{status} = 'success';
     if($@){
+        $log->(error => $@ );
         $app_info->{status} = 'fail';
     }
 
@@ -519,22 +489,34 @@ sub extract_app_from_feeder{
     return 0 unless exists $params->{web_page};
 
     print "run extract_app_from_feeder_list ............\n";
+    my $tree = new HTML::TreeBuilder;
     eval{
         my $html = $params->{web_page};
-        my $tree = new HTML::TreeBuilder;
         $tree->parse($html);
         $tree->eof;
-
+        # <a href="/node/5288/reviews">Reviews</a>
         my @nodes = $tree->look_down( id => 'applications-overview' );
         $log->( 'error' => 'not find apps id') unless @nodes;
-        my $href = 
-            $nodes[0]->find_by_attribute(
-                class => 'title',
-            )->find_by_tag_name('a')->attr('href');
-        $log->( 'error' => "can't find app_url" ) unless $href;
-        return $url_base.$href;
+
+        my @app_list = $nodes[0]->look_down(
+                _tag    => 'div',
+                class   => qr/node-mobileapp/
+        );
+
+        foreach my $app_node( @app_list ){
+            my $href = $app_node->find_by_attribute( 
+                        class => 'title'
+                    )->find_by_tag_name('a')->attr('href');
+            my $r = $app_node->find_by_attribute( class => 'reviews'
+                    )->find_by_tag_name('a')->attr('href');
+            if( $r =~ m{/node/(\d+)} ){
+                $apps->{$1} = $url_base.$href;
+            }
+        }
+        $tree->delete;
     };
     if($@){
+        $tree->delete;
         $apps = {};
         return 0
     }
@@ -542,4 +524,52 @@ sub extract_app_from_feeder{
 
     return 1;
 }
+
+sub run{
+    use LWP::Simple;
+    my $content;
+    my $page;
+    my $feeder;
+    
+    my $page_file = 'sliderme_page.html';
+    my $feeder_file = 'slideme_feeder.html';
+    my $app_info_file = 'sli_content.html';
+    getstore( 'http://slideme.org/applications/category/fun-games',$page_file)
+            unless -e $page_file;
+    getstore(
+            'http://slideme.org/applications/category/fun-games?page=0',
+            $feeder_file
+     ) unless -e $feeder_file;
+    getstore( 'http://slideme.org/application/heroes-fight',$app_info_file )
+        unless -e $app_info_file;
+#    $content = get_content( 'anfone_content.html');
+    $feeder = get_content( $page_file );
+    $page = get_content( $feeder_file );
+    my $info = get_content( $app_info_file );
+#    $feeder = get_content('anfone_feeder.html');
+    my $app_info = {};
+    my $app_list = {};
+    my $page_list = [];
+    extract_page_list( undef,undef,{ web_page => $feeder},$page_list );
+    use Data::Dumper;
+    extract_app_from_feeder( undef,undef,{ web_page => $page} ,$app_list);
+    $app_info->{app_url} = 'http://slideme.org/application/heroes-fight';
+    extract_app_info( undef,undef,$info,$app_info );
+    print Dumper $app_info;
+}
+
+sub get_content{
+    my $html = shift;
+    use FileHandle;
+    use open ':utf8';
+    my $content = do{
+        local $/='</html>';
+        my $fh = new FileHandle($html)||die $@;
+        <$fh>
+    };
+    use Encode;
+    $content = Encode::decode_utf8($content);
+    return $content;
+}
+
 

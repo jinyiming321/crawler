@@ -5,6 +5,7 @@ use strict;
 use HTTP::Request;
 use HTTP::Status;
 use HTTP::Date;
+use POSIX;
 use URI::URL;
 use IO::File;
 use English;
@@ -107,7 +108,7 @@ sub run
     $self->{'MARKET_INFO'} = $self->{'DB_HELPER'}->get_market_info($self->getAttribute('MARKET'));
     $self->finish_task( 'fail' ) and return 0
         if  not $self->get_app_result( \%apps )  or##get app info and apk info 
-#            not $self->package_and_send()        or#package and send to center server
+            not $self->package_and_send()        or#package and send to center server
             not $self->save_app_result();     ##insert app info and apk into DB 
 
     ##end a task
@@ -197,6 +198,7 @@ sub get_app_result
         $apk_info{'app_package_name'} = $app_info{'app_package_name'};
         $self->invoke_hook_functions('download_app_apk', \%apk_info);
 
+        $app_info{ 'apk_md5'  } = $apk_info{apk_md5};
         $app_info{ 'status'  } = 'success';
 
         print "end processing $md5\n";
@@ -535,6 +537,7 @@ sub initialise
     ($self->{ 'DB_HELPER' }     = new AMMS::DBHelper)    || return undef;
     ($self->{ 'DOWNLOADER' }    = new AMMS::Downloader) || return undef;
 
+
     $self->{'TOP_DIR'} = $self->{'CONFIG_HANDLE'}->getAttribute( 'TempFolder' );
     return $self;
 }
@@ -726,7 +729,7 @@ sub deal_with_app_info
         open VIDEO, ">$app_res_video_dir/video";
         print VIDEO $app_info->{ 'video' };
         close VIDEO;
-#   $downloader->download_to_disk($app_info->{'video'},$app_res_video_dir,'video');
+#$downloader->download_to_disk($app_info->{'video'},$app_res_video_dir,'video');
 #        $logger->error( "fail to download video ,AppID:$md5" ) and return 0 if not $downloader->is_success;
     }
 
@@ -822,6 +825,11 @@ sub download_app_apk
         return 0;
     }
 
+    unless (check_apk_validity("$apk_dir/$apk_file") ){
+        $apk_info->{'status'}='fail';
+        return 0;
+    }
+
     $apk_info->{apk_md5}=file_md5("$apk_dir/$apk_file");
     my $unique_name=$apk_info->{apk_md5}."__".$apk_file;
 
@@ -875,7 +883,7 @@ sub check_app_info{
 
     return 0 if( $app_info->{'status'} eq 'fail' );
 
-    if (not defined $app_info->{'app_name'} 
+    return 0 if (not defined $app_info->{'app_name'} 
             or not defined $app_info->{'official_category'}
             or not defined $app_info->{'trustgo_category_id'}
             or not defined $app_info->{'last_update'}
@@ -885,10 +893,7 @@ sub check_app_info{
             or not defined $app_info->{'current_version'} 
             or not defined $app_info->{'app_url'} 
             or not defined $app_info->{'description'} 
-            )
-            {
-                return 0;
-            }
+            );
 
     return 1;
 }
@@ -919,6 +924,7 @@ sub generate_meta_file
     print "\nos_version=".$app_info->{'min_os_version'}.",".$app_info->{'max_os_version'};
     print "\nofficial_rating=".$app_info->{'official_rating_stars'}; 
     print "\nofficial_rating_times=".$app_info->{'official_rating_times'}; 
+    print "\nofficial_comment_times=".$app_info->{'official_comment_times'}; 
     print "\nrelease_date=".$app_info->{'release_date'}; 
     print "\nlast_update=".$app_info->{'last_update'}; 
     print "\nsize=".$app_info->{'size'}; 
@@ -933,6 +939,7 @@ sub generate_meta_file
     print "\nlanguage=".$self->{'MARKET_INFO'}->{'language'}; 
     print "\ncopyright =".$app_info->{'copyright '}; 
     print "\nage_rating=".$app_info->{'age_rating'}; 
+    print "\napp_download_date=".(strftime "%Y-%m-%d %H:%M:%S", localtime); 
     print "\n";
     close(META);
 

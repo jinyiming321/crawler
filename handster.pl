@@ -298,12 +298,9 @@ EOF
                         $_[0]->as_text =~ m/Summary/is
                     }
             );
-            my $desc = $node->as_text;
-            $desc =~ s/\r//g;
-            $desc =~ s/\n//g;
+            my $desc = $node->as_HTML;
             $desc =~ s/Summary\s*://si;
-            return $desc;
-
+            return AMMS::Util::del_inline_elements($desc);
         },
         official_category       => sub {
             my $html = shift;
@@ -481,9 +478,9 @@ sub extract_app_info
 
     $app_info->{status} = 'success';
     if($@){
+        $tree->delete;
         $app_info->{status} = 'fail';
     }
-
     return scalar %{$app_info};
 }
 sub extract_app_from_feeder{
@@ -596,8 +593,14 @@ sub download_app_apk
         return 0;
     }
 
+    unless (check_apk_validity("$apk_dir/$apk_file") ){
+        $apk_info->{'status'}='fail';
+        return 0;
+    }
+ 
     $apk_info->{apk_md5}=file_md5("$apk_dir/$apk_file");
     my $unique_name=$apk_info->{apk_md5}."__".$apk_file;
+
 
     rename("$apk_dir/$apk_file","$apk_dir/$unique_name");
 
