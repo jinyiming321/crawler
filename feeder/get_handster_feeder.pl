@@ -1,4 +1,26 @@
 #!/usr/bin/perl -w
+#*****************************************************************************
+# *     Program Title: get_handster_feeder.pl
+# *    
+# *     Description: This program is used to fetch handster.com's feeder url.
+# *    
+# *     Author: Yiming Jin
+# *    
+# *     (C) Copyright 2011-2014 TrustGo Mobile, Inc.
+# *     All Rights Reserved.
+# *    
+# *     This program is an unpublished copyrighted work which is proprietary
+# *     to TrustGo Mobile, Inc. and contains confidential information that is not
+# *     to be reproduced or disclosed to any other person or entity without
+# *     prior written consent from TrustGo Mobile, Inc. in each and every instance.
+# *    
+# *     WARNING:  Unauthorized reproduction of this program as well as
+# *     unauthorized preparation of derivative works based upon the
+# *     program or distribution of copies by sale, rental, lease or
+# *     lending are violations of federal copyright laws and state trade
+# *     secret laws, punishable by civil and criminal penalties.
+#*****************************************************************************
+
 use strict;
 use Data::Dumper;
 use LWP::UserAgent;
@@ -21,7 +43,6 @@ my $map_w = new FileHandle(">$map_file")or die $@;
 my $cookie_jar = HTTP::Cookies->new;
 my $feed_w = new FileHandle(">handster.url")|| die $@;
 
-#$cookie_jar->set_cookie(undef,"handango_device_id","2433","/",'mobilestore.opera.com',undef); 
 my $ua = new LWP::UserAgent;
 $ua->agent('Mozilla/5.0');
 $ua->timeout(60);
@@ -31,18 +52,7 @@ while( not $res->is_success ){
 }
 
 my $cookie = $res->header('set_cookie');
-# http://www.handster.com/
-# PHPSESSID=n5lqagnqfhv882edimgmbmd8b6;
 my $header;
-=pod
-if( $cookie =~ m/(PHPSESSID=[^;]+;)/i ){
-    $header = $1;
-}else{
-    die "can't get cookie \n";
-}
-
-$ua->default_header( cookie => $header );
-=cut
 
 if( my $html = Encode::decode_utf8($res->content) ){
     my $tree = new HTML::TreeBuilder;

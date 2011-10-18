@@ -1,23 +1,27 @@
-#!/usr/bin/perl 
-#===============================================================================
-#         FILE: opera.pl
-#        USAGE: task_type task_id configure
-# for example => $0 find_app 144 ./default.cfg
-#  DESCRIPTION: 
-#      This is a program,which is a adaptor for the crawler of amms system,
-# it can parse html meta data and support extract_page_list,extract_app_from_feeder,
-# extract_app_info.Somewhere used HTML::TreeBuilder to parse html tree, handle 
-# description,stars... with regular expression.
-#
-# REQUIREMENTS: HTML::TreeBuilder,AMMS::UpdatedAppExtractor,AMMS::Downloader,
-#               AMMS::NewAppExtractor,AMMS::AppFinder,AMMS::Util
-#         BUGS: send email to me, if there is any bugs.
-#        NOTES: 
-#       AUTHOR: James King, jinyiming456@gmail.com
-#      VERSION: 1.0
-#      CREATED: 2011/9/24 13:35
-#     REVISION: 1.0
-#===============================================================================
+#*****************************************************************************
+# *     Program Title: handster.pl
+# *    
+# *     Description: This program has functions as below
+# *         1) extract android page_url from handster feeder url.
+# *         2) extract android application from every page_url.
+# *         3) extrace android app information from android app html.
+# *
+# *     Author: Yiming Jin
+# *    
+# *     (C) Copyright 2011-2014 TrustGo Mobile, Inc.
+# *     All Rights Reserved.
+# *    
+# *     This program is an unpublished copyrighted work which is proprietary
+# *     to TrustGo Mobile, Inc. and contains confidential information that is not
+# *     to be reproduced or disclosed to any other person or entity without
+# *     prior written consent from TrustGo Mobile, Inc. in each and every instance.
+# *    
+# *     WARNING:  Unauthorized reproduction of this program as well as
+# *     unauthorized preparation of derivative works based upon the
+# *     program or distribution of copies by sale, rental, lease or
+# *     lending are violations of federal copyright laws and state trade
+# *     secret laws, punishable by civil and criminal penalties.
+#*****************************************************************************
 
 use strict;
 use warnings;
