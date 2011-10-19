@@ -182,9 +182,14 @@ sub task_for_new_app
 {		
     my %app_hash=();
     my $count=0;
-
+=pod
     my $sql = "select SQL_BUFFER_RESULT app_url_md5, app_url from app_source where ".
         " (status='undo' or (status='fail' and TIMESTAMPDIFF( MINUTE,last_visited_time, now() )/60 >2 ) ) ".
+        " and market_id=$market->{'id'} ".
+        " order by last_visited_time, app_self_id";  
+=cut
+    my $sql = "select SQL_BUFFER_RESULT app_url_md5, app_url from app_source where ".
+        " (status='undo' or status='fail'  ) ".
         " and market_id=$market->{'id'} ".
         " order by last_visited_time, app_self_id";  
     my $sth = $dbh->prepare($sql);

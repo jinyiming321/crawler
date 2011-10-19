@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/repos/!svn/ver/2722/mobile/crawler/AMMS
+END
+Config.pm
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/repos/!svn/ver/1155/mobile/crawler/AMMS/Config.pm
+END
+DBHelper.pm
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/!svn/ver/2711/mobile/crawler/AMMS/DBHelper.pm
+END
+NewAppExtractor.pm
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/!svn/ver/2766/mobile/crawler/AMMS/NewAppExtractor.pm
+END
+AppFinder.pm
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/repos/!svn/ver/2711/mobile/crawler/AMMS/AppFinder.pm
+END
+AppExtractor.pm_bak
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/!svn/ver/164/mobile/crawler/AMMS/AppExtractor.pm_bak
+END
+ApkDownloader.pm
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/repos/!svn/ver/164/mobile/crawler/AMMS/ApkDownloader.pm
+END
+AppExtractor.pm
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/!svn/ver/164/mobile/crawler/AMMS/AppExtractor.pm
+END
+Util.pm
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/!svn/ver/2757/mobile/crawler/AMMS/Util.pm
+END
+Downloader.pm
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/repos/!svn/ver/1484/mobile/crawler/AMMS/Downloader.pm
+END
+test.pl
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/!svn/ver/164/mobile/crawler/AMMS/test.pl
+END
+Proto.pm
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/!svn/ver/164/mobile/crawler/AMMS/Proto.pm
+END
+UpdatedAppExtractor.pm
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/!svn/ver/2711/mobile/crawler/AMMS/UpdatedAppExtractor.pm
+END

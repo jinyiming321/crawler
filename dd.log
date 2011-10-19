@@ -1,0 +1,116 @@
+run extract_page_list ............
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '113194' => 'http://slideme.org/application/pothole-report',
+          '142487' => 'http://slideme.org/application/find-dunkin',
+          '127620' => 'http://slideme.org/application/dondeesta',
+          '122202' => 'http://slideme.org/application/remember-place',
+          '135001' => 'http://slideme.org/application/remember-place-donate-version',
+          '161637' => 'http://slideme.org/application/gps-tts',
+          '147661' => 'http://slideme.org/application/usa-traffic-cameras',
+          '130710' => 'http://slideme.org/application/alloteou',
+          '114347' => 'http://slideme.org/application/proximity-0',
+          '155389' => 'http://slideme.org/application/visit-morocco'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '109804' => 'http://slideme.org/application/smaartfriendfinder',
+          '86771' => 'http://slideme.org/application/itstimetofishing',
+          '97809' => 'http://slideme.org/application/istanbul-yasam-rehberi',
+          '104906' => 'http://slideme.org/application/itrackme',
+          '87336' => 'http://slideme.org/application/metrobrussels',
+          '103395' => 'http://slideme.org/application/tapin-places',
+          '84195' => 'http://slideme.org/application/droid-locator-ver-2-09',
+          '89151' => 'http://slideme.org/application/fly-away-home',
+          '84304' => 'http://slideme.org/application/foursquare4locus',
+          '86264' => 'http://slideme.org/application/fdonmap'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '82905' => 'http://slideme.org/application/osmand',
+          '71515' => 'http://slideme.org/application/gpshunt',
+          '80248' => 'http://slideme.org/application/i-know-where-you-are-pro',
+          '81440' => 'http://slideme.org/application/anafain',
+          '76854' => 'http://slideme.org/application/i-know-where-you-are-lite',
+          '72554' => 'http://slideme.org/application/vcubmobile',
+          '75908' => 'http://slideme.org/application/getgrub',
+          '75929' => 'http://slideme.org/application/allindiabankinfo',
+          '76980' => 'http://slideme.org/application/encountme',
+          '78767' => 'http://slideme.org/application/hather'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '54700' => 'http://slideme.org/application/gps-reminder',
+          '67559' => 'http://slideme.org/application/hava-durumu-0',
+          '54554' => 'http://slideme.org/application/locus-free',
+          '55293' => 'http://slideme.org/application/mearth',
+          '66040' => 'http://slideme.org/application/itrack',
+          '71329' => 'http://slideme.org/application/earthquake-viewer',
+          '64256' => 'http://slideme.org/application/maps-my-pocket',
+          '71342' => 'http://slideme.org/application/compass3d',
+          '65530' => 'http://slideme.org/application/geofind',
+          '70661' => 'http://slideme.org/application/kievtaxi'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '44605' => 'http://slideme.org/application/gps-location',
+          '53950' => 'http://slideme.org/application/pinkmaphd',
+          '45504' => 'http://slideme.org/application/son-depremler',
+          '50012' => 'http://slideme.org/application/gps-location-lite',
+          '46806' => 'http://slideme.org/application/terrdroid',
+          '48133' => 'http://slideme.org/application/bal-location',
+          '49950' => 'http://slideme.org/application/find-your-android',
+          '53949' => 'http://slideme.org/application/pinkmap',
+          '53532' => 'http://slideme.org/application/isq',
+          '47194' => 'http://slideme.org/application/321-trackme-premium'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '44406' => 'http://slideme.org/application/321-trackme',
+          '31541' => 'http://slideme.org/application/streetrace',
+          '34308' => 'http://slideme.org/application/tracker',
+          '38144' => 'http://slideme.org/application/jtrip',
+          '39836' => 'http://slideme.org/application/waze',
+          '33551' => 'http://slideme.org/application/vgps-offline-map-android',
+          '37628' => 'http://slideme.org/application/offline-maps',
+          '44023' => 'http://slideme.org/application/nearbyfeed',
+          '33744' => 'http://slideme.org/application/aprs-viewer',
+          '40019' => 'http://slideme.org/application/squareshoot'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '21014' => 'http://slideme.org/application/kids-tracker',
+          '30499' => 'http://slideme.org/application/sub-speedo',
+          '23805' => 'http://slideme.org/application/facebook-location-updater',
+          '29648' => 'http://slideme.org/application/restdroid',
+          '21597' => 'http://slideme.org/application/phone-locator',
+          '15124' => 'http://slideme.org/application/gomniagent',
+          '25066' => 'http://slideme.org/application/my-locations-manager',
+          '28471' => 'http://slideme.org/application/koopzondag',
+          '28857' => 'http://slideme.org/application/elevation-and-sea-depth',
+          '21399' => 'http://slideme.org/application/car-tracker'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '15123' => 'http://slideme.org/application/gomnitracker',
+          '8523' => 'http://slideme.org/application/ufindme-pro',
+          '7752' => 'http://slideme.org/application/navigation-starter',
+          '13063' => 'http://slideme.org/application/maps-ruler',
+          '13711' => 'http://slideme.org/application/coworking',
+          '10743' => 'http://slideme.org/application/send-my-position',
+          '14030' => 'http://slideme.org/application/map-explorer',
+          '14210' => 'http://slideme.org/application/viamici-demo',
+          '6773' => 'http://slideme.org/application/ufindme',
+          '11199' => 'http://slideme.org/application/giao-thong-viet'
+        };
+run extract_app_from_feeder_list ............
+$VAR1 = {
+          '339' => 'http://slideme.org/application/andweather',
+          '1038' => 'http://slideme.org/application/gps-status',
+          '1866' => 'http://slideme.org/application/radaralert',
+          '3192' => 'http://slideme.org/application/crumbs',
+          '6516' => 'http://slideme.org/application/mapdroyd',
+          '257' => 'http://slideme.org/application/accutracking',
+          '1029' => 'http://slideme.org/application/mileageledger',
+          '222' => 'http://slideme.org/application/imap-weather'
+        };

@@ -1,0 +1,86 @@
+#*****************************************************************************
+# *     Program Title: get_xda_feeder.pl
+# *    
+# *     Description:  get feeder url
+# *    
+# *     Author: Yiming Jin
+# *    
+# *     (C) Copyright 2011-2014 TrustGo Mobile, Inc.
+# *     All Rights Reserved.  
+# *                           
+# *     This program is an unpublished copyrighted work which is proprietary
+# *     to TrustGo Mobile, Inc. and contains confidential information that is
+# *     not to be reproduced or disclosed to any other person or entity without
+# *     prior written consent from TrustGo Mobile, Inc. in each and every
+# *     instance.
+# *    
+# *     WARNING:  Unauthorized reproduction of this program as well as                                                              
+# *     unauthorized preparation of derivative works based upon the
+# *     program or distribution of copies by sale, rental, lease or
+# *     secret laws, punishable by civil and criminal penalties.
+#*****************************************************************************
+
+
+use strict;
+use warnings;
+use LWP::UserAgent;
+use HTML::TreeBuilder;
+use IO::Handle;
+use Carp;
+use LWP::Simple;
+
+my $ua = LWP::UserAgent->new;
+$ua->timeout(60);
+$ua->env_proxy;
+
+open(FEED,">xda.url");
+FEED->autoflush(1);
+
+#'http://www.liqucn.com/os/android/rj/';
+# http://www.liqucn.com/os/android/rj/
+my @portals = (
+    "http://android.xda.cn/html/list_index/1.html",
+       );
+
+
+
+foreach my $portal ( @portals ){
+    my $response = $ua->get($portal);
+    getstore($portal,'xda.html');
+    while( not $response->is_success){
+         $response=$ua->get($portal);
+    }
+                                                     
+    if ($response->is_success) {
+        my $tree;
+        my $webpage=$response->content;
+        eval {
+            $tree = new HTML::TreeBuilder;
+                    
+            $tree->parse($webpage);
+                         
+            my @nodes = $tree->look_down( id => 'content_left_left_one');
+            Carp::croak("not find node\n") unless @nodes;
+            for(@nodes){
+                my @tags = $_->find_by_tag_name('a');
+                foreach my $tag(@tags){
+                        next unless ref($tag);
+                        my $href = $tag->attr('href');
+                        map{
+                            my $temp = $href ;
+                            my $num = $_;
+                            $temp =~ s/(\d+)(?=\.html$)/$1."_$num"/e;
+                            print FEED $temp."\n";
+
+                        } (1..3);
+                }
+            }
+        };
+        if($@){
+            die "fail to $@\n";
+        }
+        $tree->delete;
+    }
+}
+close(FEED);
+

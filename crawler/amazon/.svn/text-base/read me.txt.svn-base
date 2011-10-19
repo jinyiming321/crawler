@@ -1,0 +1,17 @@
+Java ¿jar amazonDown.jar    -a asin   // asin
+                -v version  //version
+                -t devicetoken  //devicetoken
+                -k devicekey   //devicekey
+               
+¿¿¿¿¿
+-r ¿¿¿¿cookie ¿¿¿¿¿ crawler112@gmail.com
+-u ¿¿¿
+-p ¿¿
+
+java -jar amazonDown.jar -u chengzhuang.rong@trustgo.com -p 123456 -r
+¿¿¿¿¿¿¿¿¿ ¿¿¿¿¿¿¿
+
+DeviceToken ¿ "deviceToken":"  ¿¿¿¿ " ¿¿¿¿¿
+devicekey ¿ "deviceKey":" ¿¿¿¿ " ¿¿¿¿¿
+
+

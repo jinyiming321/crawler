@@ -1,0 +1,311 @@
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/repos/!svn/ver/2740/mobile/crawler
+END
+anfone.pl
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/!svn/ver/2725/mobile/crawler/anfone.pl
+END
+import_applist.pl
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/!svn/ver/164/mobile/crawler/import_applist.pl
+END
+opera.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/repos/!svn/ver/2726/mobile/crawler/opera.pl
+END
+google_apk.pl
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/!svn/ver/164/mobile/crawler/google_apk.pl
+END
+default.cfg
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/!svn/ver/2424/mobile/crawler/default.cfg
+END
+handster.pl
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/!svn/ver/2755/mobile/crawler/handster.pl
+END
+task_generator.pl
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/repos/!svn/ver/2712/mobile/crawler/task_generator.pl
+END
+liqu.pl
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/repos/!svn/ver/1966/mobile/crawler/liqu.pl
+END
+get_page.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/164/mobile/crawler/get_page.pl
+END
+untar_task.pl
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/!svn/ver/164/mobile/crawler/untar_task.pl
+END
+eoemarket.pl
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/!svn/ver/1186/mobile/crawler/eoemarket.pl
+END
+amazon_apk.pl
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/repos/!svn/ver/1877/mobile/crawler/amazon_apk.pl
+END
+import_feeder.pl
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/!svn/ver/2728/mobile/crawler/import_feeder.pl
+END
+tgbus.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/repos/!svn/ver/2719/mobile/crawler/tgbus.pl
+END
+format_category.pl
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/repos/!svn/ver/164/mobile/crawler/format_category.pl
+END
+dangle.pl
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/!svn/ver/1224/mobile/crawler/dangle.pl
+END
+hiapk.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/repos/!svn/ver/2469/mobile/crawler/hiapk.pl
+END
+google_app_finder.pl
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/repos/!svn/ver/2303/mobile/crawler/google_app_finder.pl
+END
+zol.pl
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/repos/!svn/ver/2678/mobile/crawler/zol.pl
+END
+submit_sample.pl
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/!svn/ver/2278/mobile/crawler/submit_sample.pl
+END
+monitor_goole_appfinder.pl
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/!svn/ver/2310/mobile/crawler/monitor_goole_appfinder.pl
+END
+generate_package.pl
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/repos/!svn/ver/164/mobile/crawler/generate_package.pl
+END
+nduoa.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/repos/!svn/ver/1186/mobile/crawler/nduoa.pl
+END
+chomp.pl
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/repos/!svn/ver/164/mobile/crawler/chomp.pl
+END
+aimi8.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/repos/!svn/ver/1186/mobile/crawler/aimi8.pl
+END
+trustgo_category.txt
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/!svn/ver/164/mobile/crawler/trustgo_category.txt
+END
+google_protocol_buffers.pl
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/!svn/ver/164/mobile/crawler/google_protocol_buffers.pl
+END
+163.pl
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/repos/!svn/ver/1712/mobile/crawler/163.pl
+END
+db.sql
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/repos/!svn/ver/2575/mobile/crawler/db.sql
+END
+gfan.pl
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/repos/!svn/ver/1828/mobile/crawler/gfan.pl
+END
+market.proto
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/!svn/ver/164/mobile/crawler/market.proto
+END
+google.pl
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/!svn/ver/2716/mobile/crawler/google.pl
+END
+xda.pl
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/repos/!svn/ver/1970/mobile/crawler/xda.pl
+END
+category.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/164/mobile/crawler/category.pl
+END
+submit_package.pl
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/!svn/ver/164/mobile/crawler/submit_package.pl
+END
+mobango.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/2721/mobile/crawler/mobango.pl
+END
+slideme.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/2811/mobile/crawler/slideme.pl
+END
+appchina.pl
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/!svn/ver/2468/mobile/crawler/appchina.pl
+END
+cat.format
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/!svn/ver/164/mobile/crawler/cat.format
+END
+dbi-logger.conf
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/repos/!svn/ver/747/mobile/crawler/dbi-logger.conf
+END
+amazon.pl
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/!svn/ver/2294/mobile/crawler/amazon.pl
+END
+meta_file.pl
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/!svn/ver/164/mobile/crawler/meta_file.pl
+END
+google_multi_lang.pl
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/!svn/ver/998/mobile/crawler/google_multi_lang.pl
+END
+1mobile.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/2679/mobile/crawler/1mobile.pl
+END
+coolapk.pl
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/repos/!svn/ver/2727/mobile/crawler/coolapk.pl
+END
+monitor_market.pl
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/repos/!svn/ver/2728/mobile/crawler/monitor_market.pl
+END
+189store.pl
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/!svn/ver/1874/mobile/crawler/189store.pl
+END
+goapk.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/repos/!svn/ver/1187/mobile/crawler/goapk.pl
+END
+brothersoft.pl
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/repos/!svn/ver/2717/mobile/crawler/brothersoft.pl
+END
+mumayi.pl
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/!svn/ver/1434/mobile/crawler/mumayi.pl
+END
+daemon.pl
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/repos/!svn/ver/164/mobile/crawler/daemon.pl
+END

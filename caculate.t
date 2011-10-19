@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
+use Coro;
 use Data::Dumper;
 use Encode;
 use FileHandle;
@@ -41,18 +42,41 @@ my $app_url_match='';
 my $dbh = DBI->connect( $dsn,$user,$pass ) or die $DBI::errstr;
 
 my $task_info = {};
-
+my @task_list;
+my @coros;
 if( $task_type eq 'fix_app' ){
     my $sql =<<EOF;
-    select distinct b.task_id from app_source a ,task_detail b where
-        a.app_url=b.detail_info and a.status in ('fail','doing')
+    select app_url_md5 from app_source  
+    where status='fail'
+    and market_id=40
 EOF
     my $sth = $dbh->prepare($sql);
     $sth->execute;
+    my $i=1;
     while(my $row = $sth->fetchrow_hashref ){
-        $task_info->{'new_app'}->{$row->{task_id}} = 1;
+#        $task_info->{'new_app'}->{$row->{task_id}} = 1;
+        my $task_id = '19740'.$i;
+        $i++;
+        my $do =<<EOF;
+    update task_detail set task_id=$task_id where 
+        detail_id= '$row->{app_url_md5}'
+EOF
+        push @task_list,$task_id;
+    print $do."\n";
+        $dbh->do( $do) or die "can't update";
     }
-    run_new_app();
+    print Dumper @task_list;
+    foreach my $task(@task_list){
+        print "taskid is $task\n";
+        push @coros,async{
+my $cmd = "/usr/bin/perl /root/crawler/slideme.pl new_app $task default.cfg";
+            print $cmd."\n";
+            system($cmd);
+        };
+    }
+    $_->join  foreach @coros;
+    
+#    run_new_app();
 }else{
     get_task_info();
 }
