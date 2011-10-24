@@ -31,6 +31,8 @@ my %program_table = (
         => ['new_app'] },
         'slideme' => { host => 'slideme.org',script => 'slideme.pl',task_type =>
         ['new_app']},
+        'soc'  => { host => 'soc.io',script => 'soc.pl',task_type =>
+        ['find_app']},
         
         
         );

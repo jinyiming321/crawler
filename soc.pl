@@ -24,9 +24,8 @@
 #*****************************************************************************
 
 use strict;
-use warnings;
 use Data::Dumper;
-
+use warnings;
 
 BEGIN{
     unshift(@INC, $1) if ($0=~m/(.+)\//);
@@ -75,8 +74,8 @@ our @EXPORT_OK  = qw(
 my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
-
-my $market      = 'mall.soc.io';
+my @total_pages;
+my $market      = 'soc.io';
 my $url_base    = 'http://mall.soc.io';
 my $tree;
 
@@ -112,27 +111,112 @@ explain:
 EOF
 
 our %category_mapping=(
-    'Fun & Games' => '302,8',
-    'E-books' => '1',
-    'Entertainment' => '6',
-    'Utilities' => '',
-    'Educational / Reference' => '1,5',
-    'Wallpapers' => '1205',
-    'Lifestyle' => '19',
-    'Communications' => '4',
-    'Productivity' => '16',
-    'Health & Fitness' => '9',
-    'Music' => '7',
-    'Travel' => '21',
-    'Other' => '0',
-    'Religion' => '26',
-    'Location & Maps' => '2105,2106',
-    'Social Responsibility' => '18',
-    'Home & Hobby' => '19',
-    'Developer / Programmer' => '1100',
-    'Enterprise' => '2',
-    'Collaboration' => '28',
-);
+    'Action'  => '823',
+    'Adventure & Roleplay'  => '800',
+    'Arcade'  => '801',
+    'Board'  => '802',
+    'Card'  => '803',
+    'Kids'  => '827',
+    'Online Gaming'  => '822',
+    'Other'  => '0',
+    'Puzzle & Word Games'  => '810,817',
+    'Simulation'  => '813',
+    'Sports'  => '814',
+    'Strategy & War Games'  => '815',
+    'Tools & Editors'  => '2207',
+    'Comics'  => '3',
+    'Chat & Instant Messaging'  => '400',
+    'Dial Up & Connection Tools'  => '2208',
+    'E-Mail Clients'  => '401',
+    'Fax Tools'  => '402',
+    'Newsgroup Clients'  => '404',
+    'Other Comms Tools'  => '4',
+    'Other E-Mail Tools'  => '4',
+    'Pager Tools'  => '2213',
+    'Telephony'  => '2209',
+    'Web/Video Cams'  => '708',
+    'Compilers & Interpreters'  => '11',
+    'Components & Libraries'  => '11',
+    'Debugging'  => '1102',
+    'Computer'  => '117',
+    'Dictionaries'  => '103',
+    'Geography'  => '104',
+    'Languages'  => '106',
+    'Mathematics'  => '109',
+    'Reference Tools'  => '1',
+    'Science'  => '102',
+    'Teaching & Training Tools'  => '504',
+    'Animation Tools'  => '1500',
+    'Converters & Optimizers'  => '1501',
+    'Editors'  => '1502',
+    'Gallery & Cataloging Tools'  => '15',
+    'Screen Capture'  => '1504',
+    'Viewers'  => '1505',
+    'Browser Tools'  => '22',
+    'Browsers'  => '2210',
+    'Download Managers'  => '2212',
+    'E-Commerce'  => '2',
+    'FTP Clients'  => '22',
+    'File Sharing/Peer to Peer'  => '22',
+    'Network Monitoring'  => '22',
+    'Search/Lookup Tools'  => '2211',
+    'Terminal & Telnet Clients'  => '2205',
+    'Timers & Time Synch'  => '22',
+    'Trace & Ping Tools'  => '22',
+    'Audio Encoders/Decoders'  => '700',
+    'Audio File Players'  => '701',
+    'Audio File Recorders'  => '702',
+    'Multimedia Creation Tools'  => '703',
+    'Music Composers'  => '704',
+    'Presentation Tools'  => '705',
+    'Speech'  => '706',
+    'Video Tools'  => '707',
+    'Astrology/Biorhythms/Mystic'  => '1908',
+    'Astronomy'  => '19',
+    'Cataloging'  => '19',
+    'Food & Drink'  => '1905',
+    'Genealogy'  => '19',
+    'Health & Nutrition'  => '19',
+    'Personal Finance'  => '209',
+    'Personal Interest'  => '12',
+    'Recreation'  => '303',
+    'Religion'  => '26',
+    'Accounting & Finance'  => '207',
+    'Calculators & Converters'  => '1600',
+    'Databases & Tools'  => '2218',
+    'Inventory & Barcoding'  => '1602',
+    'Investment Tools'  => '204',
+    'Math & Scientific Tools'  => '1603',
+    'Office Suites & Tools'  => '1604',
+    'PIMS & Calendars'  => '1605',
+    'Project Management'  => '1606',
+    'Vertical Market Apps'  => '1607',
+    'Professional Tools'  => '16',
+    'Access Control'  => '2300',
+    'Anti-Spam & Anti-Spy Tools'  => '2301',
+    'Anti-Virus Tools'  => '2302',
+    'Covert Surveillance'  => '2303',
+    'Encryption Tools'  => '2304',
+    'Password Managers'  => '2305',
+    'Android Default'  => '12',
+    'Open Home'  => '1203',
+    'Sweeter Home'  => '1203',
+    'Wallpapers'  => '1201,1205',
+    'aHome'  => '1203',
+    'dxTop'  => '1203',
+    'Tools'  => '22',
+    'Guides'  => '2100',
+    'Navigation'  => '21',
+    'Timetables'  => '2102',
+    'Backup & Restore'  => '2200',
+    'Benchmarking'  => '2201',
+    'File & Disk Management'  => '2202',
+    'File Compression'  => '2203',
+    'Launchers & Task Managers'  => '2204',
+    'Shell Tools'  => '2205',
+    'System Maintenance'  => '2206',
+    'Text/Document Editors'  => '2207',
+            );
 
 my $logger = new AMMS::Config;
 my $log = sub {
@@ -171,21 +255,25 @@ our %app_map_func = (
                 );
                 return
             }
-            return ref($nodes[0]) ? $nodes[0]->as_text : undef;
+            my $app_name = $nodes[0]->as_text;
+            $app_name =~ s/^\s+//g;
+            $app_name =~ s/\s+$//g;
+            return $app_name;
         },
         current_version         => sub{
             my ( $html,$app_info ) = ( shift,pop );
             
-            my $regex = qr/Version.*?<span.*?>([\d\.]+)\S+?<\/span>/s;
+            my $regex = qr/Version.*?<span.*?>([\d\.]+)\S*?<\/span>/s;
             if( $html =~ m/$regex/o ){
             	return $1;
             }
+            return 0
             
         },   
         icon                    => sub {
             my ( $html,$app_info ) = ( shift,pop );
 
-            my @nodes = $tree->look_down( class => 'info_app_icon' );
+            my @nodes = $tree->look_down( class => qr/info_\w+?_icon/ );
             unless( @nodes ){
                 $log->(
                     'warn',
@@ -261,11 +349,14 @@ our %app_map_func = (
             if( $html =~ m/Installs:.*?class="title3">(\d+)<\/td>/s ){
                 return $1;
             }
+            if( $html =~ m/Downloads:(\d+)/s ){
+                return $1
+            } 
             return 0
         },
         official_comment_times  => sub {
             my ( $html,$app_info ) = ( shift,pop );
-            my $node = $tree->look_down( class => 'info_app_comments' );
+            my $node = $tree->look_down( class => 'info_\w+?_comments' );
             return 0 unless ref($node);
             
             my @tags = $node->find_by_tag_name('a');
@@ -317,7 +408,7 @@ our %app_map_func = (
             my ( $html,$app_info ) = ( shift,pop );
 
             my $tag = $tree->look_down(
-                class   => 'info_app_buy'
+                class   => 'info_\w+?_buy'
             );
             unless( ref($tag) ){
             	return 0
@@ -403,6 +494,12 @@ die "\nplease check config parameter\n"
                               ->save_url_from_feeder( $id, $page, 'fail' );
                         }
                         #redo FEED;
+                        if( $page =~ m/page=(\d+)/ ){
+                            $page =~ s/(\d+)$/$1+1/e;
+                        }else{
+                            $page .= "?page=1";
+                        }
+                        redo FEED;
                     }
                 }
                 unless ( utf8::decode($webpage) ) {
@@ -422,6 +519,14 @@ die "\nplease check config parameter\n"
                     \@pages );
                 $page = $params{'next_page_url'};
                 last LOOP if not defined($page);
+                if( $params{next_page_url} =~ m/^0$/ ){
+                    if( $page =~ m/page=(\d+)/ ){
+                        $page =~ s/(\d+)$/$1+1/e;
+                    }else{
+                            $page .= "?page=1";
+                    }
+                    $self->{DB_HELPER}->save_url_from_feeder( $id,$page,'invalid')
+                }
                 redo LOOP;
             }
             $result->{$id}->{'status'} = 'success';
@@ -459,7 +564,7 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
 sub extract_page_list{
     my ( $worker, $hook, $params, $pages ) = @_;
     my $webpage     = $params->{'web_page'};
-    my $base_page = $params->{base_page};
+    my $base_page = $params->{base_url};
     my $match = 0;
     if( $base_page =~ m/page=(\d+)/ ){
         $match = int($1);
@@ -471,19 +576,28 @@ sub extract_page_list{
     $tree->eof;
     eval {
         my $node = $tree->look_down( class => 'controls_buttons_cat');
-        my $link = ( $node->find_by_tag_name('a') )[-2]->attr('href');
-        $link =~ m/page=(\d+)/;
-        my $link_num = int($1);
+        return 0 unless ref($node);
+        my @link_nodes = $node->find_by_tag_name('a');
+        return 0 unless @link_nodes;
+        my @page_nums = 
+            sort{ $a <=> $b }
+            map{ ( split('=',$_->attr('href') ) ) [-1] } @link_nodes;
+        my $link_num = int($page_nums[-1]);
+        
+        print "$link_num = = $match\n";
         if( $link_num == $match ){
             $params->{next_page_url} = undef;
         }else{
-        	my $temp = $url_base;
+        	my $temp = $base_page;
         	$temp .= "?page=0" if index( $base_page,'page' ) == -1;
             $temp =~ s/page=(\d+)/'page='.($1+1)/e;
             $params->{next_page_url} = $temp;
         }
     };
+    print Dumper $params->{next_page_url};
     if( $@ ){
+        print Dumper $@;
+        $params->{next_page_url} = 0;
         return 0
     }
     return 1;
@@ -532,6 +646,9 @@ sub extract_app_info
     $tree->delete;
 
     $app_info->{status} = 'success';
+    my $temp = $app_info;
+    delete $temp->{app_page};
+    print Dumper $temp;
     
     if($@){
         $log->(warn => $@ );
@@ -556,9 +673,21 @@ sub extract_app_from_feeder{
         my $html = $params->{web_page};
         $tree->parse($html);
         $tree->eof;
+        my @nodes;
         # <a href="/node/5288/reviews">Reviews</a>
-        my @nodes = $tree->look_down( class => 'app_box' );
-        $log->( 'warn' => 'not find apps id') unless @nodes;
+        @nodes = $tree->look_down( class => 'app_title');
+        unless( @nodes ){
+            @nodes = $tree->look_down( 
+                    _tag  => 'a',
+                    class => qr/thumb tooltip/);   
+#            $log->(warn => 'not find app href') unless @nodes;
+            for(@nodes){
+                my $app_link = $_->attr('href');
+                $apps->{ ( split('/',$app_link) )[-1] } =
+                    'http://mall.soc.io'.$app_link;
+            }
+            return 1
+        }
 
         foreach my $app_node( @nodes ){
             next unless ref $app_node;
@@ -575,10 +704,12 @@ sub extract_app_from_feeder{
         $tree->delete;
     };
     if($@){
+        print Dumper $@;
         $tree->delete;
         $apps = {};
         return 0
     }
+    print Dumper $apps;
     return 0 unless scalar(keys %{ $apps } );
 
     return 1;
@@ -592,11 +723,11 @@ sub run{
     
     my $page_file = 'sco_page.html';
     my $feeder_file = 'sco_t_feeder.html';
-    my $app_info_file = 'sco_angry_book.html';
+    my $app_info_file = 'sco_angry_bird.html';
     getstore( 'http://mall.soc.io/category/184',$page_file)
             unless -e $page_file;
     getstore(
-            'http://mall.soc.io/category/184?page=1',
+            'http://mall.soc.io/books?page=3',
             $feeder_file
      ) unless -e $feeder_file;
     getstore(
@@ -610,11 +741,9 @@ sub run{
     my $app_info = {};
     my $app_list = {};
     my $page_list = [];
-    extract_page_list( undef,undef,{ web_page => $feeder,base_page => 
+    extract_page_list( undef,undef,{ web_page => $feeder,base_url => 
             'http://mall.soc.io/category/184'
         },$page_list );
-    use Data::Dumper;
-    print Dumper $page_list;
     extract_app_from_feeder( undef,undef,{ web_page => $page} ,$app_list);
     print Dumper $app_list;
     $app_info->{app_url} = 'http://slideme.org/application/heroes-fight';

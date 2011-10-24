@@ -26,6 +26,7 @@ my %market_feed     = (
     'handster.com' => 'handster.url',
     'anfone.com'   => 'anfone.url',
     'slideme.org'  => 'slideme.url',
+    'soc.io'  => 'soc.url'
         );
 
 die "\nplease check config parameter\n" unless init_gloabl_variable( $conf_file );

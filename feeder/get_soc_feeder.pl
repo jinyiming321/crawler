@@ -36,7 +36,7 @@ open(MAP,">soc_map.txt");
 MAP->autoflush(1);
 
 my $apps_portal='http://mall.soc.io/apps';
-my $base = 'http://mall.soc.io/apps';
+my $base = 'http://mall.soc.io';
 
 foreach my $portal ( $apps_portal){
     my $response = $ua->get($portal);
@@ -78,6 +78,7 @@ foreach my $portal ( $apps_portal){
         }
     }
 }
+print FEED "http://mall.soc.io/books\n";
 close(FEED);
 close(MAP);
 

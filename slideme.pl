@@ -130,7 +130,7 @@ our %category_mapping=(
     'Home & Hobby' => '19',
     'Developer / Programmer' => '1100',
     'Enterprise' => '2',
-    'Collaboration' => '28',
+    'Collaboration' => '2219',
 );
 
 my $logger = new AMMS::Config;
@@ -198,6 +198,17 @@ our %app_map_func = (
                 return
             }
             return $nodes[0]->find_by_tag_name('img')->attr('src');
+        },
+        age_rating              => sub {
+            my ( $html,$app_info ) = ( shift,pop );
+            if( $html =~ m/Parental rating.*?:.*?:(.*?)</s ){
+                my $rating = $1;
+                $rating =~ s/\(.*?\)//g;
+                $rating =~ s/\s+$//g;
+                $rating =~ s/^\s+//g;
+                return $rating;
+            }
+            return
         },
         screenshot              => sub {
             my ( $html,$app_info ) = ( shift,pop );
@@ -539,7 +550,7 @@ sub run{
     
     my $page_file = 'sliderme_page.html';
     my $feeder_file = 'slideme_feeder.html';
-    my $app_info_file = 'sli_frduth.html';
+    my $app_info_file = 'sli_xxth.html';
     getstore( 'http://slideme.org/applications/category/fun-games',$page_file)
             unless -e $page_file;
     getstore(
@@ -547,7 +558,7 @@ sub run{
             $feeder_file
      ) unless -e $feeder_file;
     getstore(
-            'http://slideme.org/application/dutch-words',$app_info_file )
+            'http://slideme.org/application/pipeline-connection',$app_info_file )
         unless -e $app_info_file;
 #    $content = get_content( 'anfone_content.html');
     $feeder = get_content( $page_file );
