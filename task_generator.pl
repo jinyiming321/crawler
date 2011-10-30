@@ -34,7 +34,7 @@ while(1)
     {
         $market=$db_helper->get_market_info($_);
         &task_for_find_app;
-        &task_for_fix_app;
+#        &task_for_fix_app;
 #        &task_for_find_app_again;
 #        &task_for_updated_app();
 #       &task_for_new_app();
@@ -46,9 +46,6 @@ while(1)
     sleep(10*60);			# check the task every 10 minutes
 }
 
-sub task_for_find_app{
-
-}
     
 sub task_for_find_app
 {		

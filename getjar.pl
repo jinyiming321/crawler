@@ -333,10 +333,10 @@ if( $ARGV[-1] eq 'debug' ){
               	    	select status from feed_info 
               	    	where feed_url_md5 = ?
 EOF
-                        my $sth = $self->{DBHelper}->prepare($sql);
+                        my $sth = $dbi->prepare($sql);
                         $sth->execute($page_url_md5);
                         my $hashref = $sth->fetchrow_hashref;
-                        return $hashref->{status}
+                        return $hashref->{status} || '';
                     };
                     if( $check->($page) eq 'success' 
                             or 
@@ -345,8 +345,9 @@ EOF
                     	$page .= "&p=8&i=1" if $page =~ m/lang=en$/;
                         $page =~ s/p=(\d+)/'p='.($1+8)/e;
                         $page =~ s/i=(\d+)/'i='.($1+1)/e;
+                        redo FEED;
                     }
-                    $webpage= $downloader->download($page);
+                    $webpage= $downloader->download($page) ;
                     if ( not $downloader->is_success ) {
                     	$log->( warn => "get page $page failed maybe network reason");
                         if ( $downloader->is_not_found ) {
@@ -373,12 +374,12 @@ EOF
                   ->save_url_from_feeder( $id, $page, 'success' );
 
                 $params{'next_page_url'} = undef;
-                $self->invoke_hook_functions( 'extract_page_list', \%params,
+                my $ret = $self->invoke_hook_functions( 'extract_page_list', \%params,
                     \@pages );
                 $page = $params{'next_page_url'};
-                if( $page eq 'part' ){
+                if( $ret eq 'part' ){
                     $self->{'DB_HELPER'}
-                        ->save_url_from_feeder( $id, $page, 'fail' );
+                        ->save_url_from_feeder( $id, $params{base_url}, 'fail' );
                     next FETCH;
                 }
                 last LOOP if not defined($page);
@@ -484,8 +485,8 @@ sub extract_page_list{
     # create a html tree and parse
     my $web = $params->{web_page};
     if( $web !~ m{</html>} ){
-        $params->{next_page_url} = 'part';
-        return 0
+        $params->{next_page_url} = undef;
+        return 'part'
     }
     eval{
         my $tree = new HTML::TreeBuilder;
@@ -503,12 +504,6 @@ sub extract_page_list{
                 $page =~ s/&o=new//g;
                 $params->{next_page_url} = $url_base.$page;
             }
-        }else{
-        	$log->( warn => "not find next page $params->{base_url}" );
-        	use FileHandle;
-        	my $fh = new FileHandle(">find_next.html")||die $@;
-        	print $fh $web;
-        	close($fh);
         }
     };
     return 1;
