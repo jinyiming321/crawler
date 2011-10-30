@@ -364,5 +364,4 @@ INSERT INTO `google_account` VALUES
 GRANT SELECT,INSERT,UPDATE, DELETE,ALTER,LOCK TABLES ON AMMS.* TO trustgo@"%" IDENTIFIED BY "123456";
 GRANT SELECT,LOCK TABLES ON AMMS.* TO onlyread@"%" IDENTIFIED BY "123456";
 
-replace INTO `market` set id=30,name='handster.com',language='zh_cn',feeder_entity_of_task=2,status='good';
 replace INTO `market` set id=100,name='www.getjar.com',language='zh_cn',feeder_entity_of_task=2,status='good';

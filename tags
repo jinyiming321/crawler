@@ -3,7 +3,8 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+!_TAG_PROGRAM_VERSION	5.8	//
+2787595	sco_angry_book.html	/^		        <a href='\/books\/!download?id=2787595&format=epub&verify=true' class="info_app2_buy_btn download_book iframe" name="2787595">DOWNLOAD<\/a>$/;"	a
 AMMS::AppExtractor	AMMS/AppExtractor.pm	/^package AMMS::AppExtractor;$/;"	p
 AMMS::AppExtractor	AMMS/test.pl	/^package AMMS::AppExtractor;$/;"	p
 AMMS::AppFinder	AMMS/AppFinder.pm	/^package AMMS::AppFinder;$/;"	p
@@ -19,20 +20,35 @@ CHECK_ATTR	t/lib/DataCheck.pm	/^sub CHECK_ATTR () {$/;"	s
 CHECK_FUNC_SUITE	t/DataCheck.pm	/^sub CHECK_FUNC_SUITE (){$/;"	s
 CHECK_FUNC_SUITE	t/lib/DataCheck.pm	/^sub CHECK_FUNC_SUITE (){$/;"	s
 DOWN_LOAD_APK	coolapk.pl	/^    DOWN_LOAD_APK:$/;"	l
-DOWN_LOAD_APK	getjar.pl	/^    DOWN_LOAD_APK:$/;"	l
 DOWN_LOAD_APK	mm.pl	/^    DOWN_LOAD_APK:$/;"	l
 DOWN_LOAD_APK	parse_template.pl	/^    DOWN_LOAD_APK:$/;"	l
 DOWN_LOAD_PERM	coolapk.pl	/^    DOWN_LOAD_PERM:$/;"	l
 DataCheck	t/DataCheck.pm	/^package DataCheck;$/;"	p
 DataCheck	t/lib/DataCheck.pm	/^package DataCheck;$/;"	p
+Extract_PAGE	getjar.pl	/^    Extract_PAGE: $/;"	l
+FEED	fuck.pl	/^              FEED: {$/;"	l
+FEED	getjar.pl	/^              FEED: {$/;"	l
+FEED	opera.pl	/^              FEED: {$/;"	l
+FEED	soc.pl	/^              FEED: {$/;"	l
 FIRST_NODE	anfone.pl	/^sub FIRST_NODE			(){		0		}$/;"	s
 FIRST_NODE	anfone_for_test.pl	/^sub FIRST_NODE			(){		0		}$/;"	s
+GET	feeder/get_opera_feeder.pl	/^        GET:$/;"	l
 HTC风格天气:Fancy Widget Pro	coolapk-htc.html	/^	<a href="\/dl?sid=MjMxNiwxOCw1OSwxLCw1MTdlYjA2OA&rc=32054071" name="HTC风格天气:Fancy Widget Pro" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 HTC风格天气:Fancy Widget Pro">$/;"	a
 HTC风格天气:Fancy Widget Pro	coolapk-htc.html	/^	<a href="\/dl?sid=MjMxNiwxOCw1OSwxLCw1MTdlYjA2OA&rc=39191052" name="HTC风格天气:Fancy Widget Pro" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 HTC风格天气:Fancy Widget Pro">$/;"	a
 HTC风格天气:Fancy Widget Pro	coolapk-htc.html	/^	<a href="\/dl?sid=MjMxNiwxOCw1OSwxLCw1MTdlYjA2OA&rc=48244912" name="HTC风格天气:Fancy Widget Pro" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 HTC风格天气:Fancy Widget Pro">$/;"	a
 HTC风格天气:Fancy Widget Pro	coolapk-htc.html	/^	<a href="\/dl?sid=MjMxNiwxOCw1OSwxLCw1MTdlYjA2OA&rc=85563049" name="HTC风格天气:Fancy Widget Pro" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 HTC风格天气:Fancy Widget Pro">$/;"	a
 HTC风格天气:Fancy Widget Pro	coolapk-htc.html	/^	<a href="\/dl?sid=MjMxNiwxOCw1OSwxLCw1MTdlYjA2OA&rc=96595922" name="HTC风格天气:Fancy Widget Pro" onclick="return wdapi_apkdl(this);" title="通过豌豆荚一键安装 HTC风格天气:Fancy Widget Pro">$/;"	a
+INFO	fuck.pl	/^    INFO:$/;"	l
+INFO	opera.pl	/^    INFO:$/;"	l
+LOOP	fuck.pl	/^          LOOP: {$/;"	l
+LOOP	getjar.pl	/^          LOOP: {$/;"	l
+LOOP	opera.pl	/^          LOOP: {$/;"	l
+LOOP	soc.pl	/^          LOOP: {$/;"	l
 MAMS::AppExtractor	AMMS/ApkDownloader.pm	/^package MAMS::AppExtractor;$/;"	p
+MyAppFind	fuck.pl	/^    package MyAppFind;$/;"	p
+MyAppFind	getjar.pl	/^    package MyAppFind;$/;"	p
+MyAppFind	opera.pl	/^    package MyAppFind;$/;"	p
+MyAppFind	soc.pl	/^    package MyAppFind;$/;"	p
 NOT_CHECK	t/DataCheck.pm	/^sub NOT_CHECK(){$/;"	s
 NOT_CHECK	t/lib/DataCheck.pm	/^sub NOT_CHECK(){$/;"	s
 PRIOR_CHECK_ATTR	t/DataCheck.pm	/^sub PRIOR_CHECK_ATTR () {$/;"	s
@@ -53,18 +69,23 @@ app_info	anfone.pl	/^ app_info:$/;"	l
 app_info	anfone_for_test.pl	/^ app_info:$/;"	l
 cancel_transaction	AMMS/DBHelper.pm	/^sub cancel_transaction$/;"	s
 check	t/lib/DataCheck.pm	/^sub check{$/;"	s
+check_apk_validity	AMMS/Util.pm	/^sub check_apk_validity{$/;"	s
 check_app_info	AMMS/NewAppExtractor.pm	/^sub check_app_info{$/;"	s
 check_app_info	AMMS/UpdatedAppExtractor.pm	/^sub check_app_info{$/;"	s
 check_extract_page_list	t/DataCheck.pm	/^sub check_extract_page_list{$/;"	s
 check_host_status	AMMS/Util.pm	/^sub check_host_status$/;"	s
 check_meta	t/DataCheck.pm	/^sub check_meta{$/;"	s
 check_url_vaild	t/DataCheck.pm	/^sub check_url_vaild{$/;"	s
+checkform	anfone_content.html	/^ function checkform(){$/;"	f
+checkform	anfone_info.html	/^ function checkform(){$/;"	f
 checkform	t/8766.html	/^ function checkform(){$/;"	f
 clean_app_data	AMMS/ApkDownloader.pm	/^sub clean_app_data$/;"	s
 clean_app_data	AMMS/AppExtractor.pm	/^sub clean_app_data$/;"	s
 clean_app_data	AMMS/NewAppExtractor.pm	/^sub clean_app_data$/;"	s
 clean_app_data	AMMS/UpdatedAppExtractor.pm	/^sub clean_app_data$/;"	s
 clean_app_data	AMMS/test.pl	/^sub clean_app_data$/;"	s
+comment	anfone_content.html	/^<h1><a name="comment"><\/a>发表评论：<\/h1>$/;"	a
+comment	anfone_info.html	/^<h1><a name="comment"><\/a>发表评论：<\/h1>$/;"	a
 comment	coolapk-htc.html	/^<div class="tlt"><span class="selc"><a name="comment" href="#comment" target="_self">评论(共111条评论)<\/a><\/span><\/div>$/;"	a
 comment	coolapk-htc.html	/^<div class="tlt"><span class="selc"><a name="comment" href="#comment" target="_self">评论(共208条评论)<\/a><\/span><\/div>$/;"	a
 comment	coolapk-htc.html	/^<div class="tlt"><span class="selc"><a name="comment" href="#comment" target="_self">评论(共6条评论)<\/a><\/span><\/div>$/;"	a
@@ -84,6 +105,7 @@ deal_with_app_info	AMMS/NewAppExtractor.pm	/^sub deal_with_app_info$/;"	s
 deal_with_app_info	AMMS/UpdatedAppExtractor.pm	/^sub deal_with_app_info$/;"	s
 deal_with_app_info	AMMS/test.pl	/^sub deal_with_app_info$/;"	s
 delCookies	app_list.html	/^function delCookies(name){$/;"	f
+del_inline_elements	AMMS/Util.pm	/^sub del_inline_elements{$/;"	s
 download	AMMS/Downloader.pm	/^sub download{$/;"	s
 download_apk	google.pl	/^sub download_apk {$/;"	s
 download_apk	google_apk.pl	/^sub download_apk {$/;"	s
@@ -94,9 +116,9 @@ download_app_apk	AMMS/UpdatedAppExtractor.pm	/^sub download_app_apk $/;"	s
 download_app_apk	AMMS/test.pl	/^sub download_app_apk $/;"	s
 download_app_apk	android168.pl	/^sub download_app_apk $/;"	s
 download_app_apk	coolapk.pl	/^sub download_app_apk $/;"	s
-download_app_apk	getjar.pl	/^sub download_app_apk $/;"	s
 download_app_apk	google.pl	/^sub download_app_apk $/;"	s
 download_app_apk	google_apk.pl	/^sub download_app_apk $/;"	s
+download_app_apk	handster.pl	/^sub download_app_apk $/;"	s
 download_app_apk	mm.pl	/^sub download_app_apk $/;"	s
 download_app_apk	parse_template.pl	/^sub download_app_apk $/;"	s
 download_app_apk	xda.pl	/^sub download_app_apk $/;"	s
@@ -117,10 +139,15 @@ explain	android168.pl	/^explain:$/;"	l
 explain	anfone.pl	/^explain:$/;"	l
 explain	anfone_for_test.pl	/^explain:$/;"	l
 explain	coolapk.pl	/^explain:$/;"	l
+explain	fuck.pl	/^explain:$/;"	l
 explain	getjar.pl	/^explain:$/;"	l
+explain	handster.pl	/^explain:$/;"	l
 explain	liqu.pl	/^explain:$/;"	l
 explain	mm.pl	/^explain:$/;"	l
+explain	opera.pl	/^explain:$/;"	l
 explain	parse_template.pl	/^explain:$/;"	l
+explain	slideme.pl	/^explain:$/;"	l
+explain	soc.pl	/^explain:$/;"	l
 explain	xda.pl	/^explain:$/;"	l
 extra_processing	google.pl	/^sub extra_processing$/;"	s
 extract_app_from_feeder	163.pl	/^sub extract_app_from_feeder$/;"	s
@@ -134,16 +161,21 @@ extract_app_from_feeder	chomp.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	coolapk.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	dangle.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	eoemarket.pl	/^sub extract_app_from_feeder$/;"	s
+extract_app_from_feeder	fuck.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	getjar.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	gfan.pl	/^sub extract_app_from_feeder {$/;"	s
 extract_app_from_feeder	goapk.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	google.pl	/^sub extract_app_from_feeder$/;"	s
+extract_app_from_feeder	handster.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	hiapk.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	liqu.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	mm.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	mumayi.pl	/^sub extract_app_from_feeder$/;"	s
 extract_app_from_feeder	nduoa.pl	/^sub extract_app_from_feeder$/;"	s
+extract_app_from_feeder	opera.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	parse_template.pl	/^sub extract_app_from_feeder{$/;"	s
+extract_app_from_feeder	slideme.pl	/^sub extract_app_from_feeder{$/;"	s
+extract_app_from_feeder	soc.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_from_feeder	xda.pl	/^sub extract_app_from_feeder{$/;"	s
 extract_app_id_from_file	crawler.pl	/^sub extract_app_id_from_file{$/;"	s
 extract_app_info	163.pl	/^sub extract_app_info$/;"	s
@@ -156,17 +188,22 @@ extract_app_info	appchina.pl	/^sub extract_app_info$/;"	s
 extract_app_info	coolapk.pl	/^sub extract_app_info$/;"	s
 extract_app_info	dangle.pl	/^sub extract_app_info$/;"	s
 extract_app_info	eoemarket.pl	/^sub extract_app_info$/;"	s
+extract_app_info	fuck.pl	/^sub extract_app_info$/;"	s
 extract_app_info	getjar.pl	/^sub extract_app_info$/;"	s
 extract_app_info	gfan.pl	/^sub extract_app_info {$/;"	s
 extract_app_info	goapk.pl	/^sub extract_app_info$/;"	s
 extract_app_info	google.pl	/^sub extract_app_info$/;"	s
 extract_app_info	google_multi_lang.pl	/^sub extract_app_info$/;"	s
+extract_app_info	handster.pl	/^sub extract_app_info$/;"	s
 extract_app_info	hiapk.pl	/^sub extract_app_info$/;"	s
 extract_app_info	liqu.pl	/^sub extract_app_info$/;"	s
 extract_app_info	mm.pl	/^sub extract_app_info$/;"	s
 extract_app_info	mumayi.pl	/^sub extract_app_info$/;"	s
 extract_app_info	nduoa.pl	/^sub extract_app_info$/;"	s
+extract_app_info	opera.pl	/^sub extract_app_info$/;"	s
 extract_app_info	parse_template.pl	/^sub extract_app_info$/;"	s
+extract_app_info	slideme.pl	/^sub extract_app_info$/;"	s
+extract_app_info	soc.pl	/^sub extract_app_info$/;"	s
 extract_app_info	xda.pl	/^sub extract_app_info$/;"	s
 extract_app_list	getjar_find_app.pl	/^sub extract_app_list{$/;"	s
 extract_page_list	163.pl	/^sub extract_page_list$/;"	s
@@ -180,17 +217,27 @@ extract_page_list	chomp.pl	/^sub extract_page_list$/;"	s
 extract_page_list	coolapk.pl	/^sub extract_page_list{$/;"	s
 extract_page_list	dangle.pl	/^sub extract_page_list$/;"	s
 extract_page_list	eoemarket.pl	/^sub extract_page_list$/;"	s
+extract_page_list	fuck.pl	/^sub extract_page_list {$/;"	s
 extract_page_list	getjar.pl	/^sub extract_page_list{$/;"	s
 extract_page_list	gfan.pl	/^sub extract_page_list {$/;"	s
 extract_page_list	goapk.pl	/^sub extract_page_list$/;"	s
 extract_page_list	google.pl	/^sub extract_page_list$/;"	s
+extract_page_list	handster.pl	/^sub extract_page_list{$/;"	s
 extract_page_list	hiapk.pl	/^sub extract_page_list$/;"	s
 extract_page_list	liqu.pl	/^sub extract_page_list{$/;"	s
 extract_page_list	mm.pl	/^sub extract_page_list{$/;"	s
 extract_page_list	mumayi.pl	/^sub extract_page_list$/;"	s
 extract_page_list	nduoa.pl	/^sub extract_page_list$/;"	s
+extract_page_list	opera.pl	/^sub extract_page_list {$/;"	s
 extract_page_list	parse_template.pl	/^sub extract_page_list{$/;"	s
+extract_page_list	slideme.pl	/^sub extract_page_list{$/;"	s
+extract_page_list	soc.pl	/^sub extract_page_list{$/;"	s
 extract_page_list	xda.pl	/^sub extract_page_list{$/;"	s
+fb_share	sco_angry.html	/^	                  	<a name="fb_share" type="button_count" href="http:\/\/www.facebook.com\/sharer.php">Share<\/a><script src="http:\/\/static.ak.fbcdn.net\/connect.php\/js\/FB.Share" type="text\/javascript"><\/script>$/;"	a
+fb_share	sco_angry_bird.html	/^	                  	<a name="fb_share" type="button_count" href="http:\/\/www.facebook.com\/sharer.php">Share<\/a><script src="http:\/\/static.ak.fbcdn.net\/connect.php\/js\/FB.Share" type="text\/javascript"><\/script>$/;"	a
+fb_share	sco_angry_book.html	/^		            <div style="float:left; padding-left:10px; padding-top: 10px"><a href="http:\/\/www.facebook.com\/sharer.php" name="fb_share" type="button_count" ><\/a><script src="http:\/\/static.ak.fbcdn.net\/connect.php\/js\/FB.Share" type="text\/javascript"><\/script><\/div>$/;"	a
+fb_share	sco_angry_office.html	/^	                  	<a name="fb_share" type="button_count" href="http:\/\/www.facebook.com\/sharer.php">Share<\/a><script src="http:\/\/static.ak.fbcdn.net\/connect.php\/js\/FB.Share" type="text\/javascript"><\/script>$/;"	a
+file_md5	AMMS/Util.pm	/^sub file_md5{$/;"	s
 find_pages	getjar_find_app.pl	/^sub find_pages{$/;"	s
 finish_task	AMMS/ApkDownloader.pm	/^sub finish_task$/;"	s
 finish_task	AMMS/AppExtractor.pm	/^sub finish_task$/;"	s
@@ -198,6 +245,8 @@ finish_task	AMMS/AppFinder.pm	/^sub finish_task$/;"	s
 finish_task	AMMS/NewAppExtractor.pm	/^sub finish_task$/;"	s
 finish_task	AMMS/UpdatedAppExtractor.pm	/^sub finish_task$/;"	s
 finish_task	AMMS/test.pl	/^sub finish_task$/;"	s
+fn_turnPage	anfone_feeder.html	/^		function fn_turnPage(obj_go){$/;"	f
+fn_turnPage	anfone_page.html	/^		function fn_turnPage(obj_go){$/;"	f
 fn_turnPage	t/1.html	/^		function fn_turnPage(obj_go){$/;"	f
 fn_turnPage	t/10.html	/^		function fn_turnPage(obj_go){$/;"	f
 fn_turnPage	t/11.html	/^		function fn_turnPage(obj_go){$/;"	f
@@ -265,7 +314,6 @@ get_app_list	android168.pl	/^sub get_app_list{$/;"	s
 get_app_list	anfone.pl	/^sub get_app_list{$/;"	s
 get_app_list	anfone_for_test.pl	/^sub get_app_list{$/;"	s
 get_app_list	coolapk.pl	/^sub get_app_list{$/;"	s
-get_app_list	getjar.pl	/^sub get_app_list{$/;"	s
 get_app_list	liqu.pl	/^sub get_app_list{$/;"	s
 get_app_list	mm.pl	/^sub get_app_list{$/;"	s
 get_app_list	parse_template.pl	/^sub get_app_list{$/;"	s
@@ -303,11 +351,14 @@ get_app_url	android168.pl	/^sub get_app_url{$/;"	s
 get_app_url	anfone.pl	/^sub get_app_url{$/;"	s
 get_app_url	anfone_for_test.pl	/^sub get_app_url{$/;"	s
 get_app_url	coolapk.pl	/^sub get_app_url{$/;"	s
-get_app_url	getjar.pl	/^sub get_app_url{$/;"	s
+get_app_url	fuck.pl	/^    sub get_app_url {$/;"	s
+get_app_url	getjar.pl	/^    sub get_app_url {$/;"	s
 get_app_url	google_multi_lang.pl	/^sub get_app_url$/;"	s
 get_app_url	liqu.pl	/^sub get_app_url{$/;"	s
 get_app_url	mm.pl	/^sub get_app_url{$/;"	s
+get_app_url	opera.pl	/^    sub get_app_url {$/;"	s
 get_app_url	parse_template.pl	/^sub get_app_url{$/;"	s
+get_app_url	soc.pl	/^    sub get_app_url {$/;"	s
 get_app_url	xda.pl	/^sub get_app_url{$/;"	s
 get_assetid	google.pl	/^sub get_assetid{$/;"	s
 get_assetid	google_apk.pl	/^sub get_assetid{$/;"	s
@@ -332,6 +383,8 @@ get_content	getjar.pl	/^sub get_content{$/;"	s
 get_content	liqu.pl	/^sub get_content{$/;"	s
 get_content	mm.pl	/^sub get_content{$/;"	s
 get_content	parse_template.pl	/^sub get_content{$/;"	s
+get_content	slideme.pl	/^sub get_content{$/;"	s
+get_content	soc.pl	/^sub get_content{$/;"	s
 get_content	xda.pl	/^sub get_content{$/;"	s
 get_cookie	android168.pl	/^sub get_cookie{$/;"	s
 get_cookie	coolapk.pl	/^sub get_cookie{$/;"	s
@@ -405,6 +458,7 @@ get_official_category	liqu.pl	/^sub get_official_category{$/;"	s
 get_official_category	mm.pl	/^sub get_official_category{$/;"	s
 get_official_category	parse_template.pl	/^sub get_official_category{$/;"	s
 get_official_category	xda.pl	/^sub get_official_category{$/;"	s
+get_official_comment_times	getjar.pl	/^sub get_official_comment_times{$/;"	s
 get_official_rating_stars	android168.pl	/^sub get_official_rating_stars{$/;"	s
 get_official_rating_stars	anfone.pl	/^sub get_official_rating_stars{$/;"	s
 get_official_rating_stars	anfone_for_test.pl	/^sub get_official_rating_stars{$/;"	s
@@ -620,10 +674,14 @@ run	android168.pl	/^sub run{$/;"	s
 run	anfone.pl	/^sub run{$/;"	s
 run	anfone_for_test.pl	/^sub run{$/;"	s
 run	coolapk.pl	/^sub run{$/;"	s
+run	fuck.pl	/^sub run{$/;"	s
 run	getjar.pl	/^sub run{$/;"	s
 run	liqu.pl	/^sub run{$/;"	s
 run	mm.pl	/^sub run{$/;"	s
+run	opera.pl	/^sub run{$/;"	s
 run	parse_template.pl	/^sub run{$/;"	s
+run	slideme.pl	/^sub run{$/;"	s
+run	soc.pl	/^sub run{$/;"	s
 run	xda.pl	/^sub run{$/;"	s
 run_one_time	submit_sample.pl	/^sub run_one_time$/;"	s
 save_app_into_source	AMMS/DBHelper.pm	/^sub save_app_into_source$/;"	s
@@ -633,8 +691,19 @@ save_app_result	AMMS/NewAppExtractor.pm	/^sub save_app_result$/;"	s
 save_app_result	AMMS/UpdatedAppExtractor.pm	/^sub save_app_result$/;"	s
 save_app_result	AMMS/test.pl	/^sub save_app_result$/;"	s
 save_config	AMMS/Config.pm	/^sub save_config$/;"	s
+save_extra_info	fuck.pl	/^sub save_extra_info{$/;"	s
+save_extra_info	getjar.pl	/^sub save_extra_info{$/;"	s
+save_extra_info	getjar_find_app.pl	/^sub save_extra_info{$/;"	s
+save_extra_info	handster.pl	/^sub save_extra_info{$/;"	s
+save_extra_info	opera.pl	/^sub save_extra_info{$/;"	s
 save_package	AMMS/DBHelper.pm	/^sub save_package $/;"	s
 save_url_from_feeder	AMMS/DBHelper.pm	/^sub save_url_from_feeder$/;"	s
+select_all	sco_angry.html	/^		function select_all() {$/;"	f
+select_all	sco_angry_bird.html	/^		function select_all() {$/;"	f
+select_all	sco_angry_book.html	/^		function select_all() {$/;"	f
+select_all	sco_angry_office.html	/^		function select_all() {$/;"	f
+select_all	sco_page.html	/^		function select_all() {$/;"	f
+select_all	sco_t_feeder.html	/^		function select_all() {$/;"	f
 send_file_to_server	AMMS/Util.pm	/^sub send_file_to_server{$/;"	s
 setAttribute	AMMS/ApkDownloader.pm	/^sub setAttribute$/;"	s
 setAttribute	AMMS/AppExtractor.pm	/^sub setAttribute$/;"	s
@@ -647,6 +716,8 @@ setCookies	app_list.html	/^function setCookies(name, value, day){$/;"	f
 setDuijiangInfo	app_list.html	/^	function  setDuijiangInfo(){$/;"	f
 setHomePage	app_list.html	/^function setHomePage(obj){$/;"	f
 setSideBarPosition	app_list.html	/^function setSideBarPosition(){$/;"	f
+showNormal	anfone_content.html	/^function showNormal(){$/;"	f
+showNormal	anfone_info.html	/^function showNormal(){$/;"	f
 showNormal	t/8766.html	/^function showNormal(){$/;"	f
 start_one_job	daemon.pl	/^sub start_one_job$/;"	s
 start_transaction	AMMS/DBHelper.pm	/^sub start_transaction$/;"	s
@@ -659,6 +730,7 @@ task_for_new_app	task_generator.pl	/^sub task_for_new_app$/;"	s
 task_for_updated_app	task_generator.pl	/^sub task_for_updated_app $/;"	s
 timeout	AMMS/Downloader.pm	/^sub timeout$/;"	s
 trim	AMMS/Util.pm	/^sub trim($)$/;"	s
+trim_desc	coolapk.pl	/^sub trim_desc{$/;"	s
 trim_url	android168.pl	/^sub trim_url{$/;"	s
 trim_url	anfone.pl	/^sub trim_url{$/;"	s
 trim_url	anfone_for_test.pl	/^sub trim_url{$/;"	s

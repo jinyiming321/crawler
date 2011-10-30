@@ -91,6 +91,13 @@ my $conf_file   = $ARGV[2];
 
 my $market      = 'www.getjar.com';
 my $url_base    = 'http://www.getjar.com';
+my $logger = new AMMS::Config;
+my $log = sub {
+    my $level = shift;
+    my $msg = shift;
+    $logger->getAttribute('LOGGER')->$level($msg);
+};
+
 
 my $tree;
 my $usage =<<EOF;
@@ -111,9 +118,117 @@ my $dbh = new AMMS::DBHelper;
 my $dbi = $dbh->connect_db;
 
 our %category_mapping=(
-        'Music' => 800,
-        'reference-education' => '20',
-);
+    'education' => 0,
+    'reference-education' => 0,
+    'language-education' => 0,
+    'more-education' => 0,
+    'social-and-messaging' => 0,
+    'email-social-and-messaging' => 0,
+    'sms-and-im-social-and-messaging' => 0,
+    'social-networks-social-and-messaging' => 0,
+    'more-social' => 0,
+    'entertainment' => 0,
+    'book-entertainment' => 0,
+    'video-entertainment' => 0,
+    'magazine-entertainment' => 0,
+    'movies-entertainment' => 0,
+    'more-entertainment' => 0,
+    'finance' => 0,
+    'banking-finance' => 0,
+    'quotes-finance' => 0,
+    'news-finance' => 0,
+    'tools-finance' => 0,
+    'more-finance' => 0,
+    'food' => 0,
+    'recipes-food' => 0,
+    'restaurants-food' => 0,
+    'more-food' => 0,
+    'all-games' => 0,
+    '3d-games' => 0,
+    'action-games' => 0,
+    'arcade-games' => 0,
+    'adventure-games' => 0,
+    'board-games' => 0,
+    'brain-training-games' => 0,
+    'card-and-casino-games' => 0,
+    'multiplayer-games' => 0,
+    'puzzle-and-strategy-games' => 0,
+    'sports-games' => 0,
+    'more-games' => 0,
+    'health' => 0,
+    'fitness-health' => 0,
+    'medicine-health' => 0,
+    'nutrition-health' => 0,
+    'more-health' => 0,
+    'search' => 0,
+    'lifestyle' => 0,
+    'celebrities-lifestyle' => 0,
+    'dating-lifestyle' => 0,
+    'local-events-lifestyle' => 0,
+    'more-lifestyle' => 0,
+    'maps' => 0,
+    'music' => 0,
+    'concerts-music' => 0,
+    'radio-music' => 0,
+    'ringtone-music' => 0,
+    'music-players-music' => 0,
+    'music-news-music' => 0,
+    'more-music' => 0,
+    'news-and-weather' => 0,
+    'local-news-news-and-weather' => 0,
+    'national-news-news-and-weather' => 0,
+    'world-news-news-and-weather' => 0,
+    'weather-news-and-weather' => 0,
+    'more-news' => 0,
+    'photos' => 0,
+    'view-and-edit-photos' => 0,
+    'save-and-share-photos' => 0,
+    'more-photos' => 0,
+    'productivity' => 0,
+    'address-book-productivity' => 0,
+    'backup-productivity' => 0,
+    'browser-productivity' => 0,
+    'calendar-productivity' => 0,
+    'phone-tools-productivity' => 0,
+    'security-productivity' => 0,
+    'more-productivity' => 0,
+    'religion' => 0,
+    'shopping' => 0,
+    'sports' => 0,
+    'events-sports' => 0,
+    'scores-and-news-sports' => 0,
+    'teams-and-players-sports' => 0,
+    'more-sports' => 0,
+    'travel' => 0,
+    'guides-and-reviews-travel' => 0,
+    'hotel-travel' => 0,
+    'trains-travel' => 0,
+    'car-rental-travel' => 0,
+    'cruises-travel' => 0,
+    'flights-travel' => 0,
+    'taxi-travel' => 0,
+    'more-travel' => 0,
+    'adult' => 0,
+    'education-adult' => 0,
+    'social-and-messaging-adult' => 0,
+    'entertainment-adult' => 0,
+    'finance-adult' => 0,
+    'food-adult' => 0,
+    'games-adult' => 0,
+    'health-adult' => 0,
+    'search-adult' => 0,
+    'lifestyle-adult' => 0,
+    'maps-adult' => 0,
+    'music-adult' => 0,
+    'news-and-weather-adult' => 0,
+    'photos-adult' => 0,
+    'productivity-adult' => 0,
+    'religion-adult' => 0,
+    'shopping-adult' => 0,
+    'sports-adult' => 0,
+    'travel-adult' => 0,
+    'more-adult' => 0,
+    );
 
 # define a app_info mapping
 # because trustgo_category_id is related with official_category
@@ -132,7 +247,7 @@ our %app_map_func = (
         size                    => \&get_size,
         official_rating_stars   => \&get_official_rating_stars,
         official_rating_times   => \&get_official_rating_times,
-        official_comment_times  => \&get_official_rating_times,
+        official_comment_times  => \&get_official_comment_times,
         app_qr                  => \&get_app_qr,
         note                    => '',
         apk_url                 => \&get_apk_url, 
@@ -150,6 +265,8 @@ our %app_map_func = (
 our @app_info_list = qw(
         apk_url
         author                  
+        last_update
+        official_comment_times
         app_name
         current_version
         icon                    
@@ -267,7 +384,7 @@ unless( $task_type && $task_id && $conf_file ){
 die "\nplease check config parameter\n" 
     unless init_gloabl_variable( $conf_file );
 
-my $downloader;
+my $mobile_downloader;
 
 if( $task_type eq 'find_app' )# find app
 {
@@ -282,17 +399,22 @@ if( $task_type eq 'find_app' )# find app
 }
 elsif( $task_type eq 'new_app' )##download new app info and apk
 {
-	$downloader = new AMMS::Downloader;
-	$downloader->{USERAGENT}->agent( $mobile_agent );
+	$mobile_downloader = new AMMS::Downloader;
+	$mobile_downloader->{USERAGENT}->agent( $mobile_agent );
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
+    $NewAppExtractor->{DOWNLOADER}->{USERAGENT}->agent($web_agent);
     $NewAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
-#    $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
+    $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $NewAppExtractor->run($task_id);
 }
 elsif( $task_type eq 'update_app' )##download updated app info and apk
 {
+	$mobile_downloader = new AMMS::Downloader;
+	$mobile_downloader->{USERAGENT}->agent( $mobile_agent );
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
+    $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->agent($web_agent);
+    $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $UpdatedAppExtractor->run($task_id);
@@ -342,6 +464,7 @@ sub extract_page_list{
     };
     if($@){
 #        print Dumper $pages;
+        $log->( warn => "extract page failed $@" );      
         return 0 unless scalar @$pages
     }
     return 1;
@@ -367,7 +490,10 @@ sub extract_app_from_feeder{
         $tree->parse($html);
         $tree->eof;
         # mobile-reference-education-applications
-        if( $params->{base_url} =~ m/mobile-(.+?)-applications/ ){
+        if( $params->{base_url} =~ m/mobile-(.+?)-applications/
+            or 
+            $params->{base_url} =~ m/mobile-(.+?-games)/
+        ){
         	$category = $1;
         }
 
@@ -449,6 +575,7 @@ sub get_app_name{
     my @nodes = $tree->look_down( id => 'product_title');
     return unless @nodes;
     my $app_name = [$nodes[0]->find_by_tag_name('a')]->[0]->as_text;
+    $log->( warn => "can't find app_name" ) if $@;
     return $app_name;
 }
 
@@ -538,11 +665,12 @@ sub get_apk_url{
     	    . "-for-".$device
     	    . "/?lang=en&gjclnt=1";
 
-        my $m_page = $downloader->download( $app_url );
+        my $m_page = $mobile_downloader->download( $app_url );
         $phone_html = decode_utf8( $m_page );
         if( $phone_html =~ m/downloadUrl\s*=\s*"(.+?)\?/s ){
         	return $1;
         }
+        $log->( warn => "$app_url get apk_url failed" );
     }
     return 
 }
@@ -569,8 +697,12 @@ sub get_official_category{
     my $app_url_md5 = md5_hex($app_info->{app_url});
     my $sql = <<EOF;
     select information from app_extra_info 
-    where app_url_md5 = '$app_url_md5'
+    where app_url_md5 = ?
 EOF
+    my $sth = $dbi->prepare( $sql) ;
+    $sth->execute($app_url_md5);
+    my $hashref = $sth->fetchrow_hashref();
+    return  $hashref->{'information'}
 }
 
 #-------------------------------------------------------------
@@ -590,6 +722,7 @@ sub get_screenshot{
     return unless @nodes;
 
     my @tags = $nodes[0]->find_by_tag_name('img');
+    $log->( warn => "can't find tags" ) if $@;
     return [ map{ $_->attr('src') } @tags ];
 }
 
@@ -794,7 +927,74 @@ sub save_extra_info{
     my $data = $category;
     my $sql = "replace into app_extra_info(app_url_md5,information) values(?,?)"; 
     my $sth = $dbi->prepare($sql);
-    $sth->execute($app_url_md5,$data) or warn ( "can't replace sql $sql" );
+    $sth->execute($app_url_md5,$data) or $log->( 
+        warn =>  "can't replace sql in $app_url_md5 with ".$DBI::errstr 
+    );
+}
+
+sub download_app_apk 
+{
+    my $self    = shift;
+    my $hook_name  = shift;
+    my $apk_info= shift;
+
+    my $apk_file;
+    my $md5 =   $apk_info->{'app_url_md5'};
+    my $apk_dir= $self->{'TOP_DIR'}.'/'. get_app_dir( $self->getAttribute('MARKET'),$md5).'/apk';
+
+    my $downloader  = $mobile_downloader;
+
+#    $downloader->header({Referer=>$apk_info->{'app_url'}});
+    if( $apk_info->{apk_url} !~ m/apk$/ ){
+    	$apk_info->{status} = 'redirect';
+    	return 1;
+    }
+    if( $apk_info->{price} ne '0' ){
+        $apk_info->{'status'}='paid';
+        return 1;
+    }
+    eval { 
+        rmtree($apk_dir) if -e $apk_dir;
+        mkpath($apk_dir);
+    };
+    if ( $@ )
+    {
+        $self->{ 'LOGGER'}->error( sprintf("fail to create directory,App ID:%d,Error: %s",
+                                    $md5,$EVAL_ERROR)
+                                 );
+        $apk_info->{'status'}='fail';
+        $downloader->{USERAGENT}->max_redirect(0);
+        return 0;
+    }
+
+    my $timeout = $self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime');
+    $timeout += int($apk_info->{size}/1024) if defined $apk_info->{size};
+    $downloader->timeout($timeout);
+    $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
+    if (!$downloader->is_success)
+    {
+        $apk_info->{'status'}='fail';
+        $downloader->{USERAGENT}->max_redirect(0);
+        return 0;
+    }
+
+    unless (check_apk_validity("$apk_dir/$apk_file") ){
+        $apk_info->{'status'}='fail';
+        return 0;
+    }
+ 
+    $apk_info->{apk_md5}=file_md5("$apk_dir/$apk_file");
+    my $unique_name=$apk_info->{apk_md5}."__".$apk_file;
+
+
+    rename("$apk_dir/$apk_file","$apk_dir/$unique_name");
+
+
+    $apk_info->{'status'}='success';
+    $apk_info->{'app_unique_name'} = $unique_name;
+
+    $downloader->{USERAGENT}->max_redirect(0);
+    return 1;
 }
 
 

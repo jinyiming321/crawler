@@ -28,7 +28,9 @@ my %program_table = (
         'anfone'=>{'host'=>'www.anfone.com','script'=>'anfone_for_test.pl','task_type'=>[qw(find_app )]},
         'coolapk' => { host => 'www.coolapk.com',script => 'coolapk.pl',task_type  => ['find_app']},
         'handster' => { host => 'handster.com',script => 'handster.pl', task_type
-        => ['new_app'] }
+        => ['new_app'] },
+        'getjar' => { host => 'www.getjar.com',script => 'getjar.pl',task_type => ['new_app'] },
+    
         
         
         );

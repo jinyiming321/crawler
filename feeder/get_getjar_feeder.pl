@@ -64,6 +64,13 @@ my $base = 'http://www.getjar.com';
 my $category_page;
 
 foreach my $port ( @apps_portal ){
+    if( $port=~ m/mobile-(.+?)-applications/  
+           or 
+        $port=~ m/mobile-(.+?-games)/
+    ){
+         print "'$1' => '',\n";
+         print MAP "'$1' => '',\n";
+    }
     my $res = $ua->get($port);
     while( not $res->is_success ){
         $res = $ua->get($port);
@@ -94,12 +101,14 @@ foreach my $port ( @apps_portal ){
             print FEED $1."?ref=".$2."&lang=en&o=top\n";
             print FEED $1."?ref=".$2."&lang=en&o=new\n";
         }
-        if( $href =~ m/mobile-(.+?)-applications/){
+        if( $href =~ m/mobile-(.+?)-applications/  
+                or 
+            $href =~ m/mobile-(.+?-games)/
+        ){
+
             print "'$1' => '',\n";
             print MAP "'$1' => '',\n";
         }
     }
-    
-    
 }
 

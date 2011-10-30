@@ -439,8 +439,8 @@ sub save_app_into_source
 	    
         if($self->{ 'DB_Handle' }->do($sql)<=0)
         {
-#my $err_str=sprintf("fail to insert app $apps->{$app_self_id}");
-#$self->{ 'CONFIG_HANDLE' }->getAttribute('LOGGER')->error($err_str);
+            my $err_str=sprintf("fail to insert app $apps->{$app_self_id}");
+            $self->{ 'CONFIG_HANDLE' }->getAttribute('LOGGER')->error($err_str);
             next;
         }
     }
