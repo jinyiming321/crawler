@@ -1,3 +1,4 @@
 #LWP-Cookies-1.0
-Set-Cookie3: gjsetdeviceredirect=1; path="/"; domain=.getjar.com; path_spec; expires="2011-10-28 09:08:53Z"; version=0
-Set-Cookie3: udvs=google-nexus-s; path="/"; domain=.getjar.com; path_spec; expires="2011-11-27 09:08:23Z"; version=0
+Set-Cookie3: gjid=f28a31df-3180-43b6-8716-ace4bdc2eb4d; path="/"; domain=.getjar.com; path_spec; expires="2011-11-30 09:33:38Z"; version=0
+Set-Cookie3: gjretpage=%2Fmobile-reference-education-applications-for-android-os%2F%3Fref%3D0%26lang%3Den%26gjretts%3D1320065269; path="/"; domain=.getjar.com; path_spec; expires="2011-11-14 12:47:50Z"; version=0
+Set-Cookie3: udvs=android-os; path="/"; domain=.getjar.com; path_spec; expires="2011-11-30 12:47:49Z"; version=0

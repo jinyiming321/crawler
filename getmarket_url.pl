@@ -23,30 +23,28 @@
 ## *     secret laws, punishable by civil and criminal penalties.
 ##*****************************************************************************
 use strict;
+use Data::Dumper;
 use warnings;
 use LWP::UserAgent;
-use HTTP::Cookies;
+use HTTP::Request;
 my $ua = new LWP::UserAgent;
-my $cookie_jar = new HTTP::Cookies;
-$cookie_jar->load('getjar_cookie.txt');
 
-    
 $ua->timeout(60);
-$ua->cookie_jar($cookie_jar);
-my $web_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.2 (KHTML, like Gecko)'
-    .'Chrome/15.0.874.81 Safari/535.2';
-my $mobile_agent = 
-        'Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; sdk Build/ECLAIR)'
-        .'AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17';
+my $mobile_agent = 'Dalvik/1.1.0 (Linux; U; Android 2.1-update1; sdk Build/ECLAIR)';
 
-#$ua->agent($mobile_agent);
-$ua->agent($web_agent);
-my $res = $ua->get('http://www.getjar.com/mobile-reference-education-applications-for-android-os/?ref=0&lang=en&p=304&i=39');
-open FH,'>',"apk.html";
-if( $res->is_success ){
-	print FH $res->content;
-}else{
-	die "download failed\n";
+$ua->agent($mobile_agent);
+=pod
+$ua->max_redirect(0);
+my $res = $ua->get(shift);
+warn $res->header('location');
+=cut
+my $request = new HTTP::Request( GET => shift );
+my $res = $ua->simple_request( $request );
+if( $res->is_redirect ){
+    print Dumper $res;
 }
+
+
+
 
 exit 0;

@@ -81,9 +81,8 @@ my $mobile_base_url = 'http://client.getjar.com';
 my $web_base_url = 'http://www.getjar.com';
 my $download_base_url = 'http://download.getjar.com';
 my $set_device_url =
-'http://www.getjar.com/set-user-device/?udvsName=google-nexus-s&udvsId=15440';
+    'http://www.getjar.com/set-user-device/?udvsName=android-os&udvsId=15103';
 my $cookie_file = 'getjar_cookie.txt';
-#get_cookie();
 
 my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
@@ -300,6 +299,7 @@ if( $ARGV[-1] eq 'debug' ){
         my $logger     = $self->{'CONFIG_HANDLE'}->getAttribute('LOGGER');
         my $result     = {};
         my %params;
+        FETCH:
         foreach my $id ( keys %{$feeder_id_urls} ) {
             my @pages;
 
@@ -315,10 +315,6 @@ if( $ARGV[-1] eq 'debug' ){
                       . $feeder_id_urls->{$id}
                       . ',reason:'
                       . $downloader->error_str );
-                warn(   'fail to download webpage '
-                      . $feeder_id_urls->{$id}
-                      . ',reason:'
-                      . $downloader->error_str );
                 next;
             }
 
@@ -330,8 +326,29 @@ if( $ARGV[-1] eq 'debug' ){
                 my %apps;
                 my $webpage;
               FEED: {
+              	    my $check = sub {
+              	    	require Digest::MD5;
+              	    	my $page_url_md5 = Digest::MD5::md5_hex($page);
+              	    	my $sql =<<EOF;
+              	    	select status from feed_info 
+              	    	where feed_url_md5 = ?
+EOF
+                        my $sth = $self->{DBHelper}->prepare($sql);
+                        $sth->execute($page_url_md5);
+                        my $hashref = $sth->fetchrow_hashref;
+                        return $hashref->{status}
+                    };
+                    if( $check->($page) eq 'success' 
+                            or 
+                        $check->($page) eq 'invaild' 
+                    ){
+                    	$page .= "&p=8&i=1" if $page =~ m/lang=en$/;
+                        $page =~ s/p=(\d+)/'p='.($1+8)/e;
+                        $page =~ s/i=(\d+)/'i='.($1+1)/e;
+                    }
                     $webpage= $downloader->download($page);
                     if ( not $downloader->is_success ) {
+                    	$log->( warn => "get page $page failed maybe network reason");
                         if ( $downloader->is_not_found ) {
                             $self->{'DB_HELPER'}
                               ->save_url_from_feeder( $id, $page, 'invalid' );
@@ -339,8 +356,8 @@ if( $ARGV[-1] eq 'debug' ){
                         else {
                             $self->{'DB_HELPER'}
                               ->save_url_from_feeder( $id, $page, 'fail' );
+                             next FETCH;
                         }
-                        #redo FEED;
                     }
                 }
                 unless ( utf8::decode($webpage) ) {
@@ -359,6 +376,11 @@ if( $ARGV[-1] eq 'debug' ){
                 $self->invoke_hook_functions( 'extract_page_list', \%params,
                     \@pages );
                 $page = $params{'next_page_url'};
+                if( $page eq 'part' ){
+                    $self->{'DB_HELPER'}
+                        ->save_url_from_feeder( $id, $page, 'fail' );
+                    next FETCH;
+                }
                 last LOOP if not defined($page);
                 redo LOOP;
             }
@@ -372,9 +394,6 @@ if( $ARGV[-1] eq 'debug' ){
     1;
 }
 
-my $cookie_jar = HTTP::Cookies->new(
-         file => $cookie_file
-);
 # check args 
 unless( $task_type && $task_id && $conf_file ){
     die $usage;
@@ -385,12 +404,30 @@ die "\nplease check config parameter\n"
     unless init_gloabl_variable( $conf_file );
 
 my $mobile_downloader;
+my $android_agent = 'Dalvik/1.1.0 (Linux; U; Android 2.1-update1; sdk Build/ECLAIR)';
+my $android_market_ua = new LWP::UserAgent;
+$android_market_ua->agent($android_agent);
+$android_market_ua->timeout(60);
+$android_market_ua->max_redirect(0);
 
 if( $task_type eq 'find_app' )# find app
 {
     my $AppFinder =
       new MyAppFind( 'MARKET' => $market, 'TASK_TYPE' => $task_type );
-    $cookie_jar->load($cookie_file);
+    my $cookie_jar = new HTTP::Cookies(
+        file => $cookie_file,
+        autosave => 1
+    );
+    $AppFinder->{DOWNLOADER}{USERAGENT}->agent($web_agent);
+ 	$AppFinder->{DOWNLOADER}{USERAGENT}->cookie_jar($cookie_jar);
+    my $res = $AppFinder->{DOWNLOADER}{USERAGENT}->get($set_device_url);
+    if( $res->is_success ){
+    	print "get cookie success\n";
+    }else{
+    	die "get cookie failed\n";
+    }
+
+#    $cookie_jar->load($cookie_file);
 
     $AppFinder->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
     $AppFinder->addHook('extract_page_list', \&extract_page_list);
@@ -403,7 +440,7 @@ elsif( $task_type eq 'new_app' )##download new app info and apk
 	$mobile_downloader->{USERAGENT}->agent( $mobile_agent );
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $NewAppExtractor->{DOWNLOADER}->{USERAGENT}->agent($web_agent);
-    $NewAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
+    #$NewAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $NewAppExtractor->run($task_id);
@@ -414,7 +451,7 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
 	$mobile_downloader->{USERAGENT}->agent( $mobile_agent );
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
     $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->agent($web_agent);
-    $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
+    #$UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $UpdatedAppExtractor->run($task_id);
@@ -446,6 +483,10 @@ sub extract_page_list{
     print "run extract_page_list ............\n";
     # create a html tree and parse
     my $web = $params->{web_page};
+    if( $web !~ m{</html>} ){
+        $params->{next_page_url} = 'part';
+        return 0
+    }
     eval{
         my $tree = new HTML::TreeBuilder;
         $tree->parse($web);
@@ -456,17 +497,20 @@ sub extract_page_list{
             )
         ){
             my $page = $nodes[0]->find_by_tag_name('a')->attr('href');
-            if( my %hash = $page =~ m/(?<=(?:[?]|&))(\w+?)=(.+?)(?=(?:&|$))/g ){
+            if( my %hash = $page =~ m/(?<=(?:[\?]|&))(\w+?)=(.+?)(?=(?:&|$))/g ){
                 $page =~ s/(?:\?|&)$_=$hash{$_}//g foreach ( 'sid','lvt');
+                $page =~ s/&o=top//g;
+                $page =~ s/&o=new//g;
                 $params->{next_page_url} = $url_base.$page;
             }
+        }else{
+        	$log->( warn => "not find next page $params->{base_url}" );
+        	use FileHandle;
+        	my $fh = new FileHandle(">find_next.html")||die $@;
+        	print $fh $web;
+        	close($fh);
         }
     };
-    if($@){
-#        print Dumper $pages;
-        $log->( warn => "extract page failed $@" );      
-        return 0 unless scalar @$pages
-    }
     return 1;
 }
 
