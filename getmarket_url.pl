@@ -38,8 +38,8 @@ $ua->max_redirect(0);
 my $res = $ua->get(shift);
 warn $res->header('location');
 =cut
-my $request = new HTTP::Request( GET => shift );
-my $res = $ua->simple_request( $request );
+#my $request = new HTTP::Request( GET => shift );
+my $res = $ua->simple_request( HTTP::Request->new(GET =>'http://download.getjar.com/downloads/wap/export-325-4ga16ki3fnyq5odd1A-gbqh005f09mgdgcg/424183/androidVersion') );
 if( $res->is_redirect ){
     print Dumper $res;
 }

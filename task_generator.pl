@@ -37,7 +37,7 @@ while(1)
 #        &task_for_fix_app;
 #        &task_for_find_app_again;
 #        &task_for_updated_app();
-#       &task_for_new_app();
+         &task_for_new_app();
 #        &update_market_monitor;
 #        &task_for_new_apk();
     }
@@ -48,7 +48,8 @@ while(1)
 
     
 sub task_for_find_app
-{		
+{
+    # for getjar check	
     my $sql = 'select SQL_BUFFER_RESULT feeder_id, feeder_url from feeder '.
             ' where status="undo" and market_id='.$market->{'id'}.
             ' order by last_visited_time, feeder_id';  

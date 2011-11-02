@@ -82,7 +82,7 @@ my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
 
-my $market      = 'handster.com';
+my $market      = 'www.handster.com';
 my $url_base    = 'http://www.handster.com';
 my $tree;
 my $usage =<<EOF;

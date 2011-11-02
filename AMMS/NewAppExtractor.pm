@@ -765,6 +765,13 @@ sub package_and_send
     if ( $app_count )
     {
         $cmd .= " $app_param;cd -";
+        use FileHandle;
+        my $file = "/root/debug/".$$."_targz.log";
+        my $fh = new FileHandle(">>$file");
+        my $content = `$cmd`;
+        print $fh "\ntar gz $cmd\n";
+        print $fh $content;
+        close $fh;
         unless ( execute_cmd($cmd) ) 
         {
             $self->{'CONFIG_HANDLE'}->getAttribute('LOGGER')->error(

@@ -30,6 +30,7 @@ FEED	fuck.pl	/^              FEED: {$/;"	l
 FEED	getjar.pl	/^              FEED: {$/;"	l
 FEED	opera.pl	/^              FEED: {$/;"	l
 FEED	soc.pl	/^              FEED: {$/;"	l
+FETCH	getjar.pl	/^        FETCH:$/;"	l
 FIRST_NODE	anfone.pl	/^sub FIRST_NODE			(){		0		}$/;"	s
 FIRST_NODE	anfone_for_test.pl	/^sub FIRST_NODE			(){		0		}$/;"	s
 GET	feeder/get_opera_feeder.pl	/^        GET:$/;"	l
@@ -116,6 +117,7 @@ download_app_apk	AMMS/UpdatedAppExtractor.pm	/^sub download_app_apk $/;"	s
 download_app_apk	AMMS/test.pl	/^sub download_app_apk $/;"	s
 download_app_apk	android168.pl	/^sub download_app_apk $/;"	s
 download_app_apk	coolapk.pl	/^sub download_app_apk $/;"	s
+download_app_apk	getjar.pl	/^sub download_app_apk $/;"	s
 download_app_apk	google.pl	/^sub download_app_apk $/;"	s
 download_app_apk	google_apk.pl	/^sub download_app_apk $/;"	s
 download_app_apk	handster.pl	/^sub download_app_apk $/;"	s
@@ -388,6 +390,7 @@ get_content	soc.pl	/^sub get_content{$/;"	s
 get_content	xda.pl	/^sub get_content{$/;"	s
 get_cookie	android168.pl	/^sub get_cookie{$/;"	s
 get_cookie	coolapk.pl	/^sub get_cookie{$/;"	s
+get_cookie	feeder/get_getjar_feeder.pl	/^sub get_cookie{$/;"	s
 get_cookie	getjar.pl	/^sub get_cookie{$/;"	s
 get_cookie	liqu.pl	/^sub get_cookie{$/;"	s
 get_cookie	mm.pl	/^sub get_cookie{$/;"	s

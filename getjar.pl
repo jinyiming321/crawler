@@ -72,6 +72,7 @@ our @EXPORT_OK  = qw(
     extract_app_info
 );
 
+#my $mobile_agent = 'Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1';
 my $mobile_agent = 
         'Mozilla/5.0 (Linux; U; Android 2.1-update1; en-us; sdk Build/ECLAIR)'
         .'AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17';
@@ -113,8 +114,8 @@ explain:
     conf_file   - the configure file of crawler,default is /root/crawler/default.cfg
 ==================================================
 EOF
-my $dbh = new AMMS::DBHelper;
-my $dbi = $dbh->connect_db;
+my $dbhelper= new AMMS::DBHelper;
+my $dbi = $dbhelper->connect_db;
 
 our %category_mapping=(
     'education' => 0,
@@ -336,13 +337,13 @@ EOF
                         my $sth = $dbi->prepare($sql);
                         $sth->execute($page_url_md5);
                         my $hashref = $sth->fetchrow_hashref;
-                        return $hashref->{status} || '';
+                        return defined($hashref) ? $hashref->{status} : '';
                     };
                     if( $check->($page) eq 'success' 
                             or 
                         $check->($page) eq 'invaild' 
                     ){
-                    	$page .= "&p=8&i=1" if $page =~ m/lang=en$/;
+                    	$page .= "&p=8&i=2" if $page =~ m/lang=en$/;
                         $page =~ s/p=(\d+)/'p='.($1+8)/e;
                         $page =~ s/i=(\d+)/'i='.($1+1)/e;
                         redo FEED;
@@ -409,16 +410,16 @@ my $android_agent = 'Dalvik/1.1.0 (Linux; U; Android 2.1-update1; sdk Build/ECLA
 my $android_market_ua = new LWP::UserAgent;
 $android_market_ua->agent($android_agent);
 $android_market_ua->timeout(60);
-$android_market_ua->max_redirect(0);
+
+my $cookie_jar = new HTTP::Cookies(
+  file => $cookie_file,
+  autosave => 1
+);
 
 if( $task_type eq 'find_app' )# find app
 {
     my $AppFinder =
       new MyAppFind( 'MARKET' => $market, 'TASK_TYPE' => $task_type );
-    my $cookie_jar = new HTTP::Cookies(
-        file => $cookie_file,
-        autosave => 1
-    );
     $AppFinder->{DOWNLOADER}{USERAGENT}->agent($web_agent);
  	$AppFinder->{DOWNLOADER}{USERAGENT}->cookie_jar($cookie_jar);
     my $res = $AppFinder->{DOWNLOADER}{USERAGENT}->get($set_device_url);
@@ -437,22 +438,46 @@ if( $task_type eq 'find_app' )# find app
 }
 elsif( $task_type eq 'new_app' )##download new app info and apk
 {
+	# set a mobile downloader to get apk download html
 	$mobile_downloader = new AMMS::Downloader;
 	$mobile_downloader->{USERAGENT}->agent( $mobile_agent );
+    
+    # defined a new app ua add cookie jar
     my $NewAppExtractor= new AMMS::NewAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
-    $NewAppExtractor->{DOWNLOADER}->{USERAGENT}->agent($web_agent);
-    #$NewAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
+    $NewAppExtractor->{DOWNLOADER}{USERAGENT}->agent($web_agent);
+ 	$NewAppExtractor->{DOWNLOADER}{USERAGENT}->cookie_jar($cookie_jar);
+    my $res = $NewAppExtractor->{DOWNLOADER}{USERAGENT}->get($set_device_url);
+
+    if( $res->is_success ){
+    	print "get cookie success\n";
+    }else{
+    	die "get cookie failed\n";
+    }
+
+ 	$NewAppExtractor->{DOWNLOADER}{USERAGENT}->cookie_jar($cookie_jar);
     $NewAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $NewAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $NewAppExtractor->run($task_id);
 }
 elsif( $task_type eq 'update_app' )##download updated app info and apk
 {
+	# set a mobile downloader to get apk download html
 	$mobile_downloader = new AMMS::Downloader;
 	$mobile_downloader->{USERAGENT}->agent( $mobile_agent );
+
     my $UpdatedAppExtractor= new AMMS::UpdatedAppExtractor('MARKET'=>$market,'TASK_TYPE'=>$task_type);
-    $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->agent($web_agent);
-    #$UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
+    $UpdatedAppExtractor->{DOWNLOADER}{USERAGENT}->agent($web_agent);
+ 	$UpdatedAppExtractor->{DOWNLOADER}{USERAGENT}->cookie_jar($cookie_jar);
+    my $res = $UpdatedAppExtractor->{DOWNLOADER}{USERAGENT}->get($set_device_url);
+
+    if( $res->is_success ){
+    	print "get cookie success\n";
+    }else{
+    	die "get cookie failed\n";
+    }
+    # load cookie
+    $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
+
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
     $UpdatedAppExtractor->run($task_id);
@@ -481,7 +506,7 @@ sub extract_page_list{
     my $params  = shift;
     my $pages	= shift;
 
-    print "run extract_page_list ............\n";
+    print "run extract_page_list  from $params->{base_url} \n";
     # create a html tree and parse
     my $web = $params->{web_page};
     if( $web !~ m{</html>} ){
@@ -521,7 +546,7 @@ sub extract_app_from_feeder{
     return 0 unless ref(  $apps ) eq 'HASH' ;
     return 0 unless exists $params->{web_page};
     
-    print "run extract_app_from_feeder_list ............\n";
+    print "run extract_app_from_feeder : $params->{base_url}\n";
     my $category;
     eval{
         my $html = $params->{web_page};
@@ -552,18 +577,9 @@ sub extract_app_from_feeder{
                     =~ m/$link_regex/o
             ){
                 my ( $app_id,$app_name,$device,$lang ) = ( $1,$2,$3,$4 );
-=pod
-                my $app_url 
-                    = $mobile_base_url
-                    . "/mobile/".$app_id."/"
-                    . $app_name
-                    . "-for-".$device
-                    . "/?lang=".$lang."&gjclnt=1";
-=cut
                 my $app_url 
                     = $web_base_url."/mobile/".$app_id."/".$app_name
                     . "-for-".$device;
-                    
                 $apps->{$1} = $app_url;
                 save_extra_info( md5_hex($app_url),$category );
             }
@@ -687,14 +703,16 @@ sub get_cookie{
 sub get_apk_url{
     my $html = shift;
     my $app_info = shift;
-
+=pod
     my $link_regex = qr{
             mobile/(\d+)/(.+?)-for- #match appliacation ID
-            (.+?)                  #match device type
+            (.+?os)                  #match device type
     }sx;
+=cut
     my $phone_html ;
  
     my $app_url = $app_info->{app_url};
+=pod
     if( $app_url =~ m{$link_regex}o ){
     	my ( $app_id,$app_name,$device ) = ( $1,$2,$3 );
     	my $app_url 
@@ -705,17 +723,30 @@ sub get_apk_url{
     	    . "/?lang=en&gjclnt=1";
 
         my $m_page = $mobile_downloader->download( $app_url );
+        $log->( error => "download phone apk_url $app_url failed" )
+            unless $mobile_downloader->is_success;
         $phone_html = decode_utf8( $m_page );
+
         if( $phone_html =~ m/downloadUrl\s*=\s*"(.+?)\?/s ){
         	return $1;
         }
-        $log->( warn => "$app_url get apk_url failed" );
+        my $node = $tree->look_down( id => 'form_product_page' );
+        return unless ref $node;
+        return $node->attr('action');
+        
+        $log->( warn => "$app_url get apk_url failed,perhaps html is part" );
+        $log->( warn => "save apk html \n $phone_html\n");
+        return
     }
-    return 
+=cut
+    my $node = $tree->look_down( id => 'form_product_page' );
+    return unless ref($node);
+    return $node->attr('action') ? $node->attr('action') : undef;
 }
 
 sub get_official_rating_stars{
     my $html  = shift;
+    return 0
 }
 
 sub kb_m{
@@ -733,15 +764,15 @@ sub get_official_category{
     my $html = shift;
     my $app_info = shift;
     
-    my $app_url_md5 = md5_hex($app_info->{app_url});
-    my $sql = <<EOF;
-    select information from app_extra_info 
-    where app_url_md5 = ?
-EOF
-    my $sth = $dbi->prepare( $sql) ;
-    $sth->execute($app_url_md5);
-    my $hashref = $sth->fetchrow_hashref();
-    return  $hashref->{'information'}
+    if( 
+    	my $hashref = $dbhelper->get_extra_info(
+    	    md5_hex( $app_info->{app_url} ) 
+        )
+    ){
+    	return $hashref->{category};
+    }
+
+    $log->( warn => "not find category from app_extra_info " );
 }
 
 #-------------------------------------------------------------
@@ -963,12 +994,8 @@ sub run{
 sub save_extra_info{
     my $app_url_md5 = shift;
     my $category= shift;
-    my $data = $category;
-    my $sql = "replace into app_extra_info(app_url_md5,information) values(?,?)"; 
-    my $sth = $dbi->prepare($sql);
-    $sth->execute($app_url_md5,$data) or $log->( 
-        warn =>  "can't replace sql in $app_url_md5 with ".$DBI::errstr 
-    );
+
+    $dbhelper->save_extra_info( $app_url_md5,{ category => $category } );
 }
 
 sub download_app_apk 
@@ -984,9 +1011,32 @@ sub download_app_apk
     my $downloader  = $mobile_downloader;
 
 #    $downloader->header({Referer=>$apk_info->{'app_url'}});
-    if( $apk_info->{apk_url} !~ m/apk$/ ){
-    	$apk_info->{status} = 'redirect';
-    	return 1;
+    if( 
+    	exists $apk_info->{apk_url}
+    	    &&
+        $apk_info->{apk_url} 
+            &&
+        $apk_info->{apk_url} !~ m/apk$/ 
+    ){
+    	my $res = $android_market_ua->simple_request( 
+    	    HTTP::Request->new( GET => $apk_info->{apk_url} )
+        );
+        if( $res->is_redirect ){
+    	    my $hashref = $self->{DB_HELPER}->get_extra_info($md5);
+    	    if( defined $hashref ){
+            	$hashref->{apk_redirect} = 
+            	    substr( 
+            	        $res->header('location'),
+            	        index($res->header('location'),'id=')+length('id='),
+            	    );
+            	$self->{DB_HELPER}->save_extra_info(
+            	    $md5 => $hashref 
+                );
+    	        $apk_info->{status} = 'success';
+            	return 1
+            }
+        }
+        return 0
     }
     if( $apk_info->{price} ne '0' ){
         $apk_info->{'status'}='paid';
@@ -1013,7 +1063,6 @@ sub download_app_apk
     if (!$downloader->is_success)
     {
         $apk_info->{'status'}='fail';
-        $downloader->{USERAGENT}->max_redirect(0);
         return 0;
     }
 
@@ -1032,7 +1081,6 @@ sub download_app_apk
     $apk_info->{'status'}='success';
     $apk_info->{'app_unique_name'} = $unique_name;
 
-    $downloader->{USERAGENT}->max_redirect(0);
     return 1;
 }
 

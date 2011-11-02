@@ -271,7 +271,16 @@ sub file_md5{
 sub check_apk_validity{
 #return 0 on success 
     my $apk_file=shift;
-    return 0==system("unzip -t $apk_file ");
+    use FileHandle;
+    my $file = '/root/debug/'.$$.'_unzip.log';
+    my $fh = new FileHandle(">>$file");
+    my $content = `unzip -t $apk_file`;
+    print $fh "\nunzip $apk_file\n";
+    print $fh $content;
+    close $fh;
+    if( 0==system("unzip -t $apk_file ") ){
+        return 1
+    }
 }
 sub del_inline_elements{
     require HTML::Entities;
