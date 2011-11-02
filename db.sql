@@ -116,6 +116,7 @@ CREATE TABLE `app_info` (
   `release_date` datetime default NULL,
   `last_update` datetime default NULL,
   `size` int(11) NOT NULL,
+  `apk_md5` varchar(32) NOT NULL,
   `price` varchar(128) default NULL,
   `currency` varchar (32) default NULL,
   `current_version` varchar(20) default NULL,
@@ -365,3 +366,4 @@ GRANT SELECT,INSERT,UPDATE, DELETE,ALTER,LOCK TABLES ON AMMS.* TO trustgo@"%" ID
 GRANT SELECT,LOCK TABLES ON AMMS.* TO onlyread@"%" IDENTIFIED BY "123456";
 
 replace INTO `market` set id=100,name='www.getjar.com',language='zh_cn',feeder_entity_of_task=2,status='good';
+replace INTO `market` set id=101,name='www.handster.com',language='zh_cn',feeder_entity_of_task=2,status='good';
