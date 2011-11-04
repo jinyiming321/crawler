@@ -1,0 +1,426 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<!---->
+<link rel="alternate" media="handheld" href="http://m.getjar.com/" />	
+<title>GetJar - Appsolutely Everything for Nokia, BlackBerry, Android, Samsung, Sony Ericsson, LG, Palm.</title>  
+<link REL="SHORTCUT ICON" HREF="http://media.getjar.com/images/web/getjar_icon.ico" />
+<link href="http://cdn.m.getjar.com/15473/views/css/pc/gj11.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://cdn.m.getjar.com/15473/views/js/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.m.getjar.com/15473/views/js/jquery.colorbox-1.3.17.min.js"></script>
+<script type="text/javascript" src="http://cdn.m.getjar.com/15473/views/js/pc/jquery.jcarousel.min.js"></script>
+<script type="text/javascript" src="http://cdn.m.getjar.com/15473/views/js/pc/gj11.js"></script>
+<script>
+var fb_login_url = "https://graph.facebook.com/oauth/authorize?client_id=166966630009823&amp;redirect_uri=http%3A%2F%2Fwww.getjar.com%2Fconnect&amp;scope=email%2Cread_stream%2Cpublish_stream%2Coffline_access";
+</script>
+</head>
+<body onload="">
+
+<div id="popup_choose_phone" class="popup">
+<h1 class="lightbox_header bg_dkgrey_gradient">Set Your Device<span class="floatright"><span class="close feedback_close" id="close_link"><img class="img20x20 closeX" alt="Close" src="http://cdn.m.getjar.com/15473/views/images/pc/icon_closebox.png"/></span></span></h1>
+<span class="lightbox_text">Enter your device make and model:</span>
+<input type="text" onkeyup="javascript:search_phones('/devicesearch');" onblur="fillPhoneBox(this);" onfocus="cleanPhoneBox(this);" value="example: Samsung Nexus S" name="key" id="key" class="search_tool_tip"/>
+<div id="searchPhoneResultsContainer"></div>
+</div><div class="popup popup_confirm_device" id="set_device_confirm">
+<h1 class="lightbox_header bg_dkgrey_gradient">Set Your Device<div class="floatright"><div class="close feedback_close customlink" id="close_link"><img class="img20x20 closeX" alt="Close" src="http://cdn.m.getjar.com/15473/views/images/pc/icon_closebox.png"/></div></div></h1>
+<span class="lightbox_text">Look on your device or in your device's settings to verify that you have this phone. If so, click Set Device.</span>
+<div id="selected_device_preview_holder"><img id="selected_device_preview" src="http://cdn.m.getjar.com/15473/views/images/pc/unknownPhone.gif"/></div>
+
+<div>
+<input type="button" name="confirm_set_device_btn" id="confirm_set_device_btn" class="confirm_set_device_btn" onclick="set_device_values('');" value="Set Device" /><br/>
+<a id="lightbox_change_phone" href="#" class="overlay" rel="#popup_choose_phone">Change Device</a>	
+</div>
+</div><div class="popup_country" id="popup_choose_country">
+<h1 class="lightbox_header bg_dkgrey_gradient">Location<div class="floatright"><div class="close feedback_close" id="close_link"><img class="img20x20 closeX" alt="Close" src="http://cdn.m.getjar.com/15473/views/images/pc/icon_closebox.png"/></div></div></h1>
+<span class="lightbox_text">Please select your location:</span>	
+<div class="standard_margin">
+<select id="userCountry" name="userCountry"><option value="0" label="Select your country">Select your country</option>
+<option value="16710" label="Afghanistan">Afghanistan</option>
+<option value="16716" label="Albania">Albania</option>
+<option value="17498" label="Algeria">Algeria</option>
+<option value="16723" label="American Samoa">American Samoa</option>
+<option value="16708" label="Andorra">Andorra</option>
+<option value="16719" label="Angola">Angola</option>
+<option value="16713" label="Anguilla">Anguilla</option>
+<option value="16721" label="Antarctica">Antarctica</option>
+<option value="16711" label="Antigua And Barbuda">Antigua And Barbuda</option>
+<option value="16722" label="Argentina">Argentina</option>
+<option value="16717" label="Armenia">Armenia</option>
+<option value="16727" label="Aruba">Aruba</option>
+<option value="16725" label="Australia">Australia</option>
+<option value="16724" label="Austria">Austria</option>
+<option value="16730" label="Azerbaijan">Azerbaijan</option>
+<option value="16979" label="Bahamas">Bahamas</option>
+<option value="16968" label="Bahrain">Bahrain</option>
+<option value="16964" label="Bangladesh">Bangladesh</option>
+<option value="16962" label="Barbados">Barbados</option>
+<option value="16985" label="Belarus">Belarus</option>
+<option value="16965" label="Belgium">Belgium</option>
+<option value="16986" label="Belize">Belize</option>
+<option value="16970" label="Benin">Benin</option>
+<option value="16973" label="Bermuda">Bermuda</option>
+<option value="16980" label="Bhutan">Bhutan</option>
+<option value="16975" label="Bolivia">Bolivia</option>
+<option value="16961" label="Bosnia And Herzegovina">Bosnia And Herzegovina</option>
+<option value="16983" label="Botswana">Botswana</option>
+<option value="16982" label="Bouvet Island">Bouvet Island</option>
+<option value="16978" label="Brazil">Brazil</option>
+<option value="18767" label="British Indian Ocean Territory">British Indian Ocean Territory</option>
+<option value="22087" label="British Virgin Island">British Virgin Island</option>
+<option value="16974" label="Brunei Darussalam">Brunei Darussalam</option>
+<option value="16967" label="Bulgaria">Bulgaria</option>
+<option value="16966" label="Burkina Faso">Burkina Faso</option>
+<option value="16969" label="Burundi">Burundi</option>
+<option value="19272" label="Cambodia">Cambodia</option>
+<option value="17229" label="Cameroon">Cameroon</option>
+<option value="17217" label="Canada">Canada</option>
+<option value="17238" label="Cape Verde">Cape Verde</option>
+<option value="19289" label="Cayman Islands">Cayman Islands</option>
+<option value="17222" label="Central African Republic">Central African Republic</option>
+<option value="21572" label="Chad">Chad</option>
+<option value="17228" label="Chile">Chile</option>
+<option value="17230" label="China">China</option>
+<option value="17231" label="Colombia">Colombia</option>
+<option value="19277" label="Comoros">Comoros</option>
+<option value="17223" label="Congo">Congo</option>
+<option value="17227" label="Cook Islands">Cook Islands</option>
+<option value="17234" label="Costa Rica">Costa Rica</option>
+<option value="17225" label="Cote D'ivoire">Cote D'ivoire</option>
+<option value="18514" label="Croatia">Croatia</option>
+<option value="17237" label="Cuba">Cuba</option>
+<option value="17241" label="Cyprus">Cyprus</option>
+<option value="17242" label="Czech Republic">Czech Republic</option>
+<option value="19280" label="Democratic People's Republic Of Korea">Democratic People's Republic Of Korea</option>
+<option value="17483" label="Denmark">Denmark</option>
+<option value="17482" label="Djibouti">Djibouti</option>
+<option value="17485" label="Dominica">Dominica</option>
+<option value="17487" label="Dominican Republic">Dominican Republic</option>
+<option value="17731" label="Ecuador">Ecuador</option>
+<option value="17735" label="Egypt">Egypt</option>
+<option value="21334" label="El Salvador">El Salvador</option>
+<option value="18257" label="Equatorial Guinea">Equatorial Guinea</option>
+<option value="17746" label="Eritrea">Eritrea</option>
+<option value="17733" label="Estonia">Estonia</option>
+<option value="17748" label="Ethiopia">Ethiopia</option>
+<option value="17995" label="Falkland Islands (malvinas)">Falkland Islands (malvinas)</option>
+<option value="17999" label="Faroe Islands">Faroe Islands</option>
+<option value="17994" label="Fiji">Fiji</option>
+<option value="17993" label="Finland">Finland</option>
+<option value="18002" label="France">France</option>
+<option value="18246" label="French Guiana">French Guiana</option>
+<option value="20550" label="French Polynesia">French Polynesia</option>
+<option value="18241" label="Gabon">Gabon</option>
+<option value="18253" label="Gambia">Gambia</option>
+<option value="18245" label="Georgia">Georgia</option>
+<option value="17477" label="Germany">Germany</option>
+<option value="18248" label="Ghana">Ghana</option>
+<option value="18249" label="Gibraltar">Gibraltar</option>
+<option value="18258" label="Greece">Greece</option>
+<option value="18252" label="Greenland">Greenland</option>
+<option value="18244" label="Grenada">Grenada</option>
+<option value="18256" label="Guadeloupe">Guadeloupe</option>
+<option value="18261" label="Guam">Guam</option>
+<option value="18260" label="Guatemala">Guatemala</option>
+<option value="18254" label="Guinea">Guinea</option>
+<option value="18263" label="Guinea-bissau">Guinea-bissau</option>
+<option value="18265" label="Guyana">Guyana</option>
+<option value="18516" label="Haiti">Haiti</option>
+<option value="22081" label="Holy See (vatican City State)">Holy See (vatican City State)</option>
+<option value="18510" label="Honduras">Honduras</option>
+<option value="18507" label="Hong Kong">Hong Kong</option>
+<option value="18517" label="Hungary">Hungary</option>
+<option value="18771" label="Iceland">Iceland</option>
+<option value="18766" label="India">India</option>
+<option value="18756" label="Indonesia">Indonesia</option>
+<option value="18770" label="Iran">Iran</option>
+<option value="18769" label="Iraq">Iraq</option>
+<option value="18757" label="Ireland">Ireland</option>
+<option value="18764" label="Israel">Israel</option>
+<option value="18772" label="Italy">Italy</option>
+<option value="19021" label="Jamaica">Jamaica</option>
+<option value="19024" label="Japan">Japan</option>
+<option value="19023" label="Jordan">Jordan</option>
+<option value="19290" label="Kazakhstan">Kazakhstan</option>
+<option value="19269" label="Kenya">Kenya</option>
+<option value="19273" label="Kiribati">Kiribati</option>
+<option value="19287" label="Kuwait">Kuwait</option>
+<option value="19271" label="Kyrgyzstan">Kyrgyzstan</option>
+<option value="19521" label="Lao People's Democratic Republic">Lao People's Democratic Republic</option>
+<option value="19542" label="Latvia">Latvia</option>
+<option value="19522" label="Lebanon">Lebanon</option>
+<option value="19539" label="Lesotho">Lesotho</option>
+<option value="19538" label="Liberia">Liberia</option>
+<option value="19545" label="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option>
+<option value="19529" label="Liechtenstein">Liechtenstein</option>
+<option value="19540" label="Lithuania">Lithuania</option>
+<option value="19541" label="Luxembourg">Luxembourg</option>
+<option value="19791" label="Macao">Macao</option>
+<option value="19787" label="Macedonia (FYROM)">Macedonia (FYROM)</option>
+<option value="19783" label="Madagascar">Madagascar</option>
+<option value="19799" label="Malawi">Malawi</option>
+<option value="19801" label="Malaysia">Malaysia</option>
+<option value="19798" label="Maldives">Maldives</option>
+<option value="19788" label="Mali">Mali</option>
+<option value="19796" label="Malta">Malta</option>
+<option value="19784" label="Marshall Islands">Marshall Islands</option>
+<option value="19793" label="Martinique">Martinique</option>
+<option value="19794" label="Mauritania">Mauritania</option>
+<option value="19797" label="Mauritius">Mauritius</option>
+<option value="22868" label="Mayotte">Mayotte</option>
+<option value="19800" label="Mexico">Mexico</option>
+<option value="17997" label="Micronesia">Micronesia</option>
+<option value="19780" label="Moldova">Moldova</option>
+<option value="19779" label="Monaco">Monaco</option>
+<option value="19790" label="Mongolia">Mongolia</option>
+<option value="19795" label="Montserrat">Montserrat</option>
+<option value="19777" label="Morocco">Morocco</option>
+<option value="19802" label="Mozambique">Mozambique</option>
+<option value="19789" label="Myanmar">Myanmar</option>
+<option value="20033" label="Namibia">Namibia</option>
+<option value="20050" label="Nauru">Nauru</option>
+<option value="20048" label="Nepal">Nepal</option>
+<option value="20044" label="Netherlands">Netherlands</option>
+<option value="16718" label="Netherlands Antilles">Netherlands Antilles</option>
+<option value="20035" label="New Caledonia">New Caledonia</option>
+<option value="20058" label="New Zealand">New Zealand</option>
+<option value="20041" label="Nicaragua">Nicaragua</option>
+<option value="20037" label="Niger">Niger</option>
+<option value="20039" label="Nigeria">Nigeria</option>
+<option value="20053" label="Niue">Niue</option>
+<option value="20038" label="Norfolk Island">Norfolk Island</option>
+<option value="19792" label="Northern Mariana Islands">Northern Mariana Islands</option>
+<option value="20047" label="Norway">Norway</option>
+<option value="20301" label="Oman">Oman</option>
+<option value="20555" label="Pakistan">Pakistan</option>
+<option value="20567" label="Palau">Palau</option>
+<option value="20545" label="Panama">Panama</option>
+<option value="20551" label="Papua New Guinea">Papua New Guinea</option>
+<option value="20569" label="Paraguay">Paraguay</option>
+<option value="20549" label="Peru">Peru</option>
+<option value="20552" label="Philippines">Philippines</option>
+<option value="20558" label="Pitcairn">Pitcairn</option>
+<option value="20556" label="Poland">Poland</option>
+<option value="20564" label="Portugal">Portugal</option>
+<option value="20562" label="Puerto Rico">Puerto Rico</option>
+<option value="20801" label="Qatar">Qatar</option>
+<option value="19282" label="Republic of Korea">Republic of Korea</option>
+<option value="21061" label="Reunion">Reunion</option>
+<option value="21071" label="Romania">Romania</option>
+<option value="21077" label="Russian Federation">Russian Federation</option>
+<option value="21079" label="Rwanda">Rwanda</option>
+<option value="19278" label="Saint Kitts And Nevis">Saint Kitts And Nevis</option>
+<option value="19523" label="Saint Lucia">Saint Lucia</option>
+<option value="22083" label="Saint Vincent And The Grenadines">Saint Vincent And The Grenadines</option>
+<option value="22355" label="Samoa">Samoa</option>
+<option value="21325" label="San Marino">San Marino</option>
+<option value="21332" label="Sao Tome And Principe">Sao Tome And Principe</option>
+<option value="21313" label="Saudi Arabia">Saudi Arabia</option>
+<option value="21326" label="Senegal">Senegal</option>
+<option value="21075" label="Serbia">Serbia</option>
+<option value="17235" label="Serbia And Montenegro">Serbia And Montenegro</option>
+<option value="21315" label="Seychelles">Seychelles</option>
+<option value="21324" label="Sierra Leone">Sierra Leone</option>
+<option value="21319" label="Singapore">Singapore</option>
+<option value="21323" label="Slovakia">Slovakia</option>
+<option value="21321" label="Slovenia">Slovenia</option>
+<option value="21314" label="Solomon Islands">Solomon Islands</option>
+<option value="21327" label="Somalia">Somalia</option>
+<option value="23105" label="South Africa">South Africa</option>
+<option value="18259" label="South Georgia And The South Sandwich Islands">South Georgia And The South Sandwich Islands</option>
+<option value="17747" label="Spain">Spain</option>
+<option value="19531" label="Sri Lanka">Sri Lanka</option>
+<option value="21316" label="Sudan">Sudan</option>
+<option value="21330" label="Suriname">Suriname</option>
+<option value="21338" label="Swaziland">Swaziland</option>
+<option value="21317" label="Sweden">Sweden</option>
+<option value="17224" label="Switzerland">Switzerland</option>
+<option value="21337" label="Syrian Arab Republic">Syrian Arab Republic</option>
+<option value="21591" label="Taiwan">Taiwan</option>
+<option value="21578" label="Tajikistan">Tajikistan</option>
+<option value="21594" label="Tanzania">Tanzania</option>
+<option value="21576" label="Thailand">Thailand</option>
+<option value="17220" label="The Democratic Republic Of The Congo">The Democratic Republic Of The Congo</option>
+<option value="21580" label="Timor-leste">Timor-leste</option>
+<option value="21575" label="Togo">Togo</option>
+<option value="21579" label="Tokelau">Tokelau</option>
+<option value="21583" label="Tonga">Tonga</option>
+<option value="21588" label="Trinidad And Tobago">Trinidad And Tobago</option>
+<option value="21582" label="Tunisia">Tunisia</option>
+<option value="21586" label="Turkey">Turkey</option>
+<option value="21581" label="Turkmenistan">Turkmenistan</option>
+<option value="21571" label="Turks And Caicos Islands">Turks And Caicos Islands</option>
+<option value="21590" label="Tuvalu">Tuvalu</option>
+<option value="21831" label="Uganda">Uganda</option>
+<option value="21825" label="Ukraine">Ukraine</option>
+<option value="16709" label="United Arab Emirates">United Arab Emirates</option>
+<option value="21835" label="United Kingdom">United Kingdom</option>
+<option value="21843" label="United States">United States</option>
+<option value="21849" label="Uruguay">Uruguay</option>
+<option value="22089" label="US virgin Island">US virgin Island</option>
+<option value="21850" label="Uzbekistan">Uzbekistan</option>
+<option value="22101" label="Vanuatu">Vanuatu</option>
+<option value="22085" label="Venezuela">Venezuela</option>
+<option value="22094" label="Viet Nam">Viet Nam</option>
+<option value="22853" label="Yemen">Yemen</option>
+<option value="23117" label="Zambia">Zambia</option>
+<option value="23127" label="Zimbabwe">Zimbabwe</option>
+</select>
+</div>
+<div><input type="button" name="confirm_set_device_btn" id="confirm_set_device_btn" class="confirm_set_device_btn" onclick="set_user_country();" value="Set" /></div>
+</div>
+<div id="page_container">
+<div id="content_bg">
+<div id="page_header" >
+			<form id="search" name="form_1320076218a" action="/search-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en" method="post">
+		<div id="page_header_logo"><div id="header_logo_image"><a href="/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;device=-for-android-os&amp;lang=en"><img src="http://cdn.m.getjar.com/15473/views/images/pc/GJlogo.png" alt="GetJar :: Appsolutely Free" /></a></div></div>
+		<div class="pushright"><input type='submit' value="Go" class="go_button" onclick="if(document.forms[0].query.value==''){document.forms[0].query.focus();}else{document.forms[0].submit();}return false;"/></div>
+		<div id="page_header_search"><input type='text' value="" name="query" class="search_field" /></div>
+		</form>
+	</div><div id="content_container"><div class="page_content">
+	<div class="nav">
+	<ul>
+		<li class="navHome first"><a href="/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;device=-for-android-os&amp;lang=en">Home</a></li>
+		<li class="navCatsAct"><a href="/categories?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en">Categories</a></li>
+					<li class="navGold"><a href="/apps?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en">Apps</a></li>
+				<li class="navFriends"><a href="/myfriends?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en">Friends</a></li>
+		<li class="navMy"><a href="/myapps?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en">My Apps</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>	<div class="subnav">
+  <a class="act" href="/mobile-language-education-applications-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en&amp;o=top"><span class="left">Top</span></a>
+  <a  href="/mobile-language-education-applications-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en&amp;o=new"><span class="right">New</span></a>
+  <div class="clear"></div>
+</div>
+<div class="category_label"><a href="/mobile-education-applications-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en">Education</a> &gt; Language</div>  	<div id="apps">
+														
+			
+						<div class="free_app_holder bg_white">
+		<div class="free_app_logo"><a href="/mobile/73983/spanish-english-dictionary-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA3&amp;f=575231318&amp;lang=en"><img src="http://cdn.media.getjar.com/repository/imgresize/50x50x1/73983_thm.png" onerror="this.src='http://cdn.m.getjar.com/15473/views/images/pc/generic.png'" alt="thumb" class="shadowed_image img50x50" /></a></div>
+        <div class="free_app_license">
+        	<a class="black_text" href="/mobile/73983/spanish-english-dictionary-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA3&amp;f=575231318&amp;lang=en">free</a>
+        	        </div>
+        <div class="free_app_info">
+        	<a class="free_app_name" href="/mobile/73983/spanish-english-dictionary-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA3&amp;f=575231318&amp;lang=en">Spanish English Dictionary</a><br/>       
+							Spanish-English  and English-Spanish dictionary 
+			       		
+        </div>
+	</div>
+						<div class="free_app_holder bg_grey">
+		<div class="free_app_logo"><a href="/mobile/74167/english-hindi-english-dictionary-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA4&amp;f=575231318&amp;lang=en"><img src="http://cdn.media.getjar.com/repository/imgresize/50x50x1/74167_thm.jpg" onerror="this.src='http://cdn.m.getjar.com/15473/views/images/pc/generic.png'" alt="thumb" class="shadowed_image img50x50" /></a></div>
+        <div class="free_app_license">
+        	<a class="black_text" href="/mobile/74167/english-hindi-english-dictionary-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA4&amp;f=575231318&amp;lang=en">free</a>
+        	        </div>
+        <div class="free_app_info">
+        	<a class="free_app_name" href="/mobile/74167/english-hindi-english-dictionary-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA4&amp;f=575231318&amp;lang=en">english hindi english dictionary</a><br/>       
+							Online english - hindi - english Dictionary. Easy to use and Now with GK in hindi.
+			       		
+        </div>
+	</div>
+						<div class="free_app_holder bg_white">
+		<div class="free_app_logo"><a href="/mobile/75414/chinese-quiz-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA5&amp;f=575231318&amp;lang=en"><img src="http://cdn.media.getjar.com/repository/imgresize/50x50x1/75414_thm.jpg" onerror="this.src='http://cdn.m.getjar.com/15473/views/images/pc/generic.png'" alt="thumb" class="shadowed_image img50x50" /></a></div>
+        <div class="free_app_license">
+        	<a class="black_text" href="/mobile/75414/chinese-quiz-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA5&amp;f=575231318&amp;lang=en">free</a>
+        	        </div>
+        <div class="free_app_info">
+        	<a class="free_app_name" href="/mobile/75414/chinese-quiz-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA5&amp;f=575231318&amp;lang=en">Chinese Quiz</a><br/>       
+							 ChizQuiz is the Chinese Characters Quiz App with OpenFeint (social game network).
+			       		
+        </div>
+	</div>
+						<div class="free_app_holder bg_grey">
+		<div class="free_app_logo"><a href="/mobile/76182/coach-english-lite-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA6&amp;f=575231318&amp;lang=en"><img src="http://cdn.media.getjar.com/repository/imgresize/50x50x1/76182_thm.png" onerror="this.src='http://cdn.m.getjar.com/15473/views/images/pc/generic.png'" alt="thumb" class="shadowed_image img50x50" /></a></div>
+        <div class="free_app_license">
+        	<a class="black_text" href="/mobile/76182/coach-english-lite-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA6&amp;f=575231318&amp;lang=en">free</a>
+        	        </div>
+        <div class="free_app_info">
+        	<a class="free_app_name" href="/mobile/76182/coach-english-lite-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA6&amp;f=575231318&amp;lang=en">Coach English Lite</a><br/>       
+							Keep your English up to date training with over 500 phrases. Save/Sent by email.
+			       		
+        </div>
+	</div>
+			
+</div>				
+			<div id="appnav" class="more_bar " >		
+				<div class="friends_nav">
+					<div id="row_left_arrow" class="arrows_friends pushleft"><a href="/mobile-language-education-applications-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;lang=en&amp;o=top&amp;p=64&amp;i=9"><div onclick="feedNav('prev',);" id="left_arrow"></div></a></div>									</div>
+			</div>
+				
+		
+	</div>
+</div><div id="adcol">
+	<div id="user_dash">
+		Location:  China <br/>
+		Language: <a href="/select-language/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;device=-for-android-os&amp;lang=en&amp;redirect=http%3A%2F%2Fwww.getjar.com%2Fmobile-language-education-applications-for-android-os%2F%3Fref%3D0%26lang%3Den%26p%3D72%26i%3D10">English</a><br/>
+		Device: 
+		<a href="#" class="overlay" rel="#popup_choose_phone">Android OS</a>
+				<img src="http://cdn.media.getjar.com/repository/mr_device_images/thumb/" alt="" class="yourdevice floatright" />
+			</div>
+	
+	<div>
+		<div id="user_action">
+			<a href="https://graph.facebook.com/oauth/authorize?client_id=166966630009823&amp;redirect_uri=http%3A%2F%2Fwww.getjar.com%2Fconnect&amp;scope=email%2Cread_stream%2Cpublish_stream%2Coffline_access">Facebook Connect</a>
+				
+		</div>
+						<div class="ad_block">
+					<a href="/mobile/253792/can-knockdown-2-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA2&amp;f=575231318&amp;lang=en"><img src="http://cdn.media.getjar.com/repository/fixed_ads_img/253792_large.jpg" alt="Can Knockdown 2"/></a>
+	</div>
+		
+		<div id="inline_ad"></div>		<div id="inline_ad"></div>		
+						<div class="ad_block">
+					<a href="/mobile/25663/espn-for-android-os/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;c=l2ne21g0x7m7q46zA1&amp;f=575231318&amp;lang=en"><img src="http://cdn.media.getjar.com/repository/fixed_ads_img/25663_large.jpg" alt="ESPN"/></a>
+	</div>
+	</div>
+	
+</div></div>
+
+<div id="page_footer" class="clear">
+	<ul>
+		<li class="footer_col">
+			<ul>
+				<li class="footer_title">Social</li>
+				<li class="footer_links"><img src="http://cdn.m.getjar.com/15473/views/images/pc/twitter_icon.png" alt="Twitter"/><a href="http://twitter.com/getjar" class="footer_link">Follow Us on Twitter</a></li>
+				<li class="footer_links"><img src="http://cdn.m.getjar.com/15473/views/images/pc/facebook_icon.png" alt="Facebook"/><a href="http://www.facebook.com/getjarapp" class="footer_link">Find us on Facebook</a></li>
+				<li class="footer_links"><img src="http://cdn.m.getjar.com/15473/views/images/pc/youtube_icon.png" alt="YouTube"/><a href="http://www.youtube.com/user/GetJarApps " class="footer_link">See us on YouTube</a></li>		
+			</ul>
+		</li>
+		<li class="footer_col">
+			<ul>
+				<li class="footer_title">About GetJar</li>
+				<li class="footer_links_text"><a href="http://www.getjar.com/about" class="footer_link_text">About Us</a></li>
+				<li class="footer_links_text"><a href="http://www.getjar.com/about/careers" class="footer_link_text">Jobs</a></li>
+				<li class="footer_links_text"><a href="http://www.getjar.com/about/contact" class="footer_link_text">Contact Us</a></li>
+			</ul>		
+		</li>
+		<li class="footer_col">
+			<ul>
+				<li class="footer_title">Legal</li>
+				<li class="footer_links_text"><a href="/terms/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;device=-for-android-os&amp;lang=en" class="footer_link_text">Terms</a></li>
+				<li class="footer_links_text"><a href="/privacy/?ref=0&amp;lvt=1320076218&amp;sid=i80d41cb6z0frx8g&amp;device=-for-android-os&amp;lang=en" class="footer_link_text">Privacy</a></li>
+			</ul>		
+		</li>
+		<li class="footer_col">
+			<ul>
+				<li class="footer_title">Developers</li>
+				<li class="footer_links_text"><a href="http://developer.getjar.com" class="footer_link_text">Developer Site</a></li>
+				<li class="footer_links_text"><a href="http://developer.getjar.com" class="footer_link_text">Publish Your App on GetJar</a></li>
+				<li class="footer_links_text"><a href="http://blog.getjar.com/developer/ " class="footer_link_text">Developer Blog</a></li>
+				<li class="footer_links_text"><a href="http://developer.getjar.com/university/" class="footer_link_text">GetJar University</a></li>
+			</ul>		
+		</li>
+	</ul>
+	<div class="copyright clearall">&copy; 2011 GetJar, Inc.</div>
+</div></div>
+
+<script type="text/javascript"> 
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); 
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); 
+</script> 
+
+<script type="text/javascript"> 
+	try { 
+		var pageTracker = _gat._getTracker("UA-6434806-1"); 
+		pageTracker._trackPageview(); 
+	} catch(err) {} 
+</script>
+</body></html>

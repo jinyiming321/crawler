@@ -33,23 +33,25 @@ while(1)
     foreach ( @markets_be_monitored)
     {
         $market=$db_helper->get_market_info($_);
-#        &task_for_find_app;
+         &task_for_find_app;
+#        &task_for_fix_app;
 #        &task_for_find_app_again;
 #        &task_for_updated_app();
-       &task_for_new_app();
+         &task_for_new_app();
 #        &update_market_monitor;
 #        &task_for_new_apk();
     }
 
     print "end to generate task\n";
-    sleep(10*60);			# check the task every 10 minutes
+    sleep(50*10);			# check the task every 10 minutes
 }
 
     
 sub task_for_find_app
-{		
+{
+    # for getjar check	
     my $sql = 'select SQL_BUFFER_RESULT feeder_id, feeder_url from feeder '.
-            ' where status="undo" and market_id='.$market->{'id'}.
+            ' where ( status="undo" or status="fail") and market_id='.$market->{'id'}.
             ' order by last_visited_time, feeder_id';  
     my $sth = $dbh->prepare($sql);
     $sth->execute();

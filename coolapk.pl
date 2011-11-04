@@ -71,7 +71,7 @@ my $task_type   = $ARGV[0];
 my $task_id     = $ARGV[1];
 my $conf_file   = $ARGV[2];
 
-my $market      = 'www.coolapk.com';
+my $market      = 'coolapk.com';
 my $url_base    = 'http://www.coolapk.com';
 #my $downloader  = new AMMS::Downloader;
 

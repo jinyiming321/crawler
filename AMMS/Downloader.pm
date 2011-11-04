@@ -168,7 +168,7 @@ sub download_to_disk
         }
         unless (defined($file)){
             if( defined($self->{RESPONSE}->header("content-disposition")) and
-                    $self->{RESPONSE}->header("content-disposition")=~/filename="(.*)"/)
+                    $self->{RESPONSE}->header("content-disposition")=~/filename="?([^";]+)/)
             {
                 $file=$1;
             }else{

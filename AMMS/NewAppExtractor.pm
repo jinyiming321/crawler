@@ -771,7 +771,7 @@ sub package_and_send
 
     if ( $app_count )
     {
-        $cmd .= " $app_param;cd -";
+        $cmd .= " $app_param";
         unless ( execute_cmd($cmd) ) 
         {
             $self->{'CONFIG_HANDLE'}->getAttribute('LOGGER')->error(

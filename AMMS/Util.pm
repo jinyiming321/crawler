@@ -24,6 +24,7 @@ BEGIN
             check_apk_validity
             init_gloabl_variable
             del_inline_elements
+            kill_program
         );
 }
 
@@ -273,7 +274,12 @@ sub file_md5{
 sub check_apk_validity{
 #return 0 on success 
     my $apk_file=shift;
-    return 0==system("unzip -t $apk_file ");
+    if( system("unzip -t '$apk_file' "))
+    {
+        system("rm -f $apk_file");
+        return 0;
+    }
+    return 1;
 }
 sub del_inline_elements{
     my $description = shift;
@@ -289,6 +295,12 @@ sub del_inline_elements{
     $description =~ s/(<\s*\w+)\s+[^>]*(>)/$1$2/g;
     $description =~ s/[\000-\037]//g;
     return HTML::Entities::decode($description);
+}
+sub kill_program{
+    my $program_tag=shift;
+
+    my $cmd="pid=`ps axu |grep \"\Q$program_tag\E\"|grep -v grep |awk '{print \$2}'`; kill \$pid";
+    system($cmd);
 }
 1;
 

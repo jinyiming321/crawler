@@ -25,16 +25,15 @@ my %program_table = (
         'eoemarket'=>{'host'=>'www.eoemarket.com','script'=>'eoemarket.pl','task_type'=>[qw(find_app new_app update_app)]},
         'goapk'=>{'host'=>'www.goapk.com','script'=>'goapk.pl','task_type'=>[qw(find_app new_app update_app )]},
         'dangle'=>{'host'=>'android.d.cn','script'=>'dangle.pl','task_type'=>[qw(find_app new_app  update_app )]},
-        'anfone'=>{'host'=>'www.anfone.com','script'=>'anfone_for_test.pl','task_type'=>[qw(find_app )]},
-        'coolapk' => { host => 'www.coolapk.com',script => 'coolapk.pl',task_type  => ['find_app']},
-        'handster' => { host => 'handster.com',script => 'handster.pl', task_type
-        => ['new_app'] },
-        'slideme' => { host => 'slideme.org',script => 'slideme.pl',task_type =>
-        ['new_app']},
-        'soc'  => { host => 'soc.io',script => 'soc.pl',task_type =>
-        ['find_app']},
-        
-        
+        'nduoa'=>{'host'=>'www.nduoa.com','script'=>'nduoa.pl','task_type'=>[qw(find_app new_app  update_app )]},
+        'anfone'=>{'host'=>'www.anfone.com','script'=>'anfone.pl','task_type'=>[qw(find_app new_app  update_app )]},
+        'tgbus'=>{'host'=>'dg.tgbus.com','script'=>'tgbus.pl','task_type'=>[qw(find_app new_app  update_app )]},
+        'brothersoft'=>{'host'=>'www.brothersoft.com','script'=>'brothersoft.pl','task_type'=>[qw(find_app new_app  )]},
+        'opera'=>{'host'=>'mobilestore.opera.com','script'=>'opera.pl','task_type'=>[qw(find_app new_app  update_app )]},
+        'mobango'=>{'host'=>'www.mobango.com','script'=>'mobango.pl','task_type'=>[qw(find_app new_app  update_app )]},
+        'handster'=>{'host'=>'www.handster.com','script'=>'handster.pl','task_type'=>[qw(find_app new_app  update_app )]},
+        'getjar'=>{'host'=>'www.getjar.com','script'=>'getjar.pl','task_type'=>[qw(find_app
+            new_app )]},
         );
 
 foreach( @markets_be_monitored )

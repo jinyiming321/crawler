@@ -570,7 +570,7 @@ sub extract_page_list{
         $match = int($1);
     }
     my $total_pages = 0;
-
+    return 0 if $webpage!~ m{</html>}s;
     my $tree = new HTML::TreeBuilder;
     $tree->parse($webpage);
     $tree->eof;

@@ -96,14 +96,20 @@ sub run
 
     unless ( scalar %feeder_id_urls)
     {
-        $self->finish_task();
+        $self->finish_task('fail');
         return 1;
     }
 
-    $self->get_app_url( \%feeder_id_urls );  ##get app url from feed
+    eval{
+        $self->get_app_url( \%feeder_id_urls );  ##get app url from feed
+    };
 
     ##end a task
-    $self->finish_task();
+    if($@){
+        $self->finish_task('fail');
+    }else{
+        $self->finish_task('success');
+    }
 
     return 1;
 }
@@ -179,10 +185,16 @@ sub get_app_url
 
 sub finish_task
 {
-    my $self        = shift;
+    my $self    = shift;
+
+    my $result  = $self->{'RESULT'};
+
+    if( $result eq 'fail' )
+    {
+        map { $result->{$_}->{'status'} = 'fail' } keys %{ $result};
+    }
 
     $self->{ 'DB_HELPER' }->update_feeder( $self->{'RESULT'} );
-
     $self->{ 'DB_HELPER' }->update_task($self->{'TASK_ID'},'done');
 
 

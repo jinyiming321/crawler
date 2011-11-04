@@ -1,83 +1,148 @@
-#!/usr/bin/perl 
-#===============================================================================
-#
-#         FILE: get_xda_feeder.pl
-#
-#        USAGE: ./get_xda_feeder.pl  
-#
-#  DESCRIPTION: 
-#
-#      OPTIONS: ---
-# REQUIREMENTS: ---
-#         BUGS: ---
-#        NOTES: ---
-#       AUTHOR: JamesKing (www.perlwiki.info), jinyiming456@gmail.com
-#      COMPANY: China
-#      VERSION: 1.0
-#      CREATED: 2011年09月25日 08时17分52秒
-#     REVISION: ---
-#===============================================================================
+#*****************************************************************************
+# *     Program Title: get_getjar_feeder.pl
+# *    
+# *     Description: get feeder url
+# *    
+# *     Author: Yiming Jin
+# *    
+# *     (C) Copyright 2011-2014 TrustGo Mobile, Inc.
+# *     All Rights Reserved.  
+# *                           
+# *     This program is an unpublished copyrighted work which is proprietary
+# *     to TrustGo Mobile, Inc. and contains confidential information that is
+# *     not to be reproduced or disclosed to any other person or entity without
+# *     prior written consent from TrustGo Mobile, Inc. in each and every
+# *     instance.
+# *    
+# *     WARNING:  Unauthorized reproduction of this program as well as                                                              
+# *     unauthorized preparation of derivative works based upon the
+# *     program or distribution of copies by sale, rental, lease or
+# *     secret laws, punishable by civil and criminal penalties.
+#*****************************************************************************
 
 use strict;
-use warnings;
 use LWP::UserAgent;
 use HTML::TreeBuilder;
 use IO::Handle;
-use Carp;
-use LWP::Simple;
+use HTTP::Cookies;
+use Encode ;
+
 
 my $ua = LWP::UserAgent->new;
+my $web_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.2 (KHTML, like Gecko)'
+    .'Chrome/15.0.874.81 Safari/535.2';
+my $set_device_url =
+    'http://www.getjar.com/set-user-device/?udvsName=android-os&udvsId=15103';
+get_cookie();
+my $cookie_jar = HTTP::Cookies->new(
+        file        => 'getjar.cookie',
+        autosave    => 1,
+);
+$ua->agent($web_agent);
 $ua->timeout(60);
-$ua->env_proxy;
+$cookie_jar->load('getjar.cookie');
+$ua->cookie_jar($cookie_jar);
 
-open(FEED,">xda.url");
+open(FEED,">getjar.url");
 FEED->autoflush(1);
 
-#'http://www.liqucn.com/os/android/rj/';
-# http://www.liqucn.com/os/android/rj/
-my @portals = (
-    "http://android.xda.cn/html/list_index/1.html",
-       );
+open(MAP,">getjar_map.txt");
+MAP->autoflush(1);
 
+my @apps_portal
+    =
+    (
+     'http://www.getjar.com/mobile-education-applications-for-android-os',
+     'http://www.getjar.com/mobile-social-and-messaging-applications-for-android-os',
+     'http://www.getjar.com/mobile-entertainment-applications-for-android-os',
+     'http://www.getjar.com/mobile-finance-applications-for-android-os',
+     'http://www.getjar.com/mobile-food-applications-for-android-os',
+     'http://www.getjar.com/mobile-all-games-for-android-os',
+     'http://www.getjar.com/mobile-health-applications-for-android-os',
+     'http://www.getjar.com/mobile-search-applications-for-android-os',
+     'http://www.getjar.com/mobile-lifestyle-applications-for-android-os',
+     'http://www.getjar.com/mobile-maps-applications-for-android-os',
+     'http://www.getjar.com/mobile-music-applications-for-android-os',
+     'http://www.getjar.com/mobile-news-and-weather-applications-for-android-os',
+     'http://www.getjar.com/mobile-photos-applications-for-android-os',
+     'http://www.getjar.com/mobile-productivity-applications-for-android-os',
+     'http://www.getjar.com/mobile-religion-applications-for-android-os',
+     'http://www.getjar.com/mobile-shopping-applications-for-android-os',
+     'http://www.getjar.com/mobile-sports-applications-for-android-os',
+     'http://www.getjar.com/mobile-travel-applications-for-android-os',
+     'http://www.getjar.com/mobile-adult-applications-for-android-os'
+    );
+my $base = 'http://www.getjar.com';
 
+my $category_page;
 
-foreach my $portal ( @portals ){
-    my $response = $ua->get($portal);
-    getstore($portal,'xda.html');
-    while( not $response->is_success){
-         $response=$ua->get($portal);
+foreach my $port ( @apps_portal ){
+    if( $port=~ m/mobile-(.+?)-applications/  
+           or 
+        $port=~ m/mobile-(.+?-games)/
+    ){
+         print "'$1' => '',\n";
+         print MAP "'$1' => '',\n";
     }
-                                                     
-    if ($response->is_success) {
-        my $tree;
-        my $webpage=$response->content;
-        eval {
-            $tree = new HTML::TreeBuilder;
-                    
-            $tree->parse($webpage);
-                         
-            my @nodes = $tree->look_down( id => 'content_left_left_one');
-            Carp::croak("not find node\n") unless @nodes;
-            for(@nodes){
-                my @tags = $_->find_by_tag_name('a');
-                foreach my $tag(@tags){
-                        next unless ref($tag);
-                        my $href = $tag->attr('href');
-                        map{
-                            my $temp = $href ;
-                            my $num = $_;
-                            $temp =~ s/(\d+)(?=\.html$)/$1."_$num"/e;
-                            print FEED $temp."\n";
-
-                        } (1..3);
-                }
+    my $res = $ua->get($port);
+    while( not $res->is_success ){
+        $res = $ua->get($port);
+    }
+    
+    my $tree = new HTML::TreeBuilder;
+    $tree->parse( Encode::decode_utf8($res->content) );
+    $tree->eof;
+    
+    my @nodes = $tree->look_down( id => 'subcat_row');
+    warn "not sub category" unless @nodes;
+    foreach my $node( @nodes ){
+        if( ! ref($node) ){
+            print $port."/?ref=0&lang=en\n";
+            print $port."/?ref=0&lang=en\n";
+            print FEED $1."?ref=".$2."&lang=en\n";
+        
+            if( $port =~ m/mobile-(.+?)-applications/){
+                print "'$1' => '',\n";
+                print MAP "'$1' => '',\n";
             }
-        };
-        if($@){
-            die "fail to $@\n";
         }
-        $tree->delete;
+        my $href = $base.$node->parent()->attr('href');
+        if( $href =~ m/(.+?)\?ref=(\d+)/ ){
+            print $1."?ref=".$2."&lang=en\n";
+            print $1."?ref=".$2."&lang=en\n";
+            print FEED $1."?ref=".$2."&lang=en\n";
+        }
+        if( $href =~ m/mobile-(.+?)-applications/  
+                or 
+            $href =~ m/mobile-(.+?-games)/
+        ){
+
+            print "'$1' => '',\n";
+            print MAP "'$1' => '',\n";
+        }
     }
 }
-close(FEED);
+sub get_cookie{
+    my $cookie_file = 'getjar_cookie.txt';
+    my $set_url = $set_device_url;
+    my $ua = new LWP::UserAgent;
+    $ua->timeout(60);
+    $ua->agent($web_agent);
+
+    my $cookie_jar = HTTP::Cookies->new(
+        file        => 'getjar.cookie',
+        autosave    => 1,
+    );
+    
+    $ua->cookie_jar($cookie_jar);
+    $ua->max_redirect(0);
+    my $res = $ua->get( $set_url );
+    if( $res->is_success ){
+        print "get cookie success!\n";
+        return 1
+    }else{
+        die "can't get cookie for getjar";
+    }
+}
+
 

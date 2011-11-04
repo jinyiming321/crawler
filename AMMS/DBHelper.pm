@@ -7,6 +7,7 @@ use LWP;
 use DBI;
 use AMMS::Config;
 use Digest::MD5 qw(md5_hex);
+use JSON;
 
 my $singleton;
 
@@ -118,7 +119,7 @@ sub get_db_handle
 sub update_feeder
 {
     my $self    = shift;
-	my $result  = shift;
+	   my $result  = shift;
 
     my $sql="update feeder set status=?, last_visited_time=now() where feeder_id=?";
     my $sth=$self->{'DB_Handle'}->prepare($sql);
@@ -211,7 +212,7 @@ sub get_task
     my $market_info = $self->get_market_info($market);
 
     $sql = "select task_id from task where market_id=$market_info->{'id'} and task_type='$task_type' and status='undo' ";
-    $sql .= " and worker_ip='".$self->{ 'CONFIG_HANDLE' }->getAttribute('host')."'" if ($task_type ne 'new_app' and $task_type ne 'find_app');
+#$sql .= " and worker_ip='".$self->{ 'CONFIG_HANDLE' }->getAttribute('host')."'" if ($task_type ne 'new_app' and $task_type ne 'find_app');
     $sql .= " order by request_time asc limit 1";
     $sth =$self->{ 'DB_Handle'}->prepare($sql);
     $sth->execute();
@@ -489,9 +490,11 @@ sub insert_app_info
     $sql .= $self->concatenate_string_field( 'author', $app_info );
     $sql .= $self->concatenate_string_field( 'app_qr', $app_info );
     $sql .= $self->concatenate_string_field( 'trustgo_category_id',$app_info );
+    $sql .= $self->concatenate_string_field( 'apk_md5',$app_info );
     $sql .= $self->concatenate_numeric_field( 'size', $app_info );
     $sql .= $self->concatenate_numeric_field( 'official_rating_stars',$app_info );
     $sql .= $self->concatenate_numeric_field( 'official_rating_times',$app_info );
+    $sql .= $self->concatenate_numeric_field( 'official_comment_times',$app_info );
     $sql .= $self->concatenate_numeric_field( 'total_install_times',$app_info );
 
     if($self->{ 'DB_Handle' }->do($sql)<=0)
@@ -516,13 +519,18 @@ sub insert_apk_info
     my $app_url_md5 = $apk_info->{'app_url_md5'}; 
    
     ##invaild app url,don't insert into app_info
-    return  1 if $apk_info->{'status'} eq 'invalid'; 
+    return  1 if $apk_info->{'status'} ne 'success'; 
 
     #insert new apps into apk table
     my $sql = "replace into app_apk set ";
     $sql .= " app_url_md5='$app_url_md5'";
     $sql .= ",status='".$apk_info->{'status'}."'";
     $sql .= ",insert_time=now()";
+    $sql .= ",updated_times=1";
+    $sql .= ",first_visited_time=now()";
+    $sql .= ",last_visited_time=now()";
+    $sql .= ",last_modified_time=now()";
+    $sql .= ",apk_md5='$apk_info->{apk_md5}'";
     $sql .= ",apk_url=".$self->{ 'DB_Handle' }->quote($apk_info->{'apk_url'});
     if ($apk_info->{'status'} eq 'success') 
     {
@@ -627,9 +635,11 @@ sub update_app_info
         $sql .= $self->concatenate_string_field( 'author', $app_info );
         $sql .= $self->concatenate_string_field( 'app_qr', $app_info );
         $sql .= $self->concatenate_string_field( 'trustgo_category_id',$app_info );
+        $sql .= $self->concatenate_string_field( 'apk_md5',$app_info );
         $sql .= $self->concatenate_numeric_field( 'size', $app_info );
         $sql .= $self->concatenate_numeric_field( 'official_rating_stars',$app_info );
         $sql .= $self->concatenate_numeric_field( 'official_rating_times',$app_info );
+        $sql .= $self->concatenate_numeric_field( 'official_comment_times',$app_info );
         $sql .= $self->concatenate_numeric_field( 'total_install_times',$app_info );
     }
 
@@ -687,13 +697,23 @@ sub update_apk_info
 
     return 1 if $status ne 'success';
 
-    my $sql = "update app_apk set ";
+    my $sql="select updated_times,visited_times from app_apk where app_url_md5='$app_url_md5'";
+    my $sth=$self->{'DB_Handle'}->prepare($sql);
+    $sth->execute;
+
+    my ($updated_times,$visited_times)=$sth->fetchrow();
+    $updated_times++;
+
+
+    $sql = "update app_apk set ";
     $sql .= " last_visited_time=now()";
+    $sql .= " last_modified_time=now()";
     $sql .= ",status='$status'";
     $sql .= $self->concatenate_string_field('apk_url',$apk_info);
     if ($status eq 'success') 
     {
     $sql .= ",need_submmit='yes'";
+    $sql .= ",updated_times=$updated_times";
     $sql .= $self->concatenate_string_field('app_unique_name',$apk_info);
     } 
     else
@@ -785,6 +805,24 @@ sub save_package
     return 1;
 }
 
+sub save_extra_info{
+    my $self = shift;
+    my $app_url_md5 = shift;
+    my $data = shift;
+    my $seri_data = encode_json($data);
+    my $sql = "replace into app_extra_info(app_url_md5,information) values(?,?)"; 
+    my $sth = $self->{'DB_Handle'}->prepare($sql);
+    $sth->execute($app_url_md5,$seri_data);
+}
+
+sub get_extra_info{
+    my $self = shift;
+    my $app_url_md5 = shift;
+    my $sql = "select information from app_extra_info where app_url_md5=?";
+    my $hash = $self->{'DB_Handle'}->selectrow_hashref($sql,undef,$app_url_md5); 
+    return decode_json($hash->{information}) if $hash;
+    return undef;
+}
 
 
 1;
