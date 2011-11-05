@@ -30,7 +30,7 @@ while(1)
     &run_one_time();
     &clean_table_data();
 
-    sleep(10);			# check the task every 10 minutes
+    sleep(600);			# check the task every 10 minutes
 }
 
 sub clean_table_data{
@@ -74,9 +74,11 @@ sub run_one_time
     my $tarfile;
     my $tarfile;
     my $hash;
+    my $ret;
     while( $hash=$sth->fetchrow_hashref)
     {
         $status='success'; 
+        $ret = 1;
         $tarfile="$sample_dir/$hash->{package_name}";
         if( -e $tarfile ){
         	my $retry_times = 0;
@@ -85,6 +87,7 @@ sub run_one_time
 
             unless( replace_old_app($tarfile) ){
                 $status='fail' ; 
+                $ret = 0;
                 next;
             }
              # check every system command
@@ -107,7 +110,6 @@ sub run_one_time
     }continue{
         if ($status eq 'success'){
             unlink($tarfile);           
-            $hash->{retry_time} = 0;
         }else{
             # unlink file
             unlink("$analytic_dir/$hash->{package_name}");           
@@ -115,30 +117,20 @@ sub run_one_time
             unlink("$analytic_dir/".$hash->{package_name}.".ready");           
             unlink("$cloud_dir/".$hash->{package_name}.".ready");         
             ++$hash->{retry_time};
-            $dbh->do("update package set retry_time=$hash->{retry_time},end_time=now() where task_id=$hash->{task_id}");
-            if( $hash->{retry_time} > 2 ){
+
+            $dbh->do("update package set
+                    retry_time=$hash->{retry_time},end_time=now() where
+                    task_id=$hash->{task_id}");
+            if( $hash->{retry_time} >= 2 ){
                 $hash->{package_name}=~ m/(.+?)__/;
                 my $market_name = $1;  
                 my $market_info = $db_helper->get_market_info($market_name);
 
-                my $sql2 =<<EOF;
-                select 
-                detail_id as app_url_md5
-                from task_detail
-                where task_id= $hash->{task_id}
-EOF
-                $dbh->do(qq{ 
+               $dbh->do(qq{ 
                     update task set status='undo' where task_id = $hash->{task_id}
                 });
-                my $sth = $dbh->prepare($sql2);
-                $sth->execute;
-                while( my $hashref = $sth->fetchrow_hashref ){
-                    my $update = "update app_info set status='fail' where
-                        app_url_md5='$hashref->{app_url_md5}'";
-                    $dbh->do($update) or warn $DBI::errstr;
-                }
-                $dbh->do("delete from package where task_id=$hash->{task_id}")
-                    or warn $DBI::errstr;
+               $dbh->do("delete from package where package_name =
+                        '$hash->{package_name}'") if ! $ret;
             }
         }
         unlink("$tarfile.ready");
