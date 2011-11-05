@@ -32,7 +32,7 @@ my %program_table = (
         'opera'=>{'host'=>'mobilestore.opera.com','script'=>'opera.pl','task_type'=>[qw(find_app new_app  update_app )]},
         'mobango'=>{'host'=>'www.mobango.com','script'=>'mobango.pl','task_type'=>[qw(find_app new_app  update_app )]},
         'handster'=>{'host'=>'www.handster.com','script'=>'handster.pl','task_type'=>[qw(find_app new_app  update_app )]},
-        'getjar'=>{'host'=>'www.getjar.com','script'=>'getjar.pl','task_type'=>[qw(find_app
+        'getjar'=>{'host'=>'www.getjar.com','script'=>'getjar.pl','task_type'=>[qw(
             new_app )]},
         );
 

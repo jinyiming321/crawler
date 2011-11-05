@@ -267,7 +267,6 @@ our @app_info_list = qw(
         author                  
         last_update
         official_comment_times
-        official_rating_stars
         app_name
         current_version
         icon                    
@@ -606,10 +605,12 @@ sub get_trustgo_category_id{
 }
 
 sub get_official_comment_times{
-    my $html  = shift;
-    my $node = $tree->look_down( class => "product_pref_comment_block" );
+    my ( $html,$app_info ) = @_;
+
+    my $node = $tree->look_down( id => 'product_count_label' );
     return 0 unless ref $node;
-    return $node->find_by_attribute( id => 'product_count_label' )->as_text;
+
+    return $node->as_text;
 }
 
 sub get_icon{
@@ -634,18 +635,6 @@ sub get_app_name{
 }
 
 sub get_price{ 
-    my $html = shift;
-    my $node = $tree->look_down( id => 'product_license_type' );
-    return 0 unless ref($node);
-    my $text = $node->as_text;
-    if( $text =~ m/free/i ){
-        return 0;
-    }else{
-        if( $text =~ m/\$([\d\.]+)/ ){
-            return "USD:".$1;
-        }
-    }
-    
     return 0;
 }
 
@@ -757,15 +746,7 @@ sub get_apk_url{
 
 sub get_official_rating_stars{
     my $html  = shift;
-    my $app_info = shift;
-    my $like_node = $tree->look_down( class => "product_pref_like_block" );
-    my $like_num =  $like_node->find_by_attribute( id => 'product_count_label' )->as_text;
-    my $dis_node = $tree->look_down( class => 'product_pref_dislike_block' );
-    my $dis_num = $dis_node->find_by_attribute( id =>
-            'product_count_label')->as_text;
-    $app_info->{official_rating_times} = $like_num+$dis_num;
-    return 0 if $like_num == 0;
-    return $like_num/($like_num+$dis_num)*10/2
+    return 0
 }
 
 sub kb_m{
@@ -1029,6 +1010,7 @@ sub download_app_apk
 
     my $downloader  = $mobile_downloader;
 
+#    $downloader->header({Referer=>$apk_info->{'app_url'}});
     if( 
     	exists $apk_info->{apk_url}
     	    &&
@@ -1073,12 +1055,11 @@ sub download_app_apk
         $apk_info->{'status'}='fail';
         return 0;
     }
-    
+
     my $timeout = $self->{'CONFIG_HANDLE'}->getAttribute('ApkDownloadMaxTime');
     $timeout += int($apk_info->{size}/1024) if defined $apk_info->{size};
     $downloader->timeout($timeout);
     $apk_file=$downloader->download_to_disk($apk_info->{'apk_url'},$apk_dir,undef);
-
     if (!$downloader->is_success)
     {
         $apk_info->{'status'}='fail';

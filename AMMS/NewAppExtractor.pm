@@ -658,8 +658,8 @@ sub deal_with_app_info
     my $app_res_dir=$app_dir.'/res';
     my $app_res_pic_dir=$app_res_dir.'/pic';
     my $app_res_video_dir=$app_res_dir.'/video';
-    eval { 
-        rmtree($app_dir) if -e $app_dir;
+    eval {
+#        rmtree($app_dir) if -e $app_dir;
         mkpath($app_dir);
         mkpath($app_header_dir);
         mkpath($app_page_dir);
@@ -676,7 +676,8 @@ sub deal_with_app_info
     }
 
     #save app info to file 
-    my $lang=$self->{'MARKET_INFO'}->{'language'};
+#my $lang=$self->{'MARKET_INFO'}->{'language'};
+    my $lang="en_us";
     open    PAGE,   ">$app_page_dir/$lang";
     print   PAGE    $app_info->{ 'app_page' };
     close   PAGE;
@@ -714,18 +715,18 @@ sub deal_with_app_info
     print   RELATED  "$_\n" foreach ( @{ $app_info->{'related_app'} } );
     close   RELATED;
 
-
+=pod
     #icon file
     $downloader->timeout($self->{ 'CONFIG_HANDLE' }->getAttribute('ImageDownloadMaxTime'));
     $downloader->download_to_disk($app_info->{'icon'},$app_res_dir,'icon');
     $logger->warn( "fail to download icon,AppID:$md5" ) if not $downloader->is_success;
-
+=cut
     #screenshot folder
     $status=0;
     foreach( @{ $app_info->{'screenshot'} } )
     {
         next unless defined($_);
-        $downloader->download_to_disk($_,$app_res_pic_dir,$status);
+#     $downloader->download_to_disk($_,$app_res_pic_dir,$status);
         $status+=1 if $downloader->is_success;
     }
     $logger->warn("fail to download screenshot,AppID:$md5") if not $status;

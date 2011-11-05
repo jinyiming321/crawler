@@ -18,7 +18,6 @@ my $cloud_dir="/mnt/cloud";
 my $bakup_dir="/mnt/bakup";
 
 #submit the app to analyzer
-my $retry_times = 0 ;
 while(1)
 {
     #check db handler  
@@ -59,12 +58,12 @@ sub clean_table_data{
         $task_sth->execute( $hashref->{task_id} ) ;
     }
 }
+
  
 
 sub run_one_time
 {
-    $retry_times++;
-    my $sql="select package_name, task_id from package where (status='undo' or status='fail') and worker_ip='".$conf->getAttribute('host')."' order by insert_time asc";
+    my $sql="select package_name, task_id ,retry_time from package where (status='undo' or status='fail') and worker_ip='".$conf->getAttribute('host')."' order by insert_time asc";
     my $sth=$dbh->prepare($sql);
     
     $sth->execute;
@@ -84,7 +83,7 @@ sub run_one_time
             open(FH,">$tarfile.ready") or die "Can't create $tarfile ready file: $!";
             close(FH);
 
-            $status='fail' and next 
+            $status='fail'  and next  and $hash->{retry_time}++
                  unless &replace_old_app($tarfile);#save  local copy
              # check every system command
             unless( 
@@ -99,6 +98,7 @@ sub run_one_time
                         execute_cmd( "cp $tarfile.ready $cloud_dir/" )
             ){
                  $status = 'fail';
+                 $hash->{retry_time}++;
                  next;
             }
         }
@@ -106,8 +106,9 @@ sub run_one_time
     }continue{
         if ($status eq 'success'){
             unlink($tarfile);           
+            $hash->{retry_time} = 0;
         }else{
-            if( $retry_times == 3 ){
+            if( $hash->{retry_time} == 3 ){
                 unlink("$analytic_dir/$hash->{package_name}");           
                 unlink("$cloud_dir/$hash->{package_name}");           
                 unlink("$analytic_dir/".$hash->{package_name}.".ready");           
@@ -132,14 +133,23 @@ EOF
                         where app_url_md5=$hashref->{app_url_md5}"
                     );
                 }
+                $hash->{retry_time} = 0;
             }
 
         }
         unlink("$tarfile.ready");
         $dbh->do("update package set status='$status',end_time=now() where task_id=$hash->{task_id}");
+        $dbh->do("update package set retry_time='$hash->{retry_time}',end_time=now() where task_id=$hash->{task_id}");
     }
-    $retry_times = 0 if $retry_times == 3;
 
+}
+sub get_market_info{
+    my $package_name = shift;
+    if( $package_name =~ m/(.+?)__/ ){
+        my $market_name = $1;
+        return $db_helper->get_market_info($market_name);
+    }
+    return 0;
 }
 
 sub replace_old_app{

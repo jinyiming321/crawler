@@ -12,7 +12,6 @@ use AMMS::Util;
 die "\nplease check config parameter\n" unless init_gloabl_variable;
 
 my $config  = AMMS::SimpleConfig->load("$Bin/monitor.conf");
-print Dumper($config);
 my $dbh     = $db_helper->get_db_handle;
 my $basedir = $conf->getAttribute('BaseBinDir');
 
@@ -26,7 +25,7 @@ while ( my ( $market_name, $script ) = each %$config ) {
     foreach my $task (@$task_ref) {
         my ($has_task) = grep { /$task->{task_id}/ } @workers;
         if ( not $has_task ) {
-            $dbh->do( "update task set status='undo' where task_id=?",
+            $dbh->do( "update task set status='fail' where task_id=?",
                 undef, $task->{task_id} )
               or die $dbh->errstr;
           SWITCH: {
@@ -57,7 +56,6 @@ sub check_market_demo {
     my $market_name = shift;
     my $script      = shift;
     my $recv        = `ps aux|grep $market_name |grep -v grep`;
-    print $recv;
     if ( $recv !~ /task_generator\.pl/ ) {
 		print $basedir. "/task_generator.pl $market_name","\n";
         system(  "perl $basedir/task_generator.pl $market_name &" );
@@ -65,7 +63,7 @@ sub check_market_demo {
     foreach my $task_type (qw/find_app new_app update_app/) {
         system(
 "perl $basedir/daemon.pl -t $task_type -c $basedir/default.cfg -m $market_name -p $script &"
-        ) unless $recv =~ /$task_type/;
+        ) unless $recv =~ /daemon\.pl\s+-t\s+$task_type/;
     }
 }
 
