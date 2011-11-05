@@ -479,9 +479,42 @@ elsif( $task_type eq 'update_app' )##download updated app info and apk
     # load cookie
     $UpdatedAppExtractor->{DOWNLOADER}->{USERAGENT}->cookie_jar( $cookie_jar );
 
+    $UpdatedAppExtractor->addHook('continue-test',\&continue_test );
     $UpdatedAppExtractor->addHook('extract_app_info', \&extract_app_info);
     $UpdatedAppExtractor->addHook('download_app_apk',\&download_app_apk);
+
     $UpdatedAppExtractor->run($task_id);
+}
+
+sub continue_test{
+   my $self        = shift; 
+   my $app_info    = shift;
+#    $self->{'TOP_DIR'} = $self->{'CONFIG_HANDLE'}->getAttribute( 'TempFolder' );
+   my $bak_dir=
+       $self->{'CONFIG_HANDLE'}->getAttribute('BackupDir')
+       .'/'.get_app_dir(
+               $self->getAttribute('MARKET'),
+               $app_info->{app_url_md5}
+       );
+
+   my $desc_file = $bak_dir."/description/".$self->{'MARKET_INFO'}->{'language'};
+   use FileHandle;
+   my $fh ;
+   my $old_desc;
+   eval{
+        $old_desc = do { 
+             local $/;
+             $fh = new FileHandle($desc_file)||die "not exists $desc_file";
+             <$fh>
+        };
+   };
+   if($@){
+       return 1;
+   }
+   if( $old_desc eq $app_info->{description} ){
+       return 1
+   }
+   return 0
 }
 
 sub get_page_list{
@@ -1050,6 +1083,7 @@ sub download_app_apk
             	$self->{DB_HELPER}->save_extra_info(
             	    $md5 => $hashref 
                 );
+                $apk_info->{app_package_name} = $hashref->{apk_redirect};
     	        $apk_info->{status} = 'success';
             	return 1
             }

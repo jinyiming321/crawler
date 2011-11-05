@@ -57,7 +57,7 @@ my %SUPPORTED_HOOKS = (
     'download_app_apk'          => 'download app apk',
     'language_suffix'          => 'support language',
     'extra_processing'          => 'extra processing, for example multi-lang',
-#    'continue-test'             => 'return true if should continue iterating',
+    'continue-test'             => 'return true if should continue iterating',
 #    'modified-since'            => 'returns modified-since time for URL passed',
 );
 

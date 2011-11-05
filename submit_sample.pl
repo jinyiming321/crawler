@@ -83,8 +83,11 @@ sub run_one_time
             open(FH,">$tarfile.ready") or die "Can't create $tarfile ready file: $!";
             close(FH);
 
-            $status='fail'  and next  and $hash->{retry_time}++
-                 unless &replace_old_app($tarfile);#save  local copy
+            unless( replace_old_app($tarfile) ){
+                $status='fail' ; 
+                $hash->{retry_time}++; 
+                next;
+            }
              # check every system command
             unless( 
                         execute_cmd( "cp $tarfile $analytic_dir/")
@@ -108,7 +111,7 @@ sub run_one_time
             unlink($tarfile);           
             $hash->{retry_time} = 0;
         }else{
-            if( $hash->{retry_time} == 3 ){
+            if( $hash->{retry_time} >= 3 ){
                 unlink("$analytic_dir/$hash->{package_name}");           
                 unlink("$cloud_dir/$hash->{package_name}");           
                 unlink("$analytic_dir/".$hash->{package_name}.".ready");           
@@ -119,19 +122,16 @@ sub run_one_time
 
                 my $sql2 =<<EOF;
                 select 
-                a.detail_id as app_url_md5
-                from task_detail a,task b 
-                where a.task_id= $hash->{task_id}
-                and b.market_id = $market_info->{id}
-                and b.task_type='new_app'
+                detail_id as app_url_md5
+                from task_detail
+                where task_id= $hash->{task_id}
 EOF
                 my $sth = $dbh->prepare($sql2);
                 $sth->execute;
                 while( my $hashref = $sth->fetchrow_hashref ){
-                    $dbh->do(
-                        "update app_info set status='fail' 
-                        where app_url_md5=$hashref->{app_url_md5}"
-                    );
+                    my $update = "update app_info set status='fail' where
+                        app_url_md5='$hashref->{app_url_md5}'";
+                    $dbh->do($update) or warn $DBI::errstr;
                 }
                 $hash->{retry_time} = 0;
             }
@@ -139,7 +139,7 @@ EOF
         }
         unlink("$tarfile.ready");
         $dbh->do("update package set status='$status',end_time=now() where task_id=$hash->{task_id}");
-        $dbh->do("update package set retry_time='$hash->{retry_time}',end_time=now() where task_id=$hash->{task_id}");
+        $dbh->do("update package set retry_time=$hash->{retry_time},end_time=now() where task_id=$hash->{task_id}");
     }
 
 }
