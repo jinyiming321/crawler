@@ -28,7 +28,7 @@ while(1)
         sleep(5);
     }
     &run_one_time();
-#    &clean_table_data();
+    &clean_table_data();
 
     sleep(10);			# check the task every 10 minutes
 }
@@ -85,7 +85,6 @@ sub run_one_time
 
             unless( replace_old_app($tarfile) ){
                 $status='fail' ; 
-                $hash->{retry_time}++; 
                 next;
             }
              # check every system command
@@ -101,7 +100,6 @@ sub run_one_time
                         execute_cmd( "cp $tarfile.ready $cloud_dir/" )
             ){
                  $status = 'fail';
-                 $hash->{retry_time}++;
                  next;
             }
         }
@@ -111,11 +109,14 @@ sub run_one_time
             unlink($tarfile);           
             $hash->{retry_time} = 0;
         }else{
-            if( $hash->{retry_time} >= 3 ){
-                unlink("$analytic_dir/$hash->{package_name}");           
-                unlink("$cloud_dir/$hash->{package_name}");           
-                unlink("$analytic_dir/".$hash->{package_name}.".ready");           
-                unlink("$cloud_dir/".$hash->{package_name}.".ready");         
+            # unlink file
+            unlink("$analytic_dir/$hash->{package_name}");           
+            unlink("$cloud_dir/$hash->{package_name}");           
+            unlink("$analytic_dir/".$hash->{package_name}.".ready");           
+            unlink("$cloud_dir/".$hash->{package_name}.".ready");         
+            ++$hash->{retry_time};
+            $dbh->do("update package set retry_time=$hash->{retry_time},end_time=now() where task_id=$hash->{task_id}");
+            if( $hash->{retry_time} > 2 ){
                 $hash->{package_name}=~ m/(.+?)__/;
                 my $market_name = $1;  
                 my $market_info = $db_helper->get_market_info($market_name);
@@ -126,6 +127,9 @@ sub run_one_time
                 from task_detail
                 where task_id= $hash->{task_id}
 EOF
+                $dbh->do(qq{ 
+                    update task set status='undo' where task_id = $hash->{task_id}
+                });
                 my $sth = $dbh->prepare($sql2);
                 $sth->execute;
                 while( my $hashref = $sth->fetchrow_hashref ){
@@ -133,15 +137,13 @@ EOF
                         app_url_md5='$hashref->{app_url_md5}'";
                     $dbh->do($update) or warn $DBI::errstr;
                 }
-                $hash->{retry_time} = 0;
+                $dbh->do("delete from package where task_id=$hash->{task_id}")
+                    or warn $DBI::errstr;
             }
-
         }
         unlink("$tarfile.ready");
         $dbh->do("update package set status='$status',end_time=now() where task_id=$hash->{task_id}");
-        $dbh->do("update package set retry_time=$hash->{retry_time},end_time=now() where task_id=$hash->{task_id}");
     }
-
 }
 sub get_market_info{
     my $package_name = shift;
